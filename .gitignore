@@ -1,0 +1,24 @@
+# Ignore IDE files and system files
+.idea/
+.vscode/
+.DS_Store
+
+# Ignore vendor directory
+/vendor/
+
+# Ignore build directory (if using Webpack Encore or similar)
+/public/build/
+
+# Ignore environment config files
+.env.local
+.env.local.php
+
+# Ignore cache and logs
+/var/cache/
+/var/log/
+
+# Ignore test results or coverage data
+/var/test/
+
+# Ignore composer lock if necessary (generally you keep it, but in some cases you can ignore)
+#/composer.lock
