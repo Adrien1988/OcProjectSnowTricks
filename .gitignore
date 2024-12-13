@@ -1,24 +1,25 @@
-# Ignore IDE files and system files
-.idea/
-.vscode/
-.DS_Store
 
-# Ignore vendor directory
+###> symfony/framework-bundle ###
+/.env.local
+/.env.local.php
+/.env.*.local
+/config/secrets/prod/prod.decrypt.private.php
+/public/bundles/
+/var/
 /vendor/
+###< symfony/framework-bundle ###
 
-# Ignore build directory (if using Webpack Encore or similar)
-/public/build/
+###> phpunit/phpunit ###
+/phpunit.xml
+.phpunit.result.cache
+###< phpunit/phpunit ###
 
-# Ignore environment config files
-.env.local
-.env.local.php
+###> symfony/phpunit-bridge ###
+.phpunit.result.cache
+/phpunit.xml
+###< symfony/phpunit-bridge ###
 
-# Ignore cache and logs
-/var/cache/
-/var/log/
-
-# Ignore test results or coverage data
-/var/test/
-
-# Ignore composer lock if necessary (generally you keep it, but in some cases you can ignore)
-#/composer.lock
+###> symfony/asset-mapper ###
+/public/assets/
+/assets/vendor/
+###< symfony/asset-mapper ###
