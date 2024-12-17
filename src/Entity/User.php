@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Comment;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'user', uniqueConstraints: [
@@ -21,34 +22,45 @@ class User
     private ?int $id = null;
 
     #[ORM\Column(length: 255, unique: true)]
+    #[Assert\NotBlank(message: "Le nom d'utilisateur est obligatoire.")]
+    #[Assert\Length(
+        max: 255,
+        maxMessage: "Le nom d'utilisateur ne doit pas dépasser {{ limit }} caractères."
+    )]
     private ?string $username = null;
 
     #[ORM\Column(length: 255, unique: true)]
+    #[Assert\NotBlank(message: "L'email est obligatoire.")]
+    #[Assert\Email(message: "L'email '{{ value }}' n'est pas valide.")]
     private ?string $email = null;
 
     #[ORM\Column(length: 255)]
+    #[Assert\NotBlank(message: "Le mot de passe est obligatoire.")]
     private ?string $password = null;
 
     #[ORM\Column(length: 255, nullable: true)]
+    #[Assert\Length(
+        max: 255,
+        maxMessage: "L'URL de l'avatar ne doit pas dépasser {{ limit }} caractères."
+    )]
     private ?string $avatarUrl = null;
 
     #[ORM\Column]
     private ?bool $isActive = null;
-
-    #[ORM\OneToMany(mappedBy: 'author', targetEntity: Comment::class, orphanRemoval: true)]
-    private Collection $comments;
-
+    
     /**
      * @var Collection<int, Comment>
      */
-    #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'author')]
-    private Collection $no;
+    #[ORM\OneToMany(mappedBy: 'author', targetEntity: Comment::class, orphanRemoval: true)]
+    private Collection $comments;
+
+    
+    
 
     public function __construct()
     {
         $this->comments = new ArrayCollection();
         $this->isActive = false;
-        $this->no = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -142,33 +154,8 @@ class User
         return $this;
     }
 
-    /**
-     * @return Collection<int, Comment>
-     */
-    public function getNo(): Collection
+    public function __toString(): string
     {
-        return $this->no;
-    }
-
-    public function addNo(Comment $no): static
-    {
-        if (!$this->no->contains($no)) {
-            $this->no->add($no);
-            $no->setAuthor($this);
-        }
-
-        return $this;
-    }
-
-    public function removeNo(Comment $no): static
-    {
-        if ($this->no->removeElement($no)) {
-            // set the owning side to null (unless already changed)
-            if ($no->getAuthor() === $this) {
-                $no->setAuthor(null);
-            }
-        }
-
-        return $this;
+        return $this->username ?? 'Utilisateur';
     }
 }

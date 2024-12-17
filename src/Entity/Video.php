@@ -2,12 +2,12 @@
 
 namespace App\Entity;
 
-use App\Repository\CommentRepository;
+use App\Repository\VideoRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
-#[ORM\Entity(repositoryClass: CommentRepository::class)]
-class Comment
+#[ORM\Entity(repositoryClass: VideoRepository::class)]
+class Video
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -15,21 +15,17 @@ class Comment
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    #[Assert\NotBlank(message: 'Le contenu ne peut pas être vide.')]
+    #[Assert\NotBlank(message: "Le code d'intégration de la vidéo est obligatoire.")]
     #[Assert\Length(
         max: 255,
-        maxMessage: 'Le contenu ne peut pas dépasser {{ limit }} caractères.'
+        maxMessage: "Le code d'intégration ne doit pas dépasser {{ limit }} caractères."
     )]
-    private ?string $content = '';
+    private ?string $embedCode = null;
 
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
-    #[ORM\ManyToOne(inversedBy: 'comments', cascade: ['persist'])]
-    #[ORM\JoinColumn(nullable: false)]
-    private ?User $author = null;
-
-    #[ORM\ManyToOne(inversedBy: 'comments', cascade: ['persist'])]
+    #[ORM\ManyToOne(targetEntity: Figure::class, inversedBy: 'videos', cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: false)]
     private ?Figure $figure = null;
 
@@ -38,24 +34,19 @@ class Comment
         $this->createdAt = new \DateTimeImmutable();
     }
 
-    public function __toString(): string
-    {
-        return (string) $this->content;
-    }
-
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getContent(): ?string
+    public function getEmbedCode(): ?string
     {
-        return $this->content;
+        return $this->embedCode;
     }
 
-    public function setContent(string $content): static
+    public function setEmbedCode(string $embedCode): static
     {
-        $this->content = $content;
+        $this->embedCode = $embedCode;
 
         return $this;
     }
@@ -63,18 +54,6 @@ class Comment
     public function getCreatedAt(): ?\DateTimeImmutable
     {
         return $this->createdAt;
-    }
-
-    public function getAuthor(): ?User
-    {
-        return $this->author;
-    }
-
-    public function setAuthor(?User $author): static
-    {
-        $this->author = $author;
-
-        return $this;
     }
 
     public function getFigure(): ?Figure
@@ -87,5 +66,10 @@ class Comment
         $this->figure = $figure;
 
         return $this;
+    }
+
+    public function __toString(): string
+    {
+        return $this->embedCode ?? 'Vidéo';
     }
 }
