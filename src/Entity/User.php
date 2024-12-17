@@ -2,19 +2,21 @@
 
 namespace App\Entity;
 
-use App\Repository\UserRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
 use App\Entity\Comment;
+use Doctrine\ORM\Mapping as ORM;
+use App\Repository\UserRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'user', uniqueConstraints: [
     new ORM\UniqueConstraint(name: 'unique_username', columns: ['username']),
     new ORM\UniqueConstraint(name: 'unique_email', columns: ['email'])
 ])]
-class User
+class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -152,6 +154,24 @@ class User
         }
 
         return $this;
+    }
+
+    public function getRoles(): array
+    {
+        // Retourne un tableau des rôles de l'utilisateur
+        return ['ROLE_USER'];
+    }
+
+    public function eraseCredentials(): void
+    {
+        // Cette méthode peut être utilisée pour effacer des données sensibles
+        // stockées temporairement, par exemple le mot de passe en clair.
+    }
+
+    public function getUserIdentifier(): string
+    {
+        // Identifiant unique pour l'authentification (email dans ce cas)
+        return $this->email;
     }
 
     public function __toString(): string
