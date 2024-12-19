@@ -2,13 +2,8 @@ security:
     # https://symfony.com/doc/current/security.html#registering-the-user-hashing-passwords
     password_hashers:
         App\Entity\User: 'auto'
-        App\Entity\User: 'auto'
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
-        user_provider:
-            entity:
-                class: App\Entity\User
-                property: email
         user_provider:
             entity:
                 class: App\Entity\User
