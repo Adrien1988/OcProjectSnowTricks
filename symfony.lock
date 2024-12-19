@@ -38,6 +38,9 @@
             "./migrations/.gitignore"
         ]
     },
+    "gregwar/captcha-bundle": {
+        "version": "v2.3.0"
+    },
     "phpunit/phpunit": {
         "version": "9.6",
         "recipe": {
@@ -205,6 +208,15 @@
             "./config/packages/security.yaml",
             "./config/routes/security.yaml"
         ]
+    },
+    "symfony/sendgrid-mailer": {
+        "version": "6.4",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "4.4",
+            "ref": "224aedffb66812dc2b0965dabc14d5f800941da6"
+        }
     },
     "symfony/translation": {
         "version": "6.4",

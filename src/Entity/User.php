@@ -47,16 +47,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     )]
     private ?string $avatarUrl = null;
 
-    #[ORM\Column]
-    private ?bool $isActive = null;
-    
+    #[ORM\Column(nullable: false, options: ["default" => false])]
+    private bool $isActive = false;
+
     /**
      * @var Collection<int, Comment>
      */
     #[ORM\OneToMany(mappedBy: 'author', targetEntity: Comment::class, orphanRemoval: true)]
     private Collection $comments;
-
     
+    #[ORM\Column(length: 64, nullable: true)]
+    private ?string $activationToken = null;
     
 
     public function __construct()
@@ -123,7 +124,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->isActive;
     }
 
-    public function setActive(bool $isActive): static
+    public function setIsActive(bool $isActive): static
     {
         $this->isActive = $isActive;
 
@@ -172,6 +173,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         // Identifiant unique pour l'authentification (email dans ce cas)
         return $this->email;
+    }
+
+    public function getActivationToken(): ?string
+    {
+        return $this->activationToken;
+    }
+
+    public function setActivationToken(?string $activationToken): self
+    {
+        $this->activationToken = $activationToken;
+        return $this;
     }
 
     public function __toString(): string
