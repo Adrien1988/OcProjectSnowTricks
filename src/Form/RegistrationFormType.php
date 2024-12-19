@@ -31,7 +31,7 @@ class RegistrationFormType extends AbstractType
             ->add('captcha', CaptchaType::class, [
                 'label' => 'Saisissez le code ci-dessous',
                 'reload' => true,
-                'as_url' => false,
+                'as_url' => true,
                 'invalid_message' => 'Le code est invalide.',
             ]);
     }
