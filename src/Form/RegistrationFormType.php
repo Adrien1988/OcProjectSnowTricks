@@ -3,16 +3,16 @@
 namespace App\Form;
 
 use App\Entity\User;
-use Symfony\Component\Form\AbstractType;
 use Gregwar\CaptchaBundle\Type\CaptchaType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\EmailType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
 use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class RegistrationFormType extends AbstractType
 {
@@ -30,14 +30,14 @@ class RegistrationFormType extends AbstractType
             ])
             ->add('avatarMethod', ChoiceType::class, [
                 'choices' => [
-                    'Ajouter l\'avatar ultérieurement'  => 'none',
+                    'Ajouter l\'avatar ultérieurement' => 'none',
                     'URL' => 'url',
                     'Uploader un fichier' => 'upload',
                 ],
                 'expanded' => true,
                 'multiple' => false,
                 'mapped' => false,
-                'label' => 'Comment fournir votre avatar ?'
+                'label' => 'Comment fournir votre avatar ?',
             ])
             ->add('avatarUrl', TextType::class, [
                 'label' => 'URL de votre avatar',

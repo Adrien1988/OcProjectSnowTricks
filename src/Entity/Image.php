@@ -22,7 +22,7 @@ class Image
     #[ORM\Column(length: 255, nullable: true)]
     #[Assert\Length(
         max: 255,
-        maxMessage: "Le texte alternatif ne doit pas dépasser {{ limit }} caractères."
+        maxMessage: 'Le texte alternatif ne doit pas dépasser {{ limit }} caractères.'
     )]
     private ?string $altText = null;
 

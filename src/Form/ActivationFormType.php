@@ -3,10 +3,10 @@
 namespace App\Form;
 
 use Symfony\Component\Form\AbstractType;
-use Symfony\Component\Form\FormBuilderInterface;
-use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
+use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class ActivationFormType extends AbstractType
 {
@@ -14,10 +14,10 @@ class ActivationFormType extends AbstractType
     {
         $builder
             ->add('email', EmailType::class, [
-                'label' => 'Confirmez votre email'
+                'label' => 'Confirmez votre email',
             ])
             ->add('password', PasswordType::class, [
-                'label' => 'Confirmez votre mot de passe'
+                'label' => 'Confirmez votre mot de passe',
             ]);
     }
 

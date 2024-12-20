@@ -17,24 +17,24 @@ class Figure
     #[ORM\Column]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255, unique: true )]
-    #[Assert\NotBlank(message: "Le nom de la figure est obligatoire.")]
+    #[ORM\Column(length: 255, unique: true)]
+    #[Assert\NotBlank(message: 'Le nom de la figure est obligatoire.')]
     #[Assert\Length(
         max: 255,
-        maxMessage: "Le nom ne doit pas dépasser {{ limit }} caractères."
+        maxMessage: 'Le nom ne doit pas dépasser {{ limit }} caractères.'
     )]
     private ?string $name = null;
 
     #[ORM\Column(type: Types::TEXT)]
-    #[Assert\NotBlank(message: "La description est obligatoire.")]
+    #[Assert\NotBlank(message: 'La description est obligatoire.')]
     private ?string $description = null;
 
     #[ORM\Column(length: 255, unique: true)]
-    #[Assert\NotBlank(message: "Le slug est obligatoire.")]
+    #[Assert\NotBlank(message: 'Le slug est obligatoire.')]
     private ?string $slug = null;
 
     #[ORM\Column(length: 255)]
-    #[Assert\NotBlank(message: "Le groupe de figure est obligatoire.")]
+    #[Assert\NotBlank(message: 'Le groupe de figure est obligatoire.')]
     private ?string $figureGroup = null;
 
     #[ORM\Column]
@@ -67,7 +67,6 @@ class Figure
     public function setUpdatedAtValue(): void
     {
         $this->updatedAt = new \DateTime();
-
     }
 
     public function getId(): ?int

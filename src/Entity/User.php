@@ -2,19 +2,18 @@
 
 namespace App\Entity;
 
-use App\Entity\Comment;
-use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Security\Core\User\UserInterface;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(name: 'user', uniqueConstraints: [
     new ORM\UniqueConstraint(name: 'unique_username', columns: ['username']),
-    new ORM\UniqueConstraint(name: 'unique_email', columns: ['email'])
+    new ORM\UniqueConstraint(name: 'unique_email', columns: ['email']),
 ])]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
@@ -37,7 +36,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $email = null;
 
     #[ORM\Column(length: 255)]
-    #[Assert\NotBlank(message: "Le mot de passe est obligatoire.")]
+    #[Assert\NotBlank(message: 'Le mot de passe est obligatoire.')]
     private ?string $password = null;
 
     #[ORM\Column(length: 255, nullable: true)]
@@ -48,7 +47,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[Assert\Url(message: 'L’URL de l’avatar n’est pas valide.')]
     private ?string $avatarUrl = null;
 
-    #[ORM\Column(nullable: false, options: ["default" => false])]
+    #[ORM\Column(nullable: false, options: ['default' => false])]
     private bool $isActive = false;
 
     /**
@@ -56,10 +55,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\OneToMany(mappedBy: 'author', targetEntity: Comment::class, orphanRemoval: true)]
     private Collection $comments;
-    
+
     #[ORM\Column(length: 64, nullable: true)]
     private ?string $activationToken = null;
-    
 
     public function __construct()
     {
@@ -184,6 +182,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setActivationToken(?string $activationToken): self
     {
         $this->activationToken = $activationToken;
+
         return $this;
     }
 

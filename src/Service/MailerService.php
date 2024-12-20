@@ -27,7 +27,7 @@ class MailerService
 
         // Rendu du template Twig.
         $htmlContent = $this->twig->render('emails/activation.html.twig', [
-            'activationUrl' => $activationUrl
+            'activationUrl' => $activationUrl,
         ]);
 
         $emailMessage = (new Email())
