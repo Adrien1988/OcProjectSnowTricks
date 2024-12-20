@@ -17,6 +17,7 @@ class MailerService
     {
         $this->mailer = $mailer;
         $this->urlGenerator = $urlGenerator;
+        $this->twig = $twig;
     }
 
     public function sendActivationEmail(string $email, string $token): void

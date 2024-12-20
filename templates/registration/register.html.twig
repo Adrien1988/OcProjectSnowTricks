@@ -10,6 +10,9 @@
     {{ form_row(registrationForm.email) }}
     {{ form_row(registrationForm.password.first) }}
     {{ form_row(registrationForm.password.second) }}
+    {{ form_row(registrationForm.avatarMethod) }}
+    {{ form_row(registrationForm.avatarUrl) }}
+    {{ form_row(registrationForm.avatarFile) }}
     {{ form_row(registrationForm.captcha) }}
     <button type="submit" class="btn btn-primary">S'inscrire</button>
 {{ form_end(registrationForm) }}
