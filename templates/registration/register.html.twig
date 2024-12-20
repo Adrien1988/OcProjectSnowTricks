@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Inscription{% endblock %}
+
+{% block body %}
+<h1>Inscription</h1>
+
+{{ form_start(registrationForm) }}
+    {{ form_row(registrationForm.username) }}
+    {{ form_row(registrationForm.email) }}
+    {{ form_row(registrationForm.password.first) }}
+    {{ form_row(registrationForm.password.second) }}
+    {{ form_row(registrationForm.avatarMethod) }}
+    {{ form_row(registrationForm.avatarUrl) }}
+    {{ form_row(registrationForm.avatarFile) }}
+    {{ form_row(registrationForm.captcha) }}
+    <button type="submit" class="btn btn-primary">S'inscrire</button>
+{{ form_end(registrationForm) }}
+
+{% for message in app.flashes('success') %}
+    <div class="alert alert-success">{{ message }}</div>
+{% endfor %}
+{% for message in app.flashes('error') %}
+    <div class="alert alert-danger">{{ message }}</div>
+{% endfor %}
+{% endblock %}
