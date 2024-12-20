@@ -15,6 +15,8 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class RegistrationController extends AbstractController
 {
+
+
     #[Route('/register', name: 'app_register')]
     public function register(
         Request $request,
@@ -83,12 +85,17 @@ class RegistrationController extends AbstractController
             $this->addFlash('success', 'Votre compte a été créé avec succès ! Veuillez vérifier votre email pour l’activer.');
 
             return $this->redirectToRoute('app_login');
-        }
+        }//end if
 
-        return $this->render('registration/register.html.twig', [
-            'registrationForm' => $form->createView(),
-        ]);
-    }
+        return $this->render(
+            'registration/register.html.twig',
+            [
+                'registrationForm' => $form->createView(),
+            ]
+        );
+
+    }//end register()
+
 
     #[Route('/activate/{token}', name: 'app_activate_account', methods: ['GET', 'POST'])]
     public function showActivationForm(string $token, Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher): Response
@@ -105,8 +112,8 @@ class RegistrationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $data = $form->getData();
-            $email = $data['email'];
+            $data            = $form->getData();
+            $email           = $data['email'];
             $enteredPassword = $data['password'];
 
             // Vérifier que l'email saisi correspond à celui de l'utilisateur.
@@ -133,11 +140,17 @@ class RegistrationController extends AbstractController
             $this->addFlash('success', 'Votre compte est maintenant actif !');
 
             return $this->redirectToRoute('app_login');
-        }
+        }//end if
 
-        return $this->render('registration/activate.html.twig', [
-            'activationForm' => $form->createView(),
-            'token' => $token,
-        ]);
-    }
-}
+        return $this->render(
+            'registration/activate.html.twig',
+            [
+                'activationForm' => $form->createView(),
+                'token'          => $token,
+            ]
+        );
+
+    }//end showActivationForm()
+
+
+}//end class

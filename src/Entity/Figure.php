@@ -12,6 +12,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: FigureRepository::class)]
 class Figure
 {
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -55,82 +56,109 @@ class Figure
     #[ORM\OneToMany(targetEntity: Video::class, mappedBy: 'figure', orphanRemoval: true, cascade: ['persist'])]
     private Collection $videos;
 
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->updatedAt = new \DateTime();
-        $this->images = new ArrayCollection();
-        $this->videos = new ArrayCollection();
-    }
+        $this->images    = new ArrayCollection();
+        $this->videos    = new ArrayCollection();
+
+    }//end __construct()
+
 
     #[ORM\PreUpdate]
     public function setUpdatedAtValue(): void
     {
         $this->updatedAt = new \DateTime();
-    }
+
+    }//end setUpdatedAtValue()
+
 
     public function getId(): ?int
     {
         return $this->id;
-    }
+
+    }//end getId()
+
 
     public function getName(): ?string
     {
         return $this->name;
-    }
+
+    }//end getName()
+
 
     public function setName(string $name): static
     {
         $this->name = $name;
 
         return $this;
-    }
+
+    }//end setName()
+
 
     public function getDescription(): ?string
     {
         return $this->description;
-    }
+
+    }//end getDescription()
+
 
     public function setDescription(string $description): static
     {
         $this->description = $description;
 
         return $this;
-    }
+
+    }//end setDescription()
+
 
     public function getSlug(): ?string
     {
         return $this->slug;
-    }
+
+    }//end getSlug()
+
 
     public function setSlug(string $slug): static
     {
         $this->slug = $slug;
 
         return $this;
-    }
+
+    }//end setSlug()
+
 
     public function getFigureGroup(): ?string
     {
         return $this->figureGroup;
-    }
+
+    }//end getFigureGroup()
+
 
     public function setFigureGroup(string $figureGroup): static
     {
         $this->figureGroup = $figureGroup;
 
         return $this;
-    }
+
+    }//end setFigureGroup()
+
 
     public function getCreatedAt(): ?\DateTimeImmutable
     {
         return $this->createdAt;
-    }
+
+    }//end getCreatedAt()
+
 
     public function getUpdatedAt(): ?\DateTime
     {
         return $this->updatedAt;
-    }
+
+    }//end getUpdatedAt()
+
 
     /**
      * @return Collection<int, Image>
@@ -138,7 +166,9 @@ class Figure
     public function getImages(): Collection
     {
         return $this->images;
-    }
+
+    }//end getImages()
+
 
     public function addImage(Image $image): static
     {
@@ -148,7 +178,9 @@ class Figure
         }
 
         return $this;
-    }
+
+    }//end addImage()
+
 
     public function removeImage(Image $image): static
     {
@@ -159,7 +191,9 @@ class Figure
         }
 
         return $this;
-    }
+
+    }//end removeImage()
+
 
     /**
      * @return Collection<int, Video>
@@ -167,7 +201,9 @@ class Figure
     public function getVideos(): Collection
     {
         return $this->videos;
-    }
+
+    }//end getVideos()
+
 
     public function addVideo(Video $video): static
     {
@@ -177,7 +213,9 @@ class Figure
         }
 
         return $this;
-    }
+
+    }//end addVideo()
+
 
     public function removeVideo(Video $video): static
     {
@@ -188,10 +226,15 @@ class Figure
         }
 
         return $this;
-    }
+
+    }//end removeVideo()
+
 
     public function __toString(): string
     {
         return (string) $this->name;
-    }
-}
+
+    }//end __toString()
+
+
+}//end class

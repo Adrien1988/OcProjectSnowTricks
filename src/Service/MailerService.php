@@ -9,16 +9,22 @@ use Twig\Environment;
 
 class MailerService
 {
+
     private MailerInterface $mailer;
+
     private UrlGeneratorInterface $urlGenerator;
+
     private Environment $twig;
+
 
     public function __construct(MailerInterface $mailer, UrlGeneratorInterface $urlGenerator, Environment $twig)
     {
-        $this->mailer = $mailer;
+        $this->mailer       = $mailer;
         $this->urlGenerator = $urlGenerator;
-        $this->twig = $twig;
-    }
+        $this->twig         = $twig;
+
+    }//end __construct()
+
 
     public function sendActivationEmail(string $email, string $token): void
     {
@@ -26,9 +32,12 @@ class MailerService
         $activationUrl = $this->urlGenerator->generate('app_activate_account', ['token' => $token], UrlGeneratorInterface::ABSOLUTE_URL);
 
         // Rendu du template Twig.
-        $htmlContent = $this->twig->render('emails/activation.html.twig', [
-            'activationUrl' => $activationUrl,
-        ]);
+        $htmlContent = $this->twig->render(
+            'emails/activation.html.twig',
+            [
+                'activationUrl' => $activationUrl,
+            ]
+        );
 
         $emailMessage = (new Email())
             ->from('no-reply@votre-domaine.com')
@@ -37,5 +46,8 @@ class MailerService
             ->html($htmlContent);
 
         $this->mailer->send($emailMessage);
-    }
-}
+
+    }//end sendActivationEmail()
+
+
+}//end class

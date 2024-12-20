@@ -9,6 +9,7 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: VideoRepository::class)]
 class Video
 {
+
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
@@ -29,47 +30,65 @@ class Video
     #[ORM\JoinColumn(nullable: false)]
     private ?Figure $figure = null;
 
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
-    }
+
+    }//end __construct()
+
 
     public function getId(): ?int
     {
         return $this->id;
-    }
+
+    }//end getId()
+
 
     public function getEmbedCode(): ?string
     {
         return $this->embedCode;
-    }
+
+    }//end getEmbedCode()
+
 
     public function setEmbedCode(string $embedCode): static
     {
         $this->embedCode = $embedCode;
 
         return $this;
-    }
+
+    }//end setEmbedCode()
+
 
     public function getCreatedAt(): ?\DateTimeImmutable
     {
         return $this->createdAt;
-    }
+
+    }//end getCreatedAt()
+
 
     public function getFigure(): ?Figure
     {
         return $this->figure;
-    }
+
+    }//end getFigure()
+
 
     public function setFigure(?Figure $figure): static
     {
         $this->figure = $figure;
 
         return $this;
-    }
+
+    }//end setFigure()
+
 
     public function __toString(): string
     {
-        return $this->embedCode ?? 'Vidéo';
-    }
-}
+        return ($this->embedCode ?? 'Vidéo');
+
+    }//end __toString()
+
+
+}//end class

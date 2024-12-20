@@ -1,12 +1,19 @@
 name: CI
 
-on: [push, pull_request]
+on: 
+  push:
+    branches:
+      - '**'
+
+  pull_request:
+    branches:
+      - '**'
 
 jobs:
-  build-test:
-    runs-on: ubuntu-latest
+  php-tests:
+    runs-on: ubuntu-22.04
     steps:
-      - name: Check out repository
+      - name: Checkout code
         uses: actions/checkout@v4
 
       - name: Set up PHP
@@ -17,17 +24,11 @@ jobs:
       - name: Install dependencies
         run: composer install --no-scripts --no-progress
 
-      - name: Install PHP_CodeSniffer
-        run: composer global require "squizlabs/php_codesniffer=*"
-
-      - name: Add Composer bin to PATH
-        run: echo "$HOME/.composer/vendor/bin" >> $GITHUB_PATH
-
-      - name: Run tests
+      - name: Run PHPUnit tests
         run: vendor/bin/phpunit
 
-  code-quality:
-    runs-on: ubuntu-latest
+  php-code-quality:
+    runs-on: ubuntu-22.04
     steps:
       - name: Check out repository
         uses: actions/checkout@v4
@@ -40,5 +41,23 @@ jobs:
       - name: Install dependencies (for code quality)
         run: composer install --no-scripts --no-progress
 
+      - name: Run PHP_CodeSniffer
+        run: vendor/bin/phpcs --standard=phpcs.xml.dist src/
+
+      - name: Run PHPCBF
+        run: vendor/bin/phpcbf --standard=phpcs.xml.dist src/
+
       - name: Run php-cs-fixer
-        run: vendor/bin/php-cs-fixer --dry-run --diff fix src
+        run: php vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php --dry-run --diff src/
+
+      - name: Run PHP CS Fixer to Fix Coding Standards
+        run: vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php src/
+
+      - name: Commit PHP_CodeSniffer and PHP CS Fixer Fixes
+        if: github.ref == 'refs/heads/main' # Optionnel : Pousser uniquement sur main
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add src/
+          git commit -m "Fix coding standards via PHPCBF and PHP CS Fixer" || echo "No changes to commit"
+          git push
