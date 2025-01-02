@@ -62,6 +62,8 @@ class Image
 
     /**
      * Récupère l'identifiant unique de l'image.
+     *
+     * @return int|null
      */
     public function getId(): ?int
     {
@@ -70,6 +72,8 @@ class Image
 
     /**
      * Récupère l'URL de l'image.
+     *
+     * @return string|null
      */
     public function getUrl(): ?string
     {
@@ -92,6 +96,8 @@ class Image
 
     /**
      * Récupère le texte alternatif de l'image.
+     *
+     * @return string|null
      */
     public function getAltText(): ?string
     {
@@ -114,6 +120,8 @@ class Image
 
     /**
      * Récupère la date de création de l'image.
+     *
+     * @return \DateTimeImmutable|null
      */
     public function getCreatedAt(): ?\DateTimeImmutable
     {
@@ -122,6 +130,8 @@ class Image
 
     /**
      * Récupère la figure associée à l'image.
+     *
+     * @return Figure|null
      */
     public function getFigure(): ?Figure
     {
@@ -145,6 +155,8 @@ class Image
     /**
      * Convertit l'objet Image en chaîne de caractères.
      * Retourne l'URL de l'image ou 'Image' si l'URL est null.
+     *
+     * @return string
      */
     public function __toString(): string
     {

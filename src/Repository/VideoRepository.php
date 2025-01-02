@@ -14,6 +14,7 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class VideoRepository extends ServiceEntityRepository
 {
+
     /**
      * Constructeur de la classe VideoRepository.
      *

@@ -14,6 +14,7 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class FigureRepository extends ServiceEntityRepository
 {
+
     /**
      * Constructeur de la classe FigureRepository.
      *

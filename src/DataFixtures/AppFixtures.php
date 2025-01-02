@@ -10,10 +10,13 @@ use Doctrine\Persistence\ObjectManager;
  */
 class AppFixtures extends Fixture
 {
+
     /**
      * Charge les données initiales dans la base de données.
      *
-     * @param ObjectManager $manager gestionnaire d'entités pour persister les données
+     * @param ObjectManager $manager gestionnaire d'entités pour persister les données.
+     *
+     * @return void
      */
     public function load(ObjectManager $manager): void
     {

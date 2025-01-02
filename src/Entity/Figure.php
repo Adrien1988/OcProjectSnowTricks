@@ -100,6 +100,8 @@ class Figure
      * Met à jour la date de mise à jour avant chaque modification.
      *
      * @ORM\PreUpdate
+     *
+     * @return void
      */
     public function setUpdatedAtValue(): void
     {
@@ -108,6 +110,8 @@ class Figure
 
     /**
      * Récupère l'identifiant de la figure.
+     *
+     * @return int|null
      */
     public function getId(): ?int
     {
@@ -116,6 +120,8 @@ class Figure
 
     /**
      * Récupère le nom de la figure.
+     *
+     * @return string|null
      */
     public function getName(): ?string
     {
@@ -138,6 +144,8 @@ class Figure
 
     /**
      * Récupère la description de la figure.
+     *
+     * @return string|null
      */
     public function getDescription(): ?string
     {
@@ -160,6 +168,8 @@ class Figure
 
     /**
      * Récupère le slug de la figure.
+     *
+     * @return string|null
      */
     public function getSlug(): ?string
     {
@@ -182,6 +192,8 @@ class Figure
 
     /**
      * Récupère le groupe de la figure.
+     *
+     * @return string|null
      */
     public function getFigureGroup(): ?string
     {
@@ -204,6 +216,8 @@ class Figure
 
     /**
      * Récupère la date de création de la figure.
+     *
+     * @return \DateTimeImmutable|null
      */
     public function getCreatedAt(): ?\DateTimeImmutable
     {
@@ -212,6 +226,8 @@ class Figure
 
     /**
      * Récupère la date de mise à jour de la figure.
+     *
+     * @return \DateTime|null
      */
     public function getUpdatedAt(): ?\DateTime
     {
@@ -310,6 +326,8 @@ class Figure
 
     /**
      * Convertit la figure en chaîne de caractères (nom de la figure).
+     *
+     * @return string
      */
     public function __toString(): string
     {

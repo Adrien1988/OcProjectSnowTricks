@@ -55,6 +55,8 @@ class Video
 
     /**
      * Récupère l'identifiant unique de la vidéo.
+     *
+     * @return int|null
      */
     public function getId(): ?int
     {
@@ -63,6 +65,8 @@ class Video
 
     /**
      * Récupère le code d'intégration de la vidéo.
+     *
+     * @return string|null
      */
     public function getEmbedCode(): ?string
     {
@@ -85,6 +89,8 @@ class Video
 
     /**
      * Récupère la date de création de la vidéo.
+     *
+     * @return \DateTimeImmutable|null
      */
     public function getCreatedAt(): ?\DateTimeImmutable
     {
@@ -93,6 +99,8 @@ class Video
 
     /**
      * Récupère la figure associée à la vidéo.
+     *
+     * @return Figure|null
      */
     public function getFigure(): ?Figure
     {
@@ -116,6 +124,8 @@ class Video
     /**
      * Convertit l'objet Video en chaîne de caractères.
      * Retourne le code d'intégration ou 'Vidéo' si le code est null.
+     *
+     * @return string
      */
     public function __toString(): string
     {

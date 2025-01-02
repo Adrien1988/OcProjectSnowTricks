@@ -12,6 +12,7 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
  */
 class SecurityController extends AbstractController
 {
+
     /**
      * Affiche le formulaire de connexion et traite les erreurs d'authentification.
      *

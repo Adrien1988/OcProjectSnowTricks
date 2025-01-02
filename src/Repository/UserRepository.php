@@ -14,6 +14,7 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class UserRepository extends ServiceEntityRepository
 {
+
     /**
      * Constructeur de la classe UserRepository.
      *

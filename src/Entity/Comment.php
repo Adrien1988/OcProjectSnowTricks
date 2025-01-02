@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\CommentRepository;
+use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -72,6 +73,8 @@ class Comment
 
     /**
      * Récupère l'identifiant du commentaire.
+     *
+     * @return int
      */
     public function getId(): ?int
     {
@@ -80,6 +83,8 @@ class Comment
 
     /**
      * Récupère le contenu du commentaire.
+     *
+     * @return string
      */
     public function getContent(): ?string
     {
@@ -102,6 +107,8 @@ class Comment
 
     /**
      * Récupère la date de création du commentaire.
+     *
+     * @return DateTimeImmutable
      */
     public function getCreatedAt(): ?\DateTimeImmutable
     {
@@ -110,6 +117,8 @@ class Comment
 
     /**
      * Récupère l'auteur du commentaire.
+     *
+     * @return User
      */
     public function getAuthor(): ?User
     {
@@ -132,6 +141,8 @@ class Comment
 
     /**
      * Récupère la figure associée au commentaire.
+     *
+     * @return Figure
      */
     public function getFigure(): ?Figure
     {

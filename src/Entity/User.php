@@ -99,6 +99,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * Récupère l'identifiant de l'utilisateur.
+     *
+     * @return int|null
      */
     public function getId(): ?int
     {
@@ -107,6 +109,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * Récupère le nom d'utilisateur.
+     *
+     * @return string|null
      */
     public function getUsername(): ?string
     {
@@ -129,6 +133,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * Récupère l'adresse email.
+     *
+     * @return string|null
      */
     public function getEmail(): ?string
     {
@@ -151,6 +157,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * Récupère le mot de passe haché.
+     *
+     * @return string|null
      */
     public function getPassword(): ?string
     {
@@ -173,6 +181,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * Récupère l'URL de l'avatar.
+     *
+     * @return string|null
      */
     public function getAvatarUrl(): ?string
     {
@@ -195,8 +205,10 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * Vérifie si le compte de l'utilisateur est actif.
+     *
+     * @return bool
      */
-    public function isActive(): ?bool
+    public function isActive(): bool
     {
         return $this->isActive;
     }// end isActive()
@@ -272,6 +284,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * Efface les données sensibles de l'utilisateur.
+     *
+     * @return void
      */
     public function eraseCredentials(): void
     {
@@ -279,6 +293,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * Récupère l'identifiant pour l'authentification (email dans ce cas).
+     *
+     * @return string
      */
     public function getUserIdentifier(): string
     {
@@ -287,6 +303,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * Récupère le token d'activation.
+     *
+     * @return string|null
      */
     public function getActivationToken(): ?string
     {
@@ -309,6 +327,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * Convertit l'utilisateur en une chaîne de caractères (retourne le nom d'utilisateur).
+     *
+     * @return string
      */
     public function __toString(): string
     {

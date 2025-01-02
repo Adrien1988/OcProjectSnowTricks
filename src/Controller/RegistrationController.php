@@ -18,6 +18,7 @@ use Symfony\Component\Routing\Attribute\Route;
  */
 class RegistrationController extends AbstractController
 {
+
     /**
      * Affiche et traite le formulaire d'enregistrement.
      *

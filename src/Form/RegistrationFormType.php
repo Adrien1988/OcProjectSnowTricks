@@ -19,11 +19,14 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class RegistrationFormType extends AbstractType
 {
+
     /**
      * Construit le formulaire d'inscription.
      *
      * @param FormBuilderInterface $builder instance utilisée pour construire les champs du formulaire
      * @param array                $options options supplémentaires pour le formulaire
+     *
+     * @return void
      */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -96,6 +99,8 @@ class RegistrationFormType extends AbstractType
      * Configure les options par défaut du formulaire.
      *
      * @param OptionsResolver $resolver instance pour définir les options
+     *
+     * @return void
      */
     public function configureOptions(OptionsResolver $resolver): void
     {

@@ -46,6 +46,8 @@ class MailerService
      *
      * @param string $email adresse email du destinataire
      * @param string $token jeton d'activation unique
+     *
+     * @return void
      */
     public function sendActivationEmail(string $email, string $token): void
     {
