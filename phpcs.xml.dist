@@ -87,12 +87,7 @@
 
     <!-- Proper spacing and formatting -->
     <rule ref="Squiz.WhiteSpace.ControlStructureSpacing" />
-    <rule ref="Squiz.WhiteSpace.FunctionSpacing">
-        <properties>
-            <property name="spacing" value="2" />
-            <property name="spacingBeforeFirst" value="1" />
-        </properties>
-    </rule>
+    <rule ref="Squiz.WhiteSpace.FunctionSpacing" />
     <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace" />
 
     <!-- Commenting rules -->
