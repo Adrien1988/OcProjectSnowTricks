@@ -49,7 +49,7 @@ class RegistrationController extends AbstractController
             // Vérification de l'unicité de l'email et du username.
             $existingUser = $entityManager->getRepository(User::class)->findOneBy(['email' => $user->getEmail()]);
             if (null !== $existingUser) {
-                $this->addFlash('error', 'Cet email est déjà utilisé.');
+                $this->addFlash('error', 'Veuillez essayer de nouveau.');
 
                 return $this->redirectToRoute('app_register');
             }
@@ -82,9 +82,10 @@ class RegistrationController extends AbstractController
                     $newFilename = uniqid().'.'.$avatarFile->guessExtension();
                     $avatarFile->move($this->getParameter('avatars_directory'), $newFilename);
                     $user->setAvatarUrl('/uploads/avatars/'.$newFilename);
-                } else {
-                    $this->addFlash('error', "Vous n'avez pas uploadé d'avatar !");
+                }
 
+                if ($avatarFile === false) {
+                    $this->addFlash('error', "Vous n'avez pas uploadé d'avatar !");
                     return $this->redirectToRoute('app_register');
                 }
             }
@@ -114,7 +115,7 @@ class RegistrationController extends AbstractController
      * @param string                      $token          le token d'activation
      * @param Request                     $request        la requête
      *                                                    HTTP
-     * @param EntityManagerInterface      $em             le gestionnaire
+     * @param EntityManagerInterface      $entityManager  le gestionnaire
      *                                                    d'entités
      * @param UserPasswordHasherInterface $passwordHasher le service de hachage de mots de passe
      *
@@ -124,10 +125,10 @@ class RegistrationController extends AbstractController
     public function showActivationForm(
         string $token,
         Request $request,
-        EntityManagerInterface $em,
+        EntityManagerInterface $entityManager,
         UserPasswordHasherInterface $passwordHasher,
     ): Response {
-        $user = $em->getRepository(User::class)->findOneBy(['activationToken' => $token]);
+        $user = $entityManager->getRepository(User::class)->findOneBy(['activationToken' => $token]);
 
         if (null === $user) {
             $this->addFlash('error', 'Token invalide.');
@@ -157,7 +158,7 @@ class RegistrationController extends AbstractController
 
             $user->setIsActive(true);
             $user->setActivationToken(null);
-            $em->flush();
+            $entityManager->flush();
 
             $this->addFlash('success', 'Votre compte est maintenant actif !');
 
