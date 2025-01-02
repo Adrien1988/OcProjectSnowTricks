@@ -61,6 +61,9 @@ jobs:
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git fetch origin "${GITHUB_HEAD_REF:-$(echo ${GITHUB_REF#refs/heads/})}"
+          git rebase origin/"${GITHUB_HEAD_REF:-$(echo ${GITHUB_REF#refs/heads/})}"
           git add src/
           git commit -m "Fix coding standards via PHPCBF and PHP CS Fixer" || echo "No changes to commit"
           git push origin "HEAD:${GITHUB_HEAD_REF:-$(echo ${GITHUB_REF#refs/heads/})}"
+      
