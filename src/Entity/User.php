@@ -11,7 +11,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
- * User entity representing application users.
+ * Entité représentant les utilisateurs de l'application.
  */
 #[ORM\Entity(repositoryClass: UserRepository::class)]
 #[ORM\Table(
@@ -25,7 +25,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
 
     /**
-     * User ID (primary key).
+     * Identifiant unique de l'utilisateur.
+     *
+     * @var integer|null
      */
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -33,7 +35,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?int $id = null;
 
     /**
-     * Username of the user.
+     * Nom d'utilisateur.
+     *
+     * @var string|null
      */
     #[ORM\Column(length: 255, unique: true)]
     #[Assert\NotBlank(message: "Le nom d'utilisateur est obligatoire.")]
@@ -44,7 +48,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $username = null;
 
     /**
-     * Email address of the user.
+     * Adresse email de l'utilisateur.
+     *
+     * @var string|null
      */
     #[ORM\Column(length: 255, unique: true)]
     #[Assert\NotBlank(message: "L'email est obligatoire.")]
@@ -52,14 +58,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $email = null;
 
     /**
-     * Hashed password of the user.
+     * Mot de passe haché de l'utilisateur.
+     *
+     * @var string|null
      */
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: 'Le mot de passe est obligatoire.')]
     private ?string $password = null;
 
     /**
-     * URL of the user's avatar.
+     * URL de l'avatar de l'utilisateur.
+     *
+     * @var string|null
      */
     #[ORM\Column(length: 255, nullable: true)]
     #[Assert\Length(
@@ -70,13 +80,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $avatarUrl = null;
 
     /**
-     * Indicates whether the user's account is active.
+     * Indique si le compte de l'utilisateur est actif.
+     *
+     * @var boolean
      */
     #[ORM\Column(nullable: false, options: ['default' => false])]
     private bool $isActive = false;
 
     /**
-     * Comments authored by the user.
+     * Commentaires rédigés par l'utilisateur.
      *
      * @var Collection<int, Comment>
      */
@@ -84,14 +96,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $comments;
 
     /**
-     * Token used for account activation.
+     * Token utilisé pour l'activation du compte.
+     *
+     * @var string|null
      */
     #[ORM\Column(length: 64, nullable: true)]
     private ?string $activationToken = null;
 
 
     /**
-     * Initializes a new User instance.
+     * Initialise une nouvelle instance de l'utilisateur.
      */
     public function __construct()
     {
@@ -102,7 +116,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
 
     /**
-     * Gets the user ID.
+     * Récupère l'identifiant de l'utilisateur.
+     *
+     * @return int|null
      */
     public function getId(): ?int
     {
@@ -112,7 +128,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
 
     /**
-     * Gets the username.
+     * Récupère le nom d'utilisateur.
+     *
+     * @return string|null
      */
     public function getUsername(): ?string
     {
@@ -122,7 +140,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
 
     /**
-     * Sets the username.
+     * Définit le nom d'utilisateur.
+     *
+     * @param string $username Le nom d'utilisateur à définir.
+     *
+     * @return $this
      */
     public function setUsername(string $username): static
     {
@@ -134,7 +156,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
 
     /**
-     * Gets the email address.
+     * Récupère l'adresse email.
+     *
+     * @return string|null
      */
     public function getEmail(): ?string
     {
@@ -144,7 +168,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
 
     /**
-     * Sets the email address.
+     * Définit l'adresse email.
+     *
+     * @param string $email L'adresse email à définir.
+     *
+     * @return $this
      */
     public function setEmail(string $email): static
     {
@@ -156,7 +184,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
 
     /**
-     * Gets the hashed password.
+     * Récupère le mot de passe haché.
+     *
+     * @return string|null
      */
     public function getPassword(): ?string
     {
@@ -166,7 +196,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
 
     /**
-     * Sets the hashed password.
+     * Définit le mot de passe haché.
+     *
+     * @param string $password Le mot de passe haché à définir.
+     *
+     * @return $this
      */
     public function setPassword(string $password): static
     {
@@ -178,7 +212,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
 
     /**
-     * Gets the avatar URL.
+     * Récupère l'URL de l'avatar.
+     *
+     * @return string|null
      */
     public function getAvatarUrl(): ?string
     {
@@ -188,7 +224,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
 
     /**
-     * Sets the avatar URL.
+     * Définit l'URL de l'avatar.
+     *
+     * @param string|null $avatarUrl L'URL de l'avatar de l'utilisateur. Peut être null si aucun avatar n'est défini.
+     *
+     * @return $this
      */
     public function setAvatarUrl(?string $avatarUrl): static
     {
@@ -200,7 +240,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
 
     /**
-     * Checks if the user account is active.
+     * Vérifie si le compte de l'utilisateur est actif.
+     *
+     * @return bool|null
      */
     public function isActive(): ?bool
     {
@@ -210,7 +252,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
 
     /**
-     * Sets the user account's active status.
+     * Définit si le compte de l'utilisateur est actif.
+     *
+     * @param bool $isActive Indique si le compte est actif (true) ou inactif (false).
+     *
+     * @return $this
      */
     public function setIsActive(bool $isActive): static
     {
@@ -222,7 +268,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
 
     /**
-     * Gets the comments authored by the user.
+     * Récupère les commentaires rédigés par l'utilisateur.
+     *
+     * @return Collection<int, Comment>
      */
     public function getComments(): Collection
     {
@@ -232,11 +280,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
 
     /**
-     * Adds a comment authored by the user.
+     * Ajoute un commentaire rédigé par l'utilisateur.
+     *
+     * @param Comment $comment Le commentaire à ajouter à l'utilisateur.
+     *
+     * @return $this
      */
     public function addComment(Comment $comment): static
     {
-        if (!$this->comments->contains($comment)) {
+        if ($this->comments->contains($comment) === false) {
             $this->comments[] = $comment;
             $comment->setAuthor($this);
         }
@@ -247,11 +299,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
 
     /**
-     * Removes a comment authored by the user.
+     * Supprime un commentaire rédigé par l'utilisateur.
+     *
+     * @param Comment $comment Le commentaire à supprimer de l'utilisateur.
+     *
+     * @return $this
      */
     public function removeComment(Comment $comment): static
     {
-        if ($this->comments->removeElement($comment)) {
+        if ($this->comments->removeElement($comment) === true) {
             if ($comment->getAuthor() === $this) {
                 $comment->setAuthor(null);
             }
@@ -263,7 +319,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
 
     /**
-     * Gets the roles assigned to the user.
+     * Récupère les rôles attribués à l'utilisateur.
+     *
+     * @return string[]
      */
     public function getRoles(): array
     {
@@ -273,7 +331,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
 
     /**
-     * Removes sensitive data from the user.
+     * Efface les données sensibles de l'utilisateur.
+     *
+     * @return void
      */
     public function eraseCredentials(): void
     {
@@ -282,7 +342,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
 
     /**
-     * Gets the identifier for authentication (email in this case).
+     * Récupère l'identifiant pour l'authentification (email dans ce cas).
+     *
+     * @return string
      */
     public function getUserIdentifier(): string
     {
@@ -292,7 +354,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
 
     /**
-     * Gets the activation token.
+     * Récupère le token d'activation.
+     *
+     * @return string|null
      */
     public function getActivationToken(): ?string
     {
@@ -302,7 +366,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
 
     /**
-     * Sets the activation token.
+     * Définit le token d'activation.
+     *
+     * @param string|null $activationToken Le token d'activation à associer à l'utilisateur.
+     *
+     * @return $this
      */
     public function setActivationToken(?string $activationToken): self
     {
@@ -314,7 +382,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
 
     /**
-     * Converts the user object to a string (returns the username).
+     * Convertit l'utilisateur en une chaîne de caractères (retourne le nom d'utilisateur).
+     *
+     * @return string
      */
     public function __toString(): string
     {

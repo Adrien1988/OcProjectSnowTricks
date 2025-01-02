@@ -7,12 +7,20 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<User>
+ * Repository pour gérer les entités User.
+ *
+ * Fournit des méthodes personnalisées pour interagir avec la base de données
+ * concernant les entités User.
  */
 class UserRepository extends ServiceEntityRepository
 {
 
 
+    /**
+     * Constructeur de la classe UserRepository.
+     *
+     * @param ManagerRegistry $registry Le registre pour l'accès aux entités.
+     */
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, User::class);

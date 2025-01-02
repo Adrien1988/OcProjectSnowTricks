@@ -7,10 +7,20 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
+/**
+ * Contrôleur gérant les actions liées à la sécurité, comme la connexion et la déconnexion.
+ */
 class SecurityController extends AbstractController
 {
 
 
+    /**
+     * Affiche le formulaire de connexion et traite les erreurs d'authentification.
+     *
+     * @param AuthenticationUtils $authenticationUtils Outil pour gérer les erreurs d'authentification et le dernier identifiant saisi.
+     *
+     * @return Response La réponse contenant la vue du formulaire de connexion.
+     */
     #[Route(path: '/login', name: 'app_login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
@@ -29,10 +39,18 @@ class SecurityController extends AbstractController
     }//end login()
 
 
+    /**
+     * Déconnecte l'utilisateur.
+     *
+     * Cette méthode est interceptée automatiquement par Symfony et ne sera jamais exécutée.
+     *
+     * @return void
+     *
+     * @throws \LogicException Exception levée si la méthode est appelée directement.
+     */
     #[Route(path: '/logout', name: 'app_logout')]
     public function logout(): void
     {
-        // Symfony gère automatiquement la déconnexion, ce code ne sera jamais exécuté.
         throw new \LogicException('Cette méthode est interceptée par la route app_logout.');
 
     }//end logout()

@@ -7,12 +7,20 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Video>
+ * Repository pour gérer les entités Video.
+ *
+ * Fournit des méthodes personnalisées pour interagir avec la base de données
+ * concernant les entités Video.
  */
 class VideoRepository extends ServiceEntityRepository
 {
 
 
+    /**
+     * Constructeur de la classe VideoRepository.
+     *
+     * @param ManagerRegistry $registry Le registre pour l'accès aux entités.
+     */
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Video::class);

@@ -13,10 +13,26 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
+/**
+ * Contrôleur pour la gestion de l'enregistrement et de l'activation des comptes utilisateurs.
+ */
 class RegistrationController extends AbstractController
 {
 
 
+    /**
+     * Affiche et traite le formulaire d'enregistrement.
+     *
+     * @param Request                     $request        La
+     *                                                    requête
+     *                                                    HTTP.
+     * @param EntityManagerInterface      $entityManager  Le gestionnaire
+     *                                                    d'entités.
+     * @param UserPasswordHasherInterface $passwordHasher Le service de hachage de mots de passe.
+     * @param MailerService               $mailerService  Le service d'envoi d'emails.
+     *
+     * @return Response La réponse HTTP.
+     */
     #[Route('/register', name: 'app_register')]
     public function register(
         Request $request,
@@ -29,10 +45,10 @@ class RegistrationController extends AbstractController
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted() === true && $form->isValid() === true) {
             // Vérification de l'unicité de l'email et du username.
             $existingUser = $entityManager->getRepository(User::class)->findOneBy(['email' => $user->getEmail()]);
-            if ($existingUser) {
+            if ($existingUser !== null) {
                 $this->addFlash('error', 'Cet email est déjà utilisé.');
 
                 return $this->redirectToRoute('app_register');
@@ -45,7 +61,7 @@ class RegistrationController extends AbstractController
             );
             $user->setPassword($hashedPassword);
 
-            // Activer l'utilisateur directement (ou gérer l'activation par email).
+            // Activation par email.
             $user->setIsActive(false);
 
             $token = bin2hex(random_bytes(32));
@@ -53,33 +69,29 @@ class RegistrationController extends AbstractController
 
             $avatarMethod = $form->get('avatarMethod')->getData();
 
-            if ('url' === $avatarMethod) {
+            if ($avatarMethod === 'url') {
                 $avatarUrl = $form->get('avatarUrl')->getData();
-                if ($avatarUrl) {
+                if ($avatarUrl !== null) {
                     $user->setAvatarUrl($avatarUrl);
                 }
             }
 
-            if ('upload' === $avatarMethod) {
+            if ($avatarMethod === 'upload') {
                 $avatarFile = $form->get('avatarFile')->getData();
-                if ($avatarFile) {
+                if ($avatarFile !== null) {
                     $newFilename = uniqid().'.'.$avatarFile->guessExtension();
-                    // Déplacement du fichier vers un répertoire défini dans services.yaml.
                     $avatarFile->move($this->getParameter('avatars_directory'), $newFilename);
                     $user->setAvatarUrl('/uploads/avatars/'.$newFilename);
                 } else {
-                    // Gérer le cas où aucun fichier n'est uploadé alors que l'utilisateur a choisi "upload".
                     $this->addFlash('error', "Vous n'avez pas uploadé d'avatar !");
 
                     return $this->redirectToRoute('app_register');
                 }
             }
 
-            // Enregistrer l'utilisateur.
             $entityManager->persist($user);
             $entityManager->flush();
 
-            // Envoyer l'email d'activation.
             $mailerService->sendActivationEmail($user->getEmail(), $token);
 
             $this->addFlash('success', 'Votre compte a été créé avec succès ! Veuillez vérifier votre email pour l’activer.');
@@ -97,12 +109,28 @@ class RegistrationController extends AbstractController
     }//end register()
 
 
+    /**
+     * Affiche et traite le formulaire d'activation de compte.
+     *
+     * @param string                      $token          Le token d'activation.
+     * @param Request                     $request        La requête
+     *                                                    HTTP.
+     * @param EntityManagerInterface      $em             Le gestionnaire
+     *                                                    d'entités.
+     * @param UserPasswordHasherInterface $passwordHasher Le service de hachage de mots de passe.
+     *
+     * @return Response La réponse HTTP.
+     */
     #[Route('/activate/{token}', name: 'app_activate_account', methods: ['GET', 'POST'])]
-    public function showActivationForm(string $token, Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $passwordHasher): Response
-    {
+    public function showActivationForm(
+        string $token,
+        Request $request,
+        EntityManagerInterface $em,
+        UserPasswordHasherInterface $passwordHasher
+    ): Response {
         $user = $em->getRepository(User::class)->findOneBy(['activationToken' => $token]);
 
-        if (!$user) {
+        if ($user === null) {
             $this->addFlash('error', 'Token invalide.');
 
             return $this->redirectToRoute('app_login');
@@ -111,28 +139,23 @@ class RegistrationController extends AbstractController
         $form = $this->createForm(ActivationFormType::class);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
+        if ($form->isSubmitted() === true && $form->isValid() === true) {
             $data            = $form->getData();
             $email           = $data['email'];
             $enteredPassword = $data['password'];
 
-            // Vérifier que l'email saisi correspond à celui de l'utilisateur.
             if ($email !== $user->getEmail()) {
                 $this->addFlash('error', 'L’email ne correspond pas à celui associé au compte.');
 
                 return $this->redirectToRoute('app_activate_account', ['token' => $token]);
             }
 
-            // Vérifier le mot de passe.
-            // Comme le compte n'est pas actif, mais a déjà un mot de passe haché,
-            // on peut vérifier que l'utilisateur connaît ce mot de passe.
-            if (!$passwordHasher->isPasswordValid($user, $enteredPassword)) {
+            if ($passwordHasher->isPasswordValid($user, $enteredPassword) === false) {
                 $this->addFlash('error', 'Le mot de passe est incorrect.');
 
                 return $this->redirectToRoute('app_activate_account', ['token' => $token]);
             }
 
-            // Si tout est bon, activer le compte.
             $user->setIsActive(true);
             $user->setActivationToken(null);
             $em->flush();

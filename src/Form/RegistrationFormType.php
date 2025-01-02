@@ -14,15 +14,32 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
+/**
+ * Formulaire d'inscription pour un nouvel utilisateur.
+ */
 class RegistrationFormType extends AbstractType
 {
 
 
+    /**
+     * Construit le formulaire d'inscription.
+     *
+     * @param FormBuilderInterface $builder Instance utilisée pour construire les champs du formulaire.
+     * @param array                $options Options supplémentaires pour le formulaire.
+     *
+     * @return void
+     */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
             ->add('username')
-            ->add('email', EmailType::class)
+            ->add(
+                'email',
+                EmailType::class,
+                [
+                    'label' => 'Adresse email',
+                ]
+            )
             ->add(
                 'password',
                 RepeatedType::class,
@@ -81,6 +98,13 @@ class RegistrationFormType extends AbstractType
     }//end buildForm()
 
 
+    /**
+     * Configure les options par défaut du formulaire.
+     *
+     * @param OptionsResolver $resolver Instance pour définir les options.
+     *
+     * @return void
+     */
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults(

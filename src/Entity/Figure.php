@@ -9,15 +9,29 @@ use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
+/**
+ * Classe représentant une figure.
+ */
 #[ORM\Entity(repositoryClass: FigureRepository::class)]
+#[ORM\HasLifecycleCallbacks]
 class Figure
 {
 
+    /**
+     * Identifiant unique de la figure.
+     *
+     * @var integer|null
+     */
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
 
+    /**
+     * Nom de la figure.
+     *
+     * @var string|null
+     */
     #[ORM\Column(length: 255, unique: true)]
     #[Assert\NotBlank(message: 'Le nom de la figure est obligatoire.')]
     #[Assert\Length(
@@ -26,37 +40,70 @@ class Figure
     )]
     private ?string $name = null;
 
+    /**
+     * Description de la figure.
+     *
+     * @var string|null
+     */
     #[ORM\Column(type: Types::TEXT)]
     #[Assert\NotBlank(message: 'La description est obligatoire.')]
     private ?string $description = null;
 
+    /**
+     * Slug unique de la figure.
+     *
+     * @var string|null
+     */
     #[ORM\Column(length: 255, unique: true)]
     #[Assert\NotBlank(message: 'Le slug est obligatoire.')]
     private ?string $slug = null;
 
+    /**
+     * Groupe de la figure.
+     *
+     * @var string|null
+     */
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: 'Le groupe de figure est obligatoire.')]
     private ?string $figureGroup = null;
 
+    /**
+     * Date de création de la figure.
+     *
+     * @var \DateTimeImmutable|null
+     */
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
+    /**
+     * Date de dernière mise à jour de la figure.
+     *
+     * @var \DateTime|null
+     */
     #[ORM\Column]
     private ?\DateTime $updatedAt = null;
 
     /**
+     * Images associées à la figure.
+     *
      * @var Collection<int, Image>
      */
     #[ORM\OneToMany(targetEntity: Image::class, mappedBy: 'figure', orphanRemoval: true, cascade: ['persist'])]
     private Collection $images;
 
     /**
+     * Vidéos associées à la figure.
+     *
      * @var Collection<int, Video>
      */
     #[ORM\OneToMany(targetEntity: Video::class, mappedBy: 'figure', orphanRemoval: true, cascade: ['persist'])]
     private Collection $videos;
 
 
+    /**
+     * Constructeur de la classe Figure.
+     * Initialise les dates et les collections.
+     */
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
@@ -67,7 +114,13 @@ class Figure
     }//end __construct()
 
 
-    #[ORM\PreUpdate]
+    /**
+     * Met à jour la date de mise à jour avant chaque modification.
+     *
+     * @ORM\PreUpdate
+     *
+     * @return void
+     */
     public function setUpdatedAtValue(): void
     {
         $this->updatedAt = new \DateTime();
@@ -75,6 +128,11 @@ class Figure
     }//end setUpdatedAtValue()
 
 
+    /**
+     * Récupère l'identifiant de la figure.
+     *
+     * @return int|null
+     */
     public function getId(): ?int
     {
         return $this->id;
@@ -82,6 +140,11 @@ class Figure
     }//end getId()
 
 
+    /**
+     * Récupère le nom de la figure.
+     *
+     * @return string|null
+     */
     public function getName(): ?string
     {
         return $this->name;
@@ -89,6 +152,13 @@ class Figure
     }//end getName()
 
 
+    /**
+     * Définit le nom de la figure.
+     *
+     * @param string $name Nom de la figure.
+     *
+     * @return $this
+     */
     public function setName(string $name): static
     {
         $this->name = $name;
@@ -98,6 +168,11 @@ class Figure
     }//end setName()
 
 
+    /**
+     * Récupère la description de la figure.
+     *
+     * @return string|null
+     */
     public function getDescription(): ?string
     {
         return $this->description;
@@ -105,6 +180,13 @@ class Figure
     }//end getDescription()
 
 
+    /**
+     * Définit la description de la figure.
+     *
+     * @param string $description Description de la figure.
+     *
+     * @return $this
+     */
     public function setDescription(string $description): static
     {
         $this->description = $description;
@@ -114,6 +196,11 @@ class Figure
     }//end setDescription()
 
 
+    /**
+     * Récupère le slug de la figure.
+     *
+     * @return string|null
+     */
     public function getSlug(): ?string
     {
         return $this->slug;
@@ -121,6 +208,13 @@ class Figure
     }//end getSlug()
 
 
+    /**
+     * Définit le slug de la figure.
+     *
+     * @param string $slug Slug de la figure.
+     *
+     * @return $this
+     */
     public function setSlug(string $slug): static
     {
         $this->slug = $slug;
@@ -130,6 +224,11 @@ class Figure
     }//end setSlug()
 
 
+    /**
+     * Récupère le groupe de la figure.
+     *
+     * @return string|null
+     */
     public function getFigureGroup(): ?string
     {
         return $this->figureGroup;
@@ -137,6 +236,13 @@ class Figure
     }//end getFigureGroup()
 
 
+    /**
+     * Définit le groupe de la figure.
+     *
+     * @param string $figureGroup Groupe de la figure.
+     *
+     * @return $this
+     */
     public function setFigureGroup(string $figureGroup): static
     {
         $this->figureGroup = $figureGroup;
@@ -146,6 +252,11 @@ class Figure
     }//end setFigureGroup()
 
 
+    /**
+     * Récupère la date de création de la figure.
+     *
+     * @return \DateTimeImmutable|null
+     */
     public function getCreatedAt(): ?\DateTimeImmutable
     {
         return $this->createdAt;
@@ -153,6 +264,11 @@ class Figure
     }//end getCreatedAt()
 
 
+    /**
+     * Récupère la date de mise à jour de la figure.
+     *
+     * @return \DateTime|null
+     */
     public function getUpdatedAt(): ?\DateTime
     {
         return $this->updatedAt;
@@ -161,6 +277,8 @@ class Figure
 
 
     /**
+     * Récupère les images associées à la figure.
+     *
      * @return Collection<int, Image>
      */
     public function getImages(): Collection
@@ -170,9 +288,16 @@ class Figure
     }//end getImages()
 
 
+    /**
+     * Ajoute une image à la figure.
+     *
+     * @param Image $image Image à ajouter.
+     *
+     * @return $this
+     */
     public function addImage(Image $image): static
     {
-        if (!$this->images->contains($image)) {
+        if ($this->images->contains($image) === false) {
             $this->images[] = $image;
             $image->setFigure($this);
         }
@@ -182,9 +307,16 @@ class Figure
     }//end addImage()
 
 
+    /**
+     * Supprime une image associée à la figure.
+     *
+     * @param Image $image Image à supprimer.
+     *
+     * @return $this
+     */
     public function removeImage(Image $image): static
     {
-        if ($this->images->removeElement($image)) {
+        if ($this->images->removeElement($image) === true) {
             if ($image->getFigure() === $this) {
                 $image->setFigure(null);
             }
@@ -196,6 +328,8 @@ class Figure
 
 
     /**
+     * Récupère les vidéos associées à la figure.
+     *
      * @return Collection<int, Video>
      */
     public function getVideos(): Collection
@@ -205,9 +339,16 @@ class Figure
     }//end getVideos()
 
 
+    /**
+     * Ajoute une vidéo à la figure.
+     *
+     * @param Video $video Vidéo à ajouter.
+     *
+     * @return $this
+     */
     public function addVideo(Video $video): static
     {
-        if (!$this->videos->contains($video)) {
+        if ($this->videos->contains($video) === false) {
             $this->videos[] = $video;
             $video->setFigure($this);
         }
@@ -217,9 +358,16 @@ class Figure
     }//end addVideo()
 
 
+    /**
+     * Supprime une vidéo associée à la figure.
+     *
+     * @param Video $video Vidéo à supprimer.
+     *
+     * @return $this
+     */
     public function removeVideo(Video $video): static
     {
-        if ($this->videos->removeElement($video)) {
+        if ($this->videos->removeElement($video) === true) {
             if ($video->getFigure() === $this) {
                 $video->setFigure(null);
             }
@@ -230,6 +378,11 @@ class Figure
     }//end removeVideo()
 
 
+    /**
+     * Convertit la figure en chaîne de caractères (nom de la figure).
+     *
+     * @return string
+     */
     public function __toString(): string
     {
         return (string) $this->name;

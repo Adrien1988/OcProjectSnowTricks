@@ -7,12 +7,20 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<Figure>
+ * Repository pour gérer les entités Figure.
+ *
+ * Fournit des méthodes personnalisées pour interagir avec la base de données
+ * concernant les entités Figure.
  */
 class FigureRepository extends ServiceEntityRepository
 {
 
 
+    /**
+     * Constructeur de la classe FigureRepository.
+     *
+     * @param ManagerRegistry $registry Le registre pour l'accès aux entités.
+     */
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Figure::class);
