@@ -86,6 +86,7 @@ class RegistrationController extends AbstractController
 
                 if ($avatarFile === false) {
                     $this->addFlash('error', "Vous n'avez pas uploadé d'avatar !");
+
                     return $this->redirectToRoute('app_register');
                 }
             }
