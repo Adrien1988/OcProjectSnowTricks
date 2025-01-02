@@ -63,4 +63,4 @@ jobs:
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
           git add src/
           git commit -m "Fix coding standards via PHPCBF and PHP CS Fixer" || echo "No changes to commit"
-          git push origin HEAD
+          git push origin "HEAD:${GITHUB_HEAD_REF:-$(echo ${GITHUB_REF#refs/heads/})}"
