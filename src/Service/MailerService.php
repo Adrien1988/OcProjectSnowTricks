@@ -27,6 +27,7 @@ class MailerService
      */
     private Environment $twig;
 
+
     /**
      * Constructeur du service MailerService.
      *
@@ -40,6 +41,7 @@ class MailerService
         $this->urlGenerator = $urlGenerator;
         $this->twig = $twig;
     }// end __construct()
+
 
     /**
      * Envoie un email d'activation à un utilisateur.

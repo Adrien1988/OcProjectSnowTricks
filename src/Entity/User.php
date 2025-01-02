@@ -88,6 +88,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     #[ORM\Column(length: 64, nullable: true)]
     private ?string $activationToken = null;
 
+
     /**
      * Initialise une nouvelle instance de l'utilisateur.
      */
@@ -96,6 +97,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->comments = new ArrayCollection();
         $this->isActive = false;
     }// end __construct()
+
 
     /**
      * Récupère l'identifiant de l'utilisateur.
@@ -107,6 +109,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->id;
     }// end getId()
 
+
     /**
      * Récupère le nom d'utilisateur.
      *
@@ -116,6 +119,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->username;
     }// end getUsername()
+
 
     /**
      * Définit le nom d'utilisateur.
@@ -131,6 +135,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }// end setUsername()
 
+
     /**
      * Récupère l'adresse email.
      *
@@ -140,6 +145,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->email;
     }// end getEmail()
+
 
     /**
      * Définit l'adresse email.
@@ -155,6 +161,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }// end setEmail()
 
+
     /**
      * Récupère le mot de passe haché.
      *
@@ -164,6 +171,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->password;
     }// end getPassword()
+
 
     /**
      * Définit le mot de passe haché.
@@ -179,6 +187,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }// end setPassword()
 
+
     /**
      * Récupère l'URL de l'avatar.
      *
@@ -188,6 +197,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->avatarUrl;
     }// end getAvatarUrl()
+
 
     /**
      * Définit l'URL de l'avatar.
@@ -203,6 +213,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }// end setAvatarUrl()
 
+
     /**
      * Vérifie si le compte de l'utilisateur est actif.
      *
@@ -212,6 +223,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->isActive;
     }// end isActive()
+
 
     /**
      * Définit si le compte de l'utilisateur est actif.
@@ -227,6 +239,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }// end setIsActive()
 
+
     /**
      * Récupère les commentaires rédigés par l'utilisateur.
      *
@@ -236,6 +249,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->comments;
     }// end getComments()
+
 
     /**
      * Ajoute un commentaire rédigé par l'utilisateur.
@@ -253,6 +267,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }// end addComment()
+
 
     /**
      * Supprime un commentaire rédigé par l'utilisateur.
@@ -272,6 +287,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }// end removeComment()
 
+
     /**
      * Récupère les rôles attribués à l'utilisateur.
      *
@@ -282,6 +298,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return ['ROLE_USER'];
     }// end getRoles()
 
+
     /**
      * Efface les données sensibles de l'utilisateur.
      *
@@ -290,6 +307,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function eraseCredentials(): void
     {
     }// end eraseCredentials()
+
 
     /**
      * Récupère l'identifiant pour l'authentification (email dans ce cas).
@@ -301,6 +319,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this->email;
     }// end getUserIdentifier()
 
+
     /**
      * Récupère le token d'activation.
      *
@@ -310,6 +329,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->activationToken;
     }// end getActivationToken()
+
 
     /**
      * Définit le token d'activation.
@@ -324,6 +344,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }// end setActivationToken()
+
 
     /**
      * Convertit l'utilisateur en une chaîne de caractères (retourne le nom d'utilisateur).

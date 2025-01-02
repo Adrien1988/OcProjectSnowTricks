@@ -3,7 +3,6 @@
 namespace App\Entity;
 
 use App\Repository\CommentRepository;
-use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
@@ -52,6 +51,7 @@ class Comment
     #[ORM\JoinColumn(nullable: false)]
     private ?Figure $figure = null;
 
+
     /**
      * Constructeur de la classe Comment.
      * Initialise la date de création.
@@ -60,6 +60,7 @@ class Comment
     {
         $this->createdAt = new \DateTimeImmutable();
     }// end __construct()
+
 
     /**
      * Convertit le commentaire en chaîne de caractères.
@@ -71,6 +72,7 @@ class Comment
         return (string) $this->content;
     }// end __toString()
 
+
     /**
      * Récupère l'identifiant du commentaire.
      *
@@ -81,6 +83,7 @@ class Comment
         return $this->id;
     }// end getId()
 
+
     /**
      * Récupère le contenu du commentaire.
      *
@@ -90,6 +93,7 @@ class Comment
     {
         return $this->content;
     }// end getContent()
+
 
     /**
      * Définit le contenu du commentaire.
@@ -105,6 +109,7 @@ class Comment
         return $this;
     }// end setContent()
 
+
     /**
      * Récupère la date de création du commentaire.
      *
@@ -115,6 +120,7 @@ class Comment
         return $this->createdAt;
     }// end getCreatedAt()
 
+
     /**
      * Récupère l'auteur du commentaire.
      *
@@ -124,6 +130,7 @@ class Comment
     {
         return $this->author;
     }// end getAuthor()
+
 
     /**
      * Définit l'auteur du commentaire.
@@ -139,6 +146,7 @@ class Comment
         return $this;
     }// end setAuthor()
 
+
     /**
      * Récupère la figure associée au commentaire.
      *
@@ -148,6 +156,7 @@ class Comment
     {
         return $this->figure;
     }// end getFigure()
+
 
     /**
      * Définit la figure associée au commentaire.

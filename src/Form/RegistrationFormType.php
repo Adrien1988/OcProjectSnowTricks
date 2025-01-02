@@ -20,6 +20,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class RegistrationFormType extends AbstractType
 {
 
+
     /**
      * Construit le formulaire d'inscription.
      *
@@ -94,6 +95,7 @@ class RegistrationFormType extends AbstractType
                 ]
             );
     }// end buildForm()
+
 
     /**
      * Configure les options par défaut du formulaire.

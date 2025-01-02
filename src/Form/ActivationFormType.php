@@ -14,6 +14,7 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 class ActivationFormType extends AbstractType
 {
 
+
     /**
      * Construit le formulaire pour l'activation de compte.
      *
@@ -40,6 +41,7 @@ class ActivationFormType extends AbstractType
                 ]
             );
     }// end buildForm()
+
 
     /**
      * Configure les options du formulaire.

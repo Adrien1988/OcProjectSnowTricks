@@ -15,6 +15,7 @@ use Doctrine\Persistence\ManagerRegistry;
 class FigureRepository extends ServiceEntityRepository
 {
 
+
     /**
      * Constructeur de la classe FigureRepository.
      *
@@ -24,6 +25,7 @@ class FigureRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Figure::class);
     }// end __construct()
+
 
     // **
     // * @return Figure[] Returns an array of Figure objects

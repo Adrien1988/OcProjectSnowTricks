@@ -44,6 +44,7 @@ class Video
     #[ORM\JoinColumn(nullable: false)]
     private ?Figure $figure = null;
 
+
     /**
      * Initialise une nouvelle instance de la classe Video.
      * Initialise la date de création.
@@ -52,6 +53,7 @@ class Video
     {
         $this->createdAt = new \DateTimeImmutable();
     }// end __construct()
+
 
     /**
      * Récupère l'identifiant unique de la vidéo.
@@ -63,6 +65,7 @@ class Video
         return $this->id;
     }// end getId()
 
+
     /**
      * Récupère le code d'intégration de la vidéo.
      *
@@ -72,6 +75,7 @@ class Video
     {
         return $this->embedCode;
     }// end getEmbedCode()
+
 
     /**
      * Définit le code d'intégration de la vidéo.
@@ -87,6 +91,7 @@ class Video
         return $this;
     }// end setEmbedCode()
 
+
     /**
      * Récupère la date de création de la vidéo.
      *
@@ -97,6 +102,7 @@ class Video
         return $this->createdAt;
     }// end getCreatedAt()
 
+
     /**
      * Récupère la figure associée à la vidéo.
      *
@@ -106,6 +112,7 @@ class Video
     {
         return $this->figure;
     }// end getFigure()
+
 
     /**
      * Définit la figure associée à la vidéo.
@@ -120,6 +127,7 @@ class Video
 
         return $this;
     }// end setFigure()
+
 
     /**
      * Convertit l'objet Video en chaîne de caractères.

@@ -51,6 +51,7 @@ class Image
     #[ORM\JoinColumn(nullable: false)]
     private ?Figure $figure = null;
 
+
     /**
      * Constructeur de la classe Image.
      * Initialise la date de création.
@@ -59,6 +60,7 @@ class Image
     {
         $this->createdAt = new \DateTimeImmutable();
     }// end __construct()
+
 
     /**
      * Récupère l'identifiant unique de l'image.
@@ -70,6 +72,7 @@ class Image
         return $this->id;
     }// end getId()
 
+
     /**
      * Récupère l'URL de l'image.
      *
@@ -79,6 +82,7 @@ class Image
     {
         return $this->url;
     }// end getUrl()
+
 
     /**
      * Définit l'URL de l'image.
@@ -94,6 +98,7 @@ class Image
         return $this;
     }// end setUrl()
 
+
     /**
      * Récupère le texte alternatif de l'image.
      *
@@ -103,6 +108,7 @@ class Image
     {
         return $this->altText;
     }// end getAltText()
+
 
     /**
      * Définit le texte alternatif de l'image.
@@ -118,6 +124,7 @@ class Image
         return $this;
     }// end setAltText()
 
+
     /**
      * Récupère la date de création de l'image.
      *
@@ -128,6 +135,7 @@ class Image
         return $this->createdAt;
     }// end getCreatedAt()
 
+
     /**
      * Récupère la figure associée à l'image.
      *
@@ -137,6 +145,7 @@ class Image
     {
         return $this->figure;
     }// end getFigure()
+
 
     /**
      * Définit la figure associée à l'image.
@@ -151,6 +160,7 @@ class Image
 
         return $this;
     }// end setFigure()
+
 
     /**
      * Convertit l'objet Image en chaîne de caractères.

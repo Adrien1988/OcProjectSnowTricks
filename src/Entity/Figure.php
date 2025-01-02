@@ -84,6 +84,7 @@ class Figure
     #[ORM\OneToMany(targetEntity: Video::class, mappedBy: 'figure', orphanRemoval: true, cascade: ['persist'])]
     private Collection $videos;
 
+
     /**
      * Constructeur de la classe Figure.
      * Initialise les dates et les collections.
@@ -95,6 +96,7 @@ class Figure
         $this->images = new ArrayCollection();
         $this->videos = new ArrayCollection();
     }// end __construct()
+
 
     /**
      * Met à jour la date de mise à jour avant chaque modification.
@@ -108,6 +110,7 @@ class Figure
         $this->updatedAt = new \DateTime();
     }// end setUpdatedAtValue()
 
+
     /**
      * Récupère l'identifiant de la figure.
      *
@@ -118,6 +121,7 @@ class Figure
         return $this->id;
     }// end getId()
 
+
     /**
      * Récupère le nom de la figure.
      *
@@ -127,6 +131,7 @@ class Figure
     {
         return $this->name;
     }// end getName()
+
 
     /**
      * Définit le nom de la figure.
@@ -142,6 +147,7 @@ class Figure
         return $this;
     }// end setName()
 
+
     /**
      * Récupère la description de la figure.
      *
@@ -151,6 +157,7 @@ class Figure
     {
         return $this->description;
     }// end getDescription()
+
 
     /**
      * Définit la description de la figure.
@@ -166,6 +173,7 @@ class Figure
         return $this;
     }// end setDescription()
 
+
     /**
      * Récupère le slug de la figure.
      *
@@ -175,6 +183,7 @@ class Figure
     {
         return $this->slug;
     }// end getSlug()
+
 
     /**
      * Définit le slug de la figure.
@@ -190,6 +199,7 @@ class Figure
         return $this;
     }// end setSlug()
 
+
     /**
      * Récupère le groupe de la figure.
      *
@@ -199,6 +209,7 @@ class Figure
     {
         return $this->figureGroup;
     }// end getFigureGroup()
+
 
     /**
      * Définit le groupe de la figure.
@@ -214,6 +225,7 @@ class Figure
         return $this;
     }// end setFigureGroup()
 
+
     /**
      * Récupère la date de création de la figure.
      *
@@ -223,6 +235,7 @@ class Figure
     {
         return $this->createdAt;
     }// end getCreatedAt()
+
 
     /**
      * Récupère la date de mise à jour de la figure.
@@ -234,6 +247,7 @@ class Figure
         return $this->updatedAt;
     }// end getUpdatedAt()
 
+
     /**
      * Récupère les images associées à la figure.
      *
@@ -243,6 +257,7 @@ class Figure
     {
         return $this->images;
     }// end getImages()
+
 
     /**
      * Ajoute une image à la figure.
@@ -260,6 +275,7 @@ class Figure
 
         return $this;
     }// end addImage()
+
 
     /**
      * Supprime une image associée à la figure.
@@ -279,6 +295,7 @@ class Figure
         return $this;
     }// end removeImage()
 
+
     /**
      * Récupère les vidéos associées à la figure.
      *
@@ -288,6 +305,7 @@ class Figure
     {
         return $this->videos;
     }// end getVideos()
+
 
     /**
      * Ajoute une vidéo à la figure.
@@ -306,6 +324,7 @@ class Figure
         return $this;
     }// end addVideo()
 
+
     /**
      * Supprime une vidéo associée à la figure.
      *
@@ -323,6 +342,7 @@ class Figure
 
         return $this;
     }// end removeVideo()
+
 
     /**
      * Convertit la figure en chaîne de caractères (nom de la figure).
