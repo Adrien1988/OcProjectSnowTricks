@@ -12,52 +12,40 @@ use Twig\Environment;
  */
 class MailerService
 {
-
     /**
      * Interface pour l'envoi d'emails.
-     *
-     * @var MailerInterface
      */
     private MailerInterface $mailer;
 
     /**
      * Générateur d'URL.
-     *
-     * @var UrlGeneratorInterface
      */
     private UrlGeneratorInterface $urlGenerator;
 
     /**
      * Moteur de rendu Twig.
-     *
-     * @var Environment
      */
     private Environment $twig;
-
 
     /**
      * Constructeur du service MailerService.
      *
-     * @param MailerInterface       $mailer       Interface pour l'envoi d'emails.
-     * @param UrlGeneratorInterface $urlGenerator Générateur d'URL pour créer les liens.
-     * @param Environment           $twig         Moteur de rendu Twig pour les templates.
+     * @param MailerInterface       $mailer       interface pour l'envoi d'emails
+     * @param UrlGeneratorInterface $urlGenerator générateur d'URL pour créer les liens
+     * @param Environment           $twig         moteur de rendu Twig pour les templates
      */
     public function __construct(MailerInterface $mailer, UrlGeneratorInterface $urlGenerator, Environment $twig)
     {
-        $this->mailer       = $mailer;
+        $this->mailer = $mailer;
         $this->urlGenerator = $urlGenerator;
-        $this->twig         = $twig;
-
-    }//end __construct()
-
+        $this->twig = $twig;
+    }// end __construct()
 
     /**
      * Envoie un email d'activation à un utilisateur.
      *
-     * @param string $email Adresse email du destinataire.
-     * @param string $token Jeton d'activation unique.
-     *
-     * @return void
+     * @param string $email adresse email du destinataire
+     * @param string $token jeton d'activation unique
      */
     public function sendActivationEmail(string $email, string $token): void
     {
@@ -85,8 +73,7 @@ class MailerService
 
         // Envoi de l'email.
         $this->mailer->send($emailMessage);
+    }// end sendActivationEmail()
 
-    }//end sendActivationEmail()
 
-
-}//end class
+}// end class

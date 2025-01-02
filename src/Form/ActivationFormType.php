@@ -13,15 +13,11 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class ActivationFormType extends AbstractType
 {
-
-
     /**
      * Construit le formulaire pour l'activation de compte.
      *
-     * @param FormBuilderInterface $builder Instance pour construire le formulaire.
-     * @param array                $options Options du formulaire.
-     *
-     * @return void
+     * @param FormBuilderInterface $builder instance pour construire le formulaire
+     * @param array                $options options du formulaire
      */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -40,16 +36,12 @@ class ActivationFormType extends AbstractType
                     'label' => 'Confirmez votre mot de passe',
                 ]
             );
-
-    }//end buildForm()
-
+    }// end buildForm()
 
     /**
      * Configure les options du formulaire.
      *
-     * @param OptionsResolver $resolver Instance pour définir les options par défaut.
-     *
-     * @return void
+     * @param OptionsResolver $resolver instance pour définir les options par défaut
      */
     public function configureOptions(OptionsResolver $resolver): void
     {
@@ -58,8 +50,7 @@ class ActivationFormType extends AbstractType
                 // Ajoutez les options par défaut ici si nécessaire.
             ]
         );
+    }// end configureOptions()
 
-    }//end configureOptions()
 
-
-}//end class
+}// end class

@@ -23,11 +23,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 )]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
-
     /**
      * Identifiant unique de l'utilisateur.
-     *
-     * @var integer|null
      */
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -36,8 +33,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * Nom d'utilisateur.
-     *
-     * @var string|null
      */
     #[ORM\Column(length: 255, unique: true)]
     #[Assert\NotBlank(message: "Le nom d'utilisateur est obligatoire.")]
@@ -49,8 +44,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * Adresse email de l'utilisateur.
-     *
-     * @var string|null
      */
     #[ORM\Column(length: 255, unique: true)]
     #[Assert\NotBlank(message: "L'email est obligatoire.")]
@@ -59,8 +52,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * Mot de passe haché de l'utilisateur.
-     *
-     * @var string|null
      */
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: 'Le mot de passe est obligatoire.')]
@@ -68,8 +59,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * URL de l'avatar de l'utilisateur.
-     *
-     * @var string|null
      */
     #[ORM\Column(length: 255, nullable: true)]
     #[Assert\Length(
@@ -81,8 +70,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * Indique si le compte de l'utilisateur est actif.
-     *
-     * @var boolean
      */
     #[ORM\Column(nullable: false, options: ['default' => false])]
     private bool $isActive = false;
@@ -97,12 +84,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * Token utilisé pour l'activation du compte.
-     *
-     * @var string|null
      */
     #[ORM\Column(length: 64, nullable: true)]
     private ?string $activationToken = null;
-
 
     /**
      * Initialise une nouvelle instance de l'utilisateur.
@@ -111,38 +95,28 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         $this->comments = new ArrayCollection();
         $this->isActive = false;
-
-    }//end __construct()
-
+    }// end __construct()
 
     /**
      * Récupère l'identifiant de l'utilisateur.
-     *
-     * @return int|null
      */
     public function getId(): ?int
     {
         return $this->id;
-
-    }//end getId()
-
+    }// end getId()
 
     /**
      * Récupère le nom d'utilisateur.
-     *
-     * @return string|null
      */
     public function getUsername(): ?string
     {
         return $this->username;
-
-    }//end getUsername()
-
+    }// end getUsername()
 
     /**
      * Définit le nom d'utilisateur.
      *
-     * @param string $username Le nom d'utilisateur à définir.
+     * @param string $username le nom d'utilisateur à définir
      *
      * @return $this
      */
@@ -151,26 +125,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->username = $username;
 
         return $this;
-
-    }//end setUsername()
-
+    }// end setUsername()
 
     /**
      * Récupère l'adresse email.
-     *
-     * @return string|null
      */
     public function getEmail(): ?string
     {
         return $this->email;
-
-    }//end getEmail()
-
+    }// end getEmail()
 
     /**
      * Définit l'adresse email.
      *
-     * @param string $email L'adresse email à définir.
+     * @param string $email L'adresse email à définir
      *
      * @return $this
      */
@@ -179,26 +147,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->email = $email;
 
         return $this;
-
-    }//end setEmail()
-
+    }// end setEmail()
 
     /**
      * Récupère le mot de passe haché.
-     *
-     * @return string|null
      */
     public function getPassword(): ?string
     {
         return $this->password;
-
-    }//end getPassword()
-
+    }// end getPassword()
 
     /**
      * Définit le mot de passe haché.
      *
-     * @param string $password Le mot de passe haché à définir.
+     * @param string $password le mot de passe haché à définir
      *
      * @return $this
      */
@@ -207,21 +169,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->password = $password;
 
         return $this;
-
-    }//end setPassword()
-
+    }// end setPassword()
 
     /**
      * Récupère l'URL de l'avatar.
-     *
-     * @return string|null
      */
     public function getAvatarUrl(): ?string
     {
         return $this->avatarUrl;
-
-    }//end getAvatarUrl()
-
+    }// end getAvatarUrl()
 
     /**
      * Définit l'URL de l'avatar.
@@ -235,26 +191,20 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->avatarUrl = $avatarUrl;
 
         return $this;
-
-    }//end setAvatarUrl()
-
+    }// end setAvatarUrl()
 
     /**
      * Vérifie si le compte de l'utilisateur est actif.
-     *
-     * @return bool|null
      */
     public function isActive(): ?bool
     {
         return $this->isActive;
-
-    }//end isActive()
-
+    }// end isActive()
 
     /**
      * Définit si le compte de l'utilisateur est actif.
      *
-     * @param bool $isActive Indique si le compte est actif (true) ou inactif (false).
+     * @param bool $isActive indique si le compte est actif (true) ou inactif (false)
      *
      * @return $this
      */
@@ -263,9 +213,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->isActive = $isActive;
 
         return $this;
-
-    }//end setIsActive()
-
+    }// end setIsActive()
 
     /**
      * Récupère les commentaires rédigés par l'utilisateur.
@@ -275,48 +223,42 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getComments(): Collection
     {
         return $this->comments;
-
-    }//end getComments()
-
+    }// end getComments()
 
     /**
      * Ajoute un commentaire rédigé par l'utilisateur.
      *
-     * @param Comment $comment Le commentaire à ajouter à l'utilisateur.
+     * @param Comment $comment le commentaire à ajouter à l'utilisateur
      *
      * @return $this
      */
     public function addComment(Comment $comment): static
     {
-        if ($this->comments->contains($comment) === false) {
+        if (false === $this->comments->contains($comment)) {
             $this->comments[] = $comment;
             $comment->setAuthor($this);
         }
 
         return $this;
-
-    }//end addComment()
-
+    }// end addComment()
 
     /**
      * Supprime un commentaire rédigé par l'utilisateur.
      *
-     * @param Comment $comment Le commentaire à supprimer de l'utilisateur.
+     * @param Comment $comment le commentaire à supprimer de l'utilisateur
      *
      * @return $this
      */
     public function removeComment(Comment $comment): static
     {
-        if ($this->comments->removeElement($comment) === true) {
+        if (true === $this->comments->removeElement($comment)) {
             if ($comment->getAuthor() === $this) {
                 $comment->setAuthor(null);
             }
         }
 
         return $this;
-
-    }//end removeComment()
-
+    }// end removeComment()
 
     /**
      * Récupère les rôles attribués à l'utilisateur.
@@ -326,49 +268,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function getRoles(): array
     {
         return ['ROLE_USER'];
-
-    }//end getRoles()
-
+    }// end getRoles()
 
     /**
      * Efface les données sensibles de l'utilisateur.
-     *
-     * @return void
      */
     public function eraseCredentials(): void
     {
-
-    }//end eraseCredentials()
-
+    }// end eraseCredentials()
 
     /**
      * Récupère l'identifiant pour l'authentification (email dans ce cas).
-     *
-     * @return string
      */
     public function getUserIdentifier(): string
     {
         return $this->email;
-
-    }//end getUserIdentifier()
-
+    }// end getUserIdentifier()
 
     /**
      * Récupère le token d'activation.
-     *
-     * @return string|null
      */
     public function getActivationToken(): ?string
     {
         return $this->activationToken;
-
-    }//end getActivationToken()
-
+    }// end getActivationToken()
 
     /**
      * Définit le token d'activation.
      *
-     * @param string|null $activationToken Le token d'activation à associer à l'utilisateur.
+     * @param string|null $activationToken le token d'activation à associer à l'utilisateur
      *
      * @return $this
      */
@@ -377,20 +305,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->activationToken = $activationToken;
 
         return $this;
-
-    }//end setActivationToken()
-
+    }// end setActivationToken()
 
     /**
      * Convertit l'utilisateur en une chaîne de caractères (retourne le nom d'utilisateur).
-     *
-     * @return string
      */
     public function __toString(): string
     {
-        return ($this->username ?? 'Utilisateur');
+        return $this->username ?? 'Utilisateur';
+    }// end __toString()
 
-    }//end __toString()
 
-
-}//end class
+}// end class

@@ -14,19 +14,15 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class FigureRepository extends ServiceEntityRepository
 {
-
-
     /**
      * Constructeur de la classe FigureRepository.
      *
-     * @param ManagerRegistry $registry Le registre pour l'accès aux entités.
+     * @param ManagerRegistry $registry le registre pour l'accès aux entités
      */
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Figure::class);
-
-    }//end __construct()
-
+    }// end __construct()
 
     // **
     // * @return Figure[] Returns an array of Figure objects
@@ -51,4 +47,4 @@ class FigureRepository extends ServiceEntityRepository
     // ->getOneOrNullResult()
     // ;
     // }
-}//end class
+}// end class

@@ -14,19 +14,15 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class CommentRepository extends ServiceEntityRepository
 {
-
-
     /**
      * Constructeur de la classe CommentRepository.
      *
-     * @param ManagerRegistry $registry Le registre pour l'accès aux entités.
+     * @param ManagerRegistry $registry le registre pour l'accès aux entités
      */
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Comment::class);
-
-    }//end __construct()
-
+    }// end __construct()
 
     // **
     // * @return Comment[] Returns an array of Comment objects
@@ -51,4 +47,4 @@ class CommentRepository extends ServiceEntityRepository
     // ->getOneOrNullResult()
     // ;
     // }
-}//end class
+}// end class

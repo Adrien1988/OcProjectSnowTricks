@@ -14,19 +14,15 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class VideoRepository extends ServiceEntityRepository
 {
-
-
     /**
      * Constructeur de la classe VideoRepository.
      *
-     * @param ManagerRegistry $registry Le registre pour l'accès aux entités.
+     * @param ManagerRegistry $registry le registre pour l'accès aux entités
      */
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Video::class);
-
-    }//end __construct()
-
+    }// end __construct()
 
     // **
     // * @return Video[] Returns an array of Video objects
@@ -51,4 +47,4 @@ class VideoRepository extends ServiceEntityRepository
     // ->getOneOrNullResult()
     // ;
     // }
-}//end class
+}// end class

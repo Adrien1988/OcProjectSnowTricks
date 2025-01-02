@@ -14,19 +14,15 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class UserRepository extends ServiceEntityRepository
 {
-
-
     /**
      * Constructeur de la classe UserRepository.
      *
-     * @param ManagerRegistry $registry Le registre pour l'accès aux entités.
+     * @param ManagerRegistry $registry le registre pour l'accès aux entités
      */
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, User::class);
-
-    }//end __construct()
-
+    }// end __construct()
 
     // **
     // * @return User[] Returns an array of User objects
@@ -51,4 +47,4 @@ class UserRepository extends ServiceEntityRepository
     // ->getOneOrNullResult()
     // ;
     // }
-}//end class
+}// end class

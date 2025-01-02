@@ -14,19 +14,15 @@ use Doctrine\Persistence\ManagerRegistry;
  */
 class ImageRepository extends ServiceEntityRepository
 {
-
-
     /**
      * Constructeur de la classe ImageRepository.
      *
-     * @param ManagerRegistry $registry Le registre pour l'accès aux entités.
+     * @param ManagerRegistry $registry le registre pour l'accès aux entités
      */
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Image::class);
-
-    }//end __construct()
-
+    }// end __construct()
 
     // **
     // * @return Image[] Returns an array of Image objects
@@ -51,4 +47,4 @@ class ImageRepository extends ServiceEntityRepository
     // ->getOneOrNullResult()
     // ;
     // }
-}//end class
+}// end class

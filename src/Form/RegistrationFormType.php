@@ -19,15 +19,11 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
  */
 class RegistrationFormType extends AbstractType
 {
-
-
     /**
      * Construit le formulaire d'inscription.
      *
-     * @param FormBuilderInterface $builder Instance utilisée pour construire les champs du formulaire.
-     * @param array                $options Options supplémentaires pour le formulaire.
-     *
-     * @return void
+     * @param FormBuilderInterface $builder instance utilisée pour construire les champs du formulaire
+     * @param array                $options options supplémentaires pour le formulaire
      */
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
@@ -94,16 +90,12 @@ class RegistrationFormType extends AbstractType
                     'invalid_message' => 'Le code est invalide.',
                 ]
             );
-
-    }//end buildForm()
-
+    }// end buildForm()
 
     /**
      * Configure les options par défaut du formulaire.
      *
-     * @param OptionsResolver $resolver Instance pour définir les options.
-     *
-     * @return void
+     * @param OptionsResolver $resolver instance pour définir les options
      */
     public function configureOptions(OptionsResolver $resolver): void
     {
@@ -112,8 +104,7 @@ class RegistrationFormType extends AbstractType
                 'data_class' => User::class,
             ]
         );
+    }// end configureOptions()
 
-    }//end configureOptions()
 
-
-}//end class
+}// end class

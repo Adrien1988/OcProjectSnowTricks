@@ -18,20 +18,18 @@ use Symfony\Component\Routing\Attribute\Route;
  */
 class RegistrationController extends AbstractController
 {
-
-
     /**
      * Affiche et traite le formulaire d'enregistrement.
      *
-     * @param Request                     $request        La
+     * @param Request                     $request        la
      *                                                    requête
-     *                                                    HTTP.
-     * @param EntityManagerInterface      $entityManager  Le gestionnaire
-     *                                                    d'entités.
-     * @param UserPasswordHasherInterface $passwordHasher Le service de hachage de mots de passe.
-     * @param MailerService               $mailerService  Le service d'envoi d'emails.
+     *                                                    HTTP
+     * @param EntityManagerInterface      $entityManager  le gestionnaire
+     *                                                    d'entités
+     * @param UserPasswordHasherInterface $passwordHasher le service de hachage de mots de passe
+     * @param MailerService               $mailerService  le service d'envoi d'emails
      *
-     * @return Response La réponse HTTP.
+     * @return Response la réponse HTTP
      */
     #[Route('/register', name: 'app_register')]
     public function register(
@@ -45,10 +43,10 @@ class RegistrationController extends AbstractController
 
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() === true && $form->isValid() === true) {
+        if (true === $form->isSubmitted() && true === $form->isValid()) {
             // Vérification de l'unicité de l'email et du username.
             $existingUser = $entityManager->getRepository(User::class)->findOneBy(['email' => $user->getEmail()]);
-            if ($existingUser !== null) {
+            if (null !== $existingUser) {
                 $this->addFlash('error', 'Cet email est déjà utilisé.');
 
                 return $this->redirectToRoute('app_register');
@@ -69,16 +67,16 @@ class RegistrationController extends AbstractController
 
             $avatarMethod = $form->get('avatarMethod')->getData();
 
-            if ($avatarMethod === 'url') {
+            if ('url' === $avatarMethod) {
                 $avatarUrl = $form->get('avatarUrl')->getData();
-                if ($avatarUrl !== null) {
+                if (null !== $avatarUrl) {
                     $user->setAvatarUrl($avatarUrl);
                 }
             }
 
-            if ($avatarMethod === 'upload') {
+            if ('upload' === $avatarMethod) {
                 $avatarFile = $form->get('avatarFile')->getData();
-                if ($avatarFile !== null) {
+                if (null !== $avatarFile) {
                     $newFilename = uniqid().'.'.$avatarFile->guessExtension();
                     $avatarFile->move($this->getParameter('avatars_directory'), $newFilename);
                     $user->setAvatarUrl('/uploads/avatars/'.$newFilename);
@@ -97,7 +95,7 @@ class RegistrationController extends AbstractController
             $this->addFlash('success', 'Votre compte a été créé avec succès ! Veuillez vérifier votre email pour l’activer.');
 
             return $this->redirectToRoute('app_login');
-        }//end if
+        }// end if
 
         return $this->render(
             'registration/register.html.twig',
@@ -105,32 +103,30 @@ class RegistrationController extends AbstractController
                 'registrationForm' => $form->createView(),
             ]
         );
-
-    }//end register()
-
+    }// end register()
 
     /**
      * Affiche et traite le formulaire d'activation de compte.
      *
-     * @param string                      $token          Le token d'activation.
-     * @param Request                     $request        La requête
-     *                                                    HTTP.
-     * @param EntityManagerInterface      $em             Le gestionnaire
-     *                                                    d'entités.
-     * @param UserPasswordHasherInterface $passwordHasher Le service de hachage de mots de passe.
+     * @param string                      $token          le token d'activation
+     * @param Request                     $request        la requête
+     *                                                    HTTP
+     * @param EntityManagerInterface      $em             le gestionnaire
+     *                                                    d'entités
+     * @param UserPasswordHasherInterface $passwordHasher le service de hachage de mots de passe
      *
-     * @return Response La réponse HTTP.
+     * @return Response la réponse HTTP
      */
     #[Route('/activate/{token}', name: 'app_activate_account', methods: ['GET', 'POST'])]
     public function showActivationForm(
         string $token,
         Request $request,
         EntityManagerInterface $em,
-        UserPasswordHasherInterface $passwordHasher
+        UserPasswordHasherInterface $passwordHasher,
     ): Response {
         $user = $em->getRepository(User::class)->findOneBy(['activationToken' => $token]);
 
-        if ($user === null) {
+        if (null === $user) {
             $this->addFlash('error', 'Token invalide.');
 
             return $this->redirectToRoute('app_login');
@@ -139,9 +135,9 @@ class RegistrationController extends AbstractController
         $form = $this->createForm(ActivationFormType::class);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() === true && $form->isValid() === true) {
-            $data            = $form->getData();
-            $email           = $data['email'];
+        if (true === $form->isSubmitted() && true === $form->isValid()) {
+            $data = $form->getData();
+            $email = $data['email'];
             $enteredPassword = $data['password'];
 
             if ($email !== $user->getEmail()) {
@@ -150,7 +146,7 @@ class RegistrationController extends AbstractController
                 return $this->redirectToRoute('app_activate_account', ['token' => $token]);
             }
 
-            if ($passwordHasher->isPasswordValid($user, $enteredPassword) === false) {
+            if (false === $passwordHasher->isPasswordValid($user, $enteredPassword)) {
                 $this->addFlash('error', 'Le mot de passe est incorrect.');
 
                 return $this->redirectToRoute('app_activate_account', ['token' => $token]);
@@ -163,7 +159,7 @@ class RegistrationController extends AbstractController
             $this->addFlash('success', 'Votre compte est maintenant actif !');
 
             return $this->redirectToRoute('app_login');
-        }//end if
+        }// end if
 
         return $this->render(
             'registration/activate.html.twig',
@@ -172,8 +168,7 @@ class RegistrationController extends AbstractController
                 'token'          => $token,
             ]
         );
+    }// end showActivationForm()
 
-    }//end showActivationForm()
 
-
-}//end class
+}// end class

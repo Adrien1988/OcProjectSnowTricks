@@ -12,11 +12,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: CommentRepository::class)]
 class Comment
 {
-
     /**
      * Identifiant unique du commentaire.
-     *
-     * @var integer|null
      */
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -25,8 +22,6 @@ class Comment
 
     /**
      * Contenu du commentaire.
-     *
-     * @var string|null
      */
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: 'Le contenu ne peut pas être vide.')]
@@ -38,16 +33,12 @@ class Comment
 
     /**
      * Date de création du commentaire.
-     *
-     * @var \DateTimeImmutable|null
      */
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
     /**
      * Auteur du commentaire.
-     *
-     * @var User|null
      */
     #[ORM\ManyToOne(inversedBy: 'comments', cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: false)]
@@ -55,13 +46,10 @@ class Comment
 
     /**
      * Figure associée au commentaire.
-     *
-     * @var Figure|null
      */
     #[ORM\ManyToOne(inversedBy: 'comments', cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: false)]
     private ?Figure $figure = null;
-
 
     /**
      * Constructeur de la classe Comment.
@@ -70,50 +58,38 @@ class Comment
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
-
-    }//end __construct()
-
+    }// end __construct()
 
     /**
      * Convertit le commentaire en chaîne de caractères.
      *
-     * @return string Représentation textuelle du commentaire.
+     * @return string représentation textuelle du commentaire
      */
     public function __toString(): string
     {
         return (string) $this->content;
-
-    }//end __toString()
-
+    }// end __toString()
 
     /**
      * Récupère l'identifiant du commentaire.
-     *
-     * @return int|null
      */
     public function getId(): ?int
     {
         return $this->id;
-
-    }//end getId()
-
+    }// end getId()
 
     /**
      * Récupère le contenu du commentaire.
-     *
-     * @return string|null
      */
     public function getContent(): ?string
     {
         return $this->content;
-
-    }//end getContent()
-
+    }// end getContent()
 
     /**
      * Définit le contenu du commentaire.
      *
-     * @param string $content Contenu du commentaire.
+     * @param string $content contenu du commentaire
      *
      * @return $this
      */
@@ -122,38 +98,28 @@ class Comment
         $this->content = $content;
 
         return $this;
-
-    }//end setContent()
-
+    }// end setContent()
 
     /**
      * Récupère la date de création du commentaire.
-     *
-     * @return \DateTimeImmutable|null
      */
     public function getCreatedAt(): ?\DateTimeImmutable
     {
         return $this->createdAt;
-
-    }//end getCreatedAt()
-
+    }// end getCreatedAt()
 
     /**
      * Récupère l'auteur du commentaire.
-     *
-     * @return User|null
      */
     public function getAuthor(): ?User
     {
         return $this->author;
-
-    }//end getAuthor()
-
+    }// end getAuthor()
 
     /**
      * Définit l'auteur du commentaire.
      *
-     * @param User|null $author Auteur du commentaire.
+     * @param User|null $author auteur du commentaire
      *
      * @return $this
      */
@@ -162,26 +128,20 @@ class Comment
         $this->author = $author;
 
         return $this;
-
-    }//end setAuthor()
-
+    }// end setAuthor()
 
     /**
      * Récupère la figure associée au commentaire.
-     *
-     * @return Figure|null
      */
     public function getFigure(): ?Figure
     {
         return $this->figure;
-
-    }//end getFigure()
-
+    }// end getFigure()
 
     /**
      * Définit la figure associée au commentaire.
      *
-     * @param Figure|null $figure Figure associée.
+     * @param Figure|null $figure figure associée
      *
      * @return $this
      */
@@ -190,8 +150,7 @@ class Comment
         $this->figure = $figure;
 
         return $this;
+    }// end setFigure()
 
-    }//end setFigure()
 
-
-}//end class
+}// end class

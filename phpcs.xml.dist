@@ -8,9 +8,6 @@
     <!-- Exclure des dossiers spécifiques -->
     <exclude-pattern>*/var/*</exclude-pattern>
     <exclude-pattern>*/vendor/*</exclude-pattern>
-    <exclude-pattern>*/config/*</exclude-pattern>
-    <exclude-pattern>*/assets/*</exclude-pattern>
-    <exclude-pattern>*/public/*</exclude-pattern>
     <exclude-pattern>*/tests/*</exclude-pattern>
     <exclude-pattern>*/migrations/*</exclude-pattern>
 
@@ -19,7 +16,7 @@
     <arg name="parallel" value="75" />
     <arg value="p" />
 
-     <!-- Include the whole PEAR standard -->
+    <!-- Include the whole PEAR standard -->
     <rule ref="PEAR">
         <exclude name="PEAR.NamingConventions.ValidFunctionName" />
         <exclude name="PEAR.NamingConventions.ValidVariableName" />
@@ -37,12 +34,6 @@
 
     <!-- We use custom indent rules for arrays -->
     <rule ref="Generic.Arrays.ArrayIndent" />
-    <rule ref="Squiz.Arrays.ArrayDeclaration.KeyNotAligned">
-        <severity>0</severity>
-    </rule>
-    <rule ref="Squiz.Arrays.ArrayDeclaration.ValueNotAligned">
-        <severity>0</severity>
-    </rule>
     <rule ref="Squiz.Arrays.ArrayDeclaration.CloseBraceNotAligned">
         <severity>0</severity>
     </rule>
@@ -54,13 +45,6 @@
     <rule ref="PEAR.Functions.FunctionCallSignature">
         <properties>
             <property name="allowMultipleArguments" value="false" />
-        </properties>
-    </rule>
-
-    <!-- Have 12 chars padding maximum -->
-    <rule ref="Generic.Formatting.MultipleStatementAlignment">
-        <properties>
-            <property name="maxPadding" value="12" />
         </properties>
     </rule>
 
@@ -83,81 +67,51 @@
     <!-- Do not allow unreachable code. -->
     <rule ref="Squiz.PHP.NonExecutableCode" />
 
-    <!-- 2.2. Character Encoding -->
-
-    <!-- PHP code MUST use only UTF-8 without BOM. -->
+    <!-- Encoding rules -->
     <rule ref="Generic.Files.ByteOrderMark" />
 
     <rule ref="Generic.PHP.DisallowShortOpenTag" />
     <rule ref="Generic.Commenting.Todo" />
-    <rule ref="Generic.ControlStructures.DisallowYodaConditions" />
-    <rule ref="Generic.ControlStructures.InlineControlStructure" />
 
-    <!-- There MUST NOT be more than one statement per line. -->
-    <rule ref="Generic.Formatting.DisallowMultipleStatements" />
-    <rule ref="Generic.Formatting.SpaceAfterCast" />
-    <rule ref="Generic.NamingConventions.ConstructorName" />
-    <rule ref="Generic.PHP.DeprecatedFunctions" />
-    <rule ref="Generic.PHP.LowerCaseKeyword" />
-    <rule ref="Generic.Strings.UnnecessaryStringConcat" />
-    <rule ref="Generic.WhiteSpace.IncrementDecrementSpacing" />
-    <rule ref="Generic.Arrays.DisallowLongArraySyntax" />
-
-    <!-- These rules enforce PSR-2 and PSR-12 standards for class and file formatting. -->
+    <!-- enforce PSR-2 and PSR-12 standards -->
     <rule ref="PSR2.Classes.PropertyDeclaration" />
     <rule ref="PSR2.Methods.MethodDeclaration" />
     <rule ref="PSR2.Files.EndFileNewline" />
     <rule ref="PSR12.Files.OpenTag" />
-
-    <!-- Include the whole PSR1 standard -->
     <rule ref="PSR1">
         <exclude name="PSR1.Files.SideEffects" />
     </rule>
 
-    <!-- Class constants MUST be declared in all upper case with underscore separators. -->
+    <!-- Class constants MUST be declared in upper case -->
     <rule ref="Generic.NamingConventions.UpperCaseConstantName" />
 
-    <!-- These rules ensure that arrays are declared and formatted correctly. -->
-    <rule ref="Squiz.Arrays.ArrayBracketSpacing" />
-    <rule ref="Squiz.Arrays.ArrayDeclaration" />
-
-    <!-- These rules ensure proper structure and formatting of control structures. -->
-    <rule ref="Squiz.ControlStructures.ControlSignature" />
-    <rule ref="Squiz.ControlStructures.ElseIfDeclaration" />
-
-    <!-- These rules ensure proper formatting and spacing for various code elements. -->
-    <rule ref="Squiz.Formatting.OperatorBracket" />
-    <rule ref="Squiz.Functions.FunctionDeclarationArgumentSpacing" />
-    <rule ref="Squiz.Operators.ComparisonOperatorUsage" />
-    <rule ref="Squiz.Scope.MethodScope" />
-    <rule ref="Squiz.Strings.ConcatenationSpacing" />
-
-
-    <!-- These rules ensure proper whitespace usage throughout the codebase. -->
+    <!-- Proper spacing and formatting -->
     <rule ref="Squiz.WhiteSpace.ControlStructureSpacing" />
-    <rule ref="Squiz.WhiteSpace.FunctionClosingBraceSpace" />
-    <rule ref="Squiz.WhiteSpace.FunctionSpacing" />
-    <rule ref="Squiz.WhiteSpace.MemberVarSpacing" />
-    <rule ref="Squiz.WhiteSpace.OperatorSpacing" />
+    <rule ref="Squiz.WhiteSpace.FunctionSpacing">
+        <properties>
+            <property name="spacing" value="1" />
+            <property name="spacingBeforeFirst" value="1" />
+            <property name="spacingAfterLast" value="2" />
+        </properties>
+    </rule>
     <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace" />
 
-    <!-- Class names MUST be declared in StudlyCaps. -->
-    <rule ref="Squiz.Classes.ValidClassName" />
-
-    <!-- These rules ensure proper commenting practices are followed throughout the codebase. -->
+    <!-- Commenting rules -->
     <rule ref="Squiz.Commenting.BlockComment" />
     <rule ref="Squiz.Commenting.DocCommentAlignment" />
-    <rule ref="Squiz.Commenting.EmptyCatchComment" />
-    <rule ref="Squiz.Commenting.InlineComment" />
-    <rule ref="Squiz.Commenting.LongConditionClosingComment" />
-    <rule ref="Squiz.Commenting.PostStatementComment" />
-    <rule ref="Squiz.Commenting.VariableComment" />
-    <rule ref="Squiz.Commenting.ClosingDeclarationComment" />
 
-    <!-- Method arguments with default values MUST go at the end of the argument list. -->
-    <rule ref="PEAR.Functions.ValidDefaultValue" />
-
-    <!-- The closing ?> tag MUST be omitted from files containing only PHP. -->
-    <rule ref="Zend.Files.ClosingTag" />
+    <!-- Disabling conflicting rules -->
+    <rule ref="Generic.Formatting.MultipleStatementAlignment">
+        <exclude name="Generic.Formatting.MultipleStatementAlignment" />
+    </rule>
+    <rule ref="Generic.ControlStructures.DisallowYodaConditions">
+        <exclude name="Generic.ControlStructures.DisallowYodaConditions" />
+    </rule>
+    <rule ref="Squiz.Arrays.ArrayDeclaration.ValueNotAligned">
+        <exclude name="Squiz.Arrays.ArrayDeclaration.ValueNotAligned" />
+    </rule>
+    <rule ref="Squiz.Arrays.ArrayDeclaration.KeyNotAligned">
+        <exclude name="Squiz.Arrays.ArrayDeclaration.KeyNotAligned" />
+    </rule>
 
 </ruleset>

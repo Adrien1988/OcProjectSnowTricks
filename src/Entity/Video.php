@@ -12,11 +12,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: VideoRepository::class)]
 class Video
 {
-
     /**
      * Identifiant unique de la vidéo.
-     *
-     * @var integer|null
      */
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -25,8 +22,6 @@ class Video
 
     /**
      * Code d'intégration de la vidéo (embed code).
-     *
-     * @var string|null
      */
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: "Le code d'intégration de la vidéo est obligatoire.")]
@@ -38,21 +33,16 @@ class Video
 
     /**
      * Date de création de la vidéo.
-     *
-     * @var \DateTimeImmutable|null
      */
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
     /**
      * Figure associée à la vidéo.
-     *
-     * @var Figure|null
      */
     #[ORM\ManyToOne(targetEntity: Figure::class, inversedBy: 'videos', cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: false)]
     private ?Figure $figure = null;
-
 
     /**
      * Initialise une nouvelle instance de la classe Video.
@@ -61,38 +51,28 @@ class Video
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
-
-    }//end __construct()
-
+    }// end __construct()
 
     /**
      * Récupère l'identifiant unique de la vidéo.
-     *
-     * @return int|null
      */
     public function getId(): ?int
     {
         return $this->id;
-
-    }//end getId()
-
+    }// end getId()
 
     /**
      * Récupère le code d'intégration de la vidéo.
-     *
-     * @return string|null
      */
     public function getEmbedCode(): ?string
     {
         return $this->embedCode;
-
-    }//end getEmbedCode()
-
+    }// end getEmbedCode()
 
     /**
      * Définit le code d'intégration de la vidéo.
      *
-     * @param string $embedCode Code d'intégration de la vidéo.
+     * @param string $embedCode code d'intégration de la vidéo
      *
      * @return $this
      */
@@ -101,38 +81,28 @@ class Video
         $this->embedCode = $embedCode;
 
         return $this;
-
-    }//end setEmbedCode()
-
+    }// end setEmbedCode()
 
     /**
      * Récupère la date de création de la vidéo.
-     *
-     * @return \DateTimeImmutable|null
      */
     public function getCreatedAt(): ?\DateTimeImmutable
     {
         return $this->createdAt;
-
-    }//end getCreatedAt()
-
+    }// end getCreatedAt()
 
     /**
      * Récupère la figure associée à la vidéo.
-     *
-     * @return Figure|null
      */
     public function getFigure(): ?Figure
     {
         return $this->figure;
-
-    }//end getFigure()
-
+    }// end getFigure()
 
     /**
      * Définit la figure associée à la vidéo.
      *
-     * @param Figure|null $figure Figure associée.
+     * @param Figure|null $figure figure associée
      *
      * @return $this
      */
@@ -141,21 +111,16 @@ class Video
         $this->figure = $figure;
 
         return $this;
-
-    }//end setFigure()
-
+    }// end setFigure()
 
     /**
      * Convertit l'objet Video en chaîne de caractères.
      * Retourne le code d'intégration ou 'Vidéo' si le code est null.
-     *
-     * @return string
      */
     public function __toString(): string
     {
-        return ($this->embedCode ?? 'Vidéo');
+        return $this->embedCode ?? 'Vidéo';
+    }// end __toString()
 
-    }//end __toString()
 
-
-}//end class
+}// end class

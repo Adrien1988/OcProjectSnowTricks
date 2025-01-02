@@ -12,20 +12,18 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
  */
 class SecurityController extends AbstractController
 {
-
-
     /**
      * Affiche le formulaire de connexion et traite les erreurs d'authentification.
      *
-     * @param AuthenticationUtils $authenticationUtils Outil pour gérer les erreurs d'authentification et le dernier identifiant saisi.
+     * @param AuthenticationUtils $authenticationUtils outil pour gérer les erreurs d'authentification et le dernier identifiant saisi
      *
-     * @return Response La réponse contenant la vue du formulaire de connexion.
+     * @return Response la réponse contenant la vue du formulaire de connexion
      */
     #[Route(path: '/login', name: 'app_login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
         // Récupérer les erreurs d'authentification et le dernier identifiant saisi.
-        $error        = $authenticationUtils->getLastAuthenticationError();
+        $error = $authenticationUtils->getLastAuthenticationError();
         $lastUsername = $authenticationUtils->getLastUsername();
 
         return $this->render(
@@ -36,24 +34,22 @@ class SecurityController extends AbstractController
             ]
         );
 
-    }//end login()
-
+    }// end login()
 
     /**
      * Déconnecte l'utilisateur.
      *
      * Cette méthode est interceptée automatiquement par Symfony et ne sera jamais exécutée.
      *
-     * @return void
+     * @throws \LogicException exception levée si la méthode est appelée directement
      *
-     * @throws \LogicException Exception levée si la méthode est appelée directement.
+     * @return void
      */
     #[Route(path: '/logout', name: 'app_logout')]
     public function logout(): void
     {
         throw new \LogicException('Cette méthode est interceptée par la route app_logout.');
+    }// end logout()
 
-    }//end logout()
 
-
-}//end class
+}// end class

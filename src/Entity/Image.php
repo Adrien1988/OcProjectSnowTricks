@@ -12,11 +12,8 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ORM\Entity(repositoryClass: ImageRepository::class)]
 class Image
 {
-
     /**
      * Identifiant unique de l'image.
-     *
-     * @var integer|null
      */
     #[ORM\Id]
     #[ORM\GeneratedValue]
@@ -25,8 +22,6 @@ class Image
 
     /**
      * URL de l'image.
-     *
-     * @var string|null
      */
     #[ORM\Column(length: 255)]
     #[Assert\NotBlank(message: "L'URL de l'image est obligatoire.")]
@@ -35,8 +30,6 @@ class Image
 
     /**
      * Texte alternatif de l'image.
-     *
-     * @var string|null
      */
     #[ORM\Column(length: 255, nullable: true)]
     #[Assert\Length(
@@ -47,21 +40,16 @@ class Image
 
     /**
      * Date de création de l'image.
-     *
-     * @var \DateTimeImmutable|null
      */
     #[ORM\Column]
     private ?\DateTimeImmutable $createdAt = null;
 
     /**
      * Figure associée à l'image.
-     *
-     * @var Figure|null
      */
     #[ORM\ManyToOne(targetEntity: Figure::class, inversedBy: 'images', cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: false)]
     private ?Figure $figure = null;
-
 
     /**
      * Constructeur de la classe Image.
@@ -70,38 +58,28 @@ class Image
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
-
-    }//end __construct()
-
+    }// end __construct()
 
     /**
      * Récupère l'identifiant unique de l'image.
-     *
-     * @return int|null
      */
     public function getId(): ?int
     {
         return $this->id;
-
-    }//end getId()
-
+    }// end getId()
 
     /**
      * Récupère l'URL de l'image.
-     *
-     * @return string|null
      */
     public function getUrl(): ?string
     {
         return $this->url;
-
-    }//end getUrl()
-
+    }// end getUrl()
 
     /**
      * Définit l'URL de l'image.
      *
-     * @param string $url URL de l'image.
+     * @param string $url URL de l'image
      *
      * @return $this
      */
@@ -110,26 +88,20 @@ class Image
         $this->url = $url;
 
         return $this;
-
-    }//end setUrl()
-
+    }// end setUrl()
 
     /**
      * Récupère le texte alternatif de l'image.
-     *
-     * @return string|null
      */
     public function getAltText(): ?string
     {
         return $this->altText;
-
-    }//end getAltText()
-
+    }// end getAltText()
 
     /**
      * Définit le texte alternatif de l'image.
      *
-     * @param string|null $altText Texte alternatif.
+     * @param string|null $altText texte alternatif
      *
      * @return $this
      */
@@ -138,38 +110,28 @@ class Image
         $this->altText = $altText;
 
         return $this;
-
-    }//end setAltText()
-
+    }// end setAltText()
 
     /**
      * Récupère la date de création de l'image.
-     *
-     * @return \DateTimeImmutable|null
      */
     public function getCreatedAt(): ?\DateTimeImmutable
     {
         return $this->createdAt;
-
-    }//end getCreatedAt()
-
+    }// end getCreatedAt()
 
     /**
      * Récupère la figure associée à l'image.
-     *
-     * @return Figure|null
      */
     public function getFigure(): ?Figure
     {
         return $this->figure;
-
-    }//end getFigure()
-
+    }// end getFigure()
 
     /**
      * Définit la figure associée à l'image.
      *
-     * @param Figure|null $figure Figure associée.
+     * @param Figure|null $figure figure associée
      *
      * @return $this
      */
@@ -178,21 +140,16 @@ class Image
         $this->figure = $figure;
 
         return $this;
-
-    }//end setFigure()
-
+    }// end setFigure()
 
     /**
      * Convertit l'objet Image en chaîne de caractères.
      * Retourne l'URL de l'image ou 'Image' si l'URL est null.
-     *
-     * @return string
      */
     public function __toString(): string
     {
-        return ($this->url ?? 'Image');
+        return $this->url ?? 'Image';
+    }// end __toString()
 
-    }//end __toString()
 
-
-}//end class
+}// end class
