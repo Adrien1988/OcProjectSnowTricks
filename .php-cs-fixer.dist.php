@@ -32,5 +32,6 @@ return (new PhpCsFixer\Config())
         'yoda_style' => false,
         'align_multiline_comment' => true,
         'method_argument_space' => ['on_multiline' => 'ignore'],
+        'no_blank_lines_after_class_opening' => false,
     ])
     ->setFinder($finder);

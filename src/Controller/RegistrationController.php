@@ -19,6 +19,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class RegistrationController extends AbstractController
 {
 
+
     /**
      * Affiche et traite le formulaire d'enregistrement.
      *
@@ -105,6 +106,7 @@ class RegistrationController extends AbstractController
             ]
         );
     }// end register()
+
 
     /**
      * Affiche et traite le formulaire d'activation de compte.
