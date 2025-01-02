@@ -14,9 +14,7 @@ return (new PhpCsFixer\Config())
         ],
         'blank_line_after_namespace' => true,
         'blank_line_after_opening_tag' => true,
-        'class_attributes_separation' => [
-            'elements' => ['method' => 'one'], // Une ligne avant chaque méthode.
-        ],
+        'class_attributes_separation' => false,
         'no_unused_imports' => true,
         'ordered_imports' => ['sort_algorithm' => 'alpha'],
         'phpdoc_no_empty_return' => false,
@@ -27,13 +25,12 @@ return (new PhpCsFixer\Config())
         'no_superfluous_phpdoc_tags' => false,
         'single_quote' => true,
         'no_trailing_whitespace' => true,
-        'no_extra_blank_lines' => [
-            'tokens' => ['break', 'continue', 'throw', 'use'],
-        ],
+        'no_extra_blank_lines' => false,
         'return_type_declaration' => ['space_before' => 'none'],
         'visibility_required' => ['elements' => ['property', 'method', 'const']],
         'no_blank_lines_after_phpdoc' => false,
         'yoda_style' => false,
         'align_multiline_comment' => true,
+        'method_argument_space' => ['on_multiline' => 'ignore'],
     ])
     ->setFinder($finder);

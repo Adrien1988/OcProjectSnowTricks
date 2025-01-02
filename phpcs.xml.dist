@@ -89,9 +89,8 @@
     <rule ref="Squiz.WhiteSpace.ControlStructureSpacing" />
     <rule ref="Squiz.WhiteSpace.FunctionSpacing">
         <properties>
-            <property name="spacing" value="1" />
+            <property name="spacing" value="2" />
             <property name="spacingBeforeFirst" value="1" />
-            <property name="spacingAfterLast" value="2" />
         </properties>
     </rule>
     <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace" />
