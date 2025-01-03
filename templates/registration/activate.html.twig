@@ -1,0 +1,14 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Activation du compte{% endblock %}
+
+{% block body %}
+<h1>Activation du compte</h1>
+<p>Veuillez confirmer votre email et votre mot de passe pour activer votre compte.</p>
+
+{{ form_start(activationForm) }}
+    {{ form_row(activationForm.email) }}
+    {{ form_row(activationForm.password) }}
+    <button type="submit">Activer mon compte</button>
+{{ form_end(activationForm) }}
+{% endblock %}

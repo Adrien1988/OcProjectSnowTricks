@@ -4,7 +4,7 @@ security:
         App\Entity\User: 'auto'
     # https://symfony.com/doc/current/security.html#loading-the-user-the-user-provider
     providers:
-        user_provider:
+        app_user_provider:
             entity:
                 class: App\Entity\User
                 property: email
@@ -14,17 +14,27 @@ security:
             security: false
         main:
             lazy: true
-            provider: user_provider
-            form_login:
-                login_path: app_login
-                check_path: app_login
-                default_target_path: /      # Redirection après succès
-                enable_csrf: true           # Active la protection CSRF
-                username_parameter: email   # Permet d'utiliser 'email' au lieu de 'username'
-                password_parameter: password
+            provider: app_user_provider
+            custom_authenticator: App\Security\UserAuthenticator
+            # form_login:
+            #     login_path: app_login
+            #     check_path: app_login
+            #     default_target_path: /      # Redirection après succès
+            #     enable_csrf: true           # Active la protection CSRF
+            #     username_parameter: email   # Permet d'utiliser 'email' au lieu de 'username'
+            #     password_parameter: password
             logout:
                 path: app_logout
-                target: /
+                # target: /
+            
+
+            remember_me:
+                secret: '%kernel.secret%'
+                lifetime: 604800
+                path: /
+                # by default, the feature is enabled by checking a checkbox in the
+                # login form, uncomment the following line to always enable it.
+                #always_remember_me: true
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
 
@@ -34,7 +44,9 @@ security:
     # Easy way to control access for large sections of your site
     # Note: Only the *first* access control that matches will be used
     access_control:
-        - { path: ^/login$, roles: PUBLIC_ACCESS }
+        - { path: ^/_captcha, roles: PUBLIC_ACCESS }
+        - { path: ^/register, roles: PUBLIC_ACCESS }
+        - { path: ^/login, roles: PUBLIC_ACCESS }
         - { path: ^/, roles: ROLE_USER }
 
 when@test:

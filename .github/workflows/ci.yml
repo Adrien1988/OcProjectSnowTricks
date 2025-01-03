@@ -1,0 +1,69 @@
+name: CI
+
+permissions:
+    contents: write
+
+on: 
+  push:
+    branches:
+      - '**'
+
+  pull_request:
+    branches:
+      - '**'
+
+jobs:
+  php-tests:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1' # Adapt selon la version de PHP utilisée
+
+      - name: Install dependencies
+        run: composer install --no-scripts --no-progress
+
+      - name: Run PHPUnit tests
+        run: vendor/bin/phpunit
+
+  php-code-quality:
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+
+      - name: Install dependencies (for code quality)
+        run: composer install --no-scripts --no-progress
+
+      - name: Run PHP_CodeSniffer
+        run: vendor/bin/phpcs --standard=phpcs.xml.dist src/
+
+      - name: Run PHPCBF
+        run: vendor/bin/phpcbf --standard=phpcs.xml.dist src/
+
+      - name: Run php-cs-fixer
+        run: php vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php --dry-run --diff src/
+
+      - name: Run PHP CS Fixer to Fix Coding Standards
+        run: vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php src/
+
+      - name: Commit PHP_CodeSniffer and PHP CS Fixer Fixes
+        if: github.event_name == 'pull_request' || github.ref != 'refs/heads/main' # Ne pas pousser directement sur main
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git fetch origin "${GITHUB_HEAD_REF:-$(echo ${GITHUB_REF#refs/heads/})}"
+          git rebase origin/"${GITHUB_HEAD_REF:-$(echo ${GITHUB_REF#refs/heads/})}"
+          git add src/
+          git commit -m "Fix coding standards via PHPCBF and PHP CS Fixer" || echo "No changes to commit"
+          git push origin "HEAD:${GITHUB_HEAD_REF:-$(echo ${GITHUB_REF#refs/heads/})}"
+      

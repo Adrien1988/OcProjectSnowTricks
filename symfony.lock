@@ -38,6 +38,21 @@
             "./migrations/.gitignore"
         ]
     },
+    "friendsofphp/php-cs-fixer": {
+        "version": "3.65",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "3.0",
+            "ref": "be2103eb4a20942e28a6dd87736669b757132435"
+        },
+        "files": [
+            "./.php-cs-fixer.dist.php"
+        ]
+    },
+    "gregwar/captcha-bundle": {
+        "version": "v2.3.0"
+    },
     "phpunit/phpunit": {
         "version": "9.6",
         "recipe": {
@@ -50,6 +65,18 @@
             "./.env.test",
             "./phpunit.xml.dist",
             "./tests/bootstrap.php"
+        ]
+    },
+    "squizlabs/php_codesniffer": {
+        "version": "3.11",
+        "recipe": {
+            "repo": "github.com/symfony/recipes-contrib",
+            "branch": "main",
+            "version": "3.6",
+            "ref": "1019e5c08d4821cb9b77f4891f8e9c31ff20ac6f"
+        },
+        "files": [
+            "./phpcs.xml.dist"
         ]
     },
     "symfony/console": {
@@ -205,6 +232,15 @@
             "./config/packages/security.yaml",
             "./config/routes/security.yaml"
         ]
+    },
+    "symfony/sendgrid-mailer": {
+        "version": "6.4",
+        "recipe": {
+            "repo": "github.com/symfony/recipes",
+            "branch": "main",
+            "version": "4.4",
+            "ref": "224aedffb66812dc2b0965dabc14d5f800941da6"
+        }
     },
     "symfony/translation": {
         "version": "6.4",
