@@ -15,6 +15,18 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class RegistrationController extends AbstractController
 {
+
+
+    /**
+     * Handles user registration.
+     *
+     * @param Request                     $request            The current HTTP request
+     * @param UserPasswordHasherInterface $userPasswordHasher The password hasher for encoding user passwords
+     * @param Security                    $security           The security helper for managing user login
+     * @param EntityManagerInterface      $entityManager      The entity manager for persisting user data
+     *
+     * @return Response The HTTP response for the registration form
+     */
     #[Route('/register', name: 'app_register')]
     public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, Security $security, EntityManagerInterface $entityManager): Response
     {
@@ -23,7 +35,10 @@ class RegistrationController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            /** @var string $plainPassword */
+            /*
+             * @var string $plainPassword
+             */
+
             $plainPassword = $form->get('plainPassword')->getData();
 
             // encode the plain password
@@ -37,8 +52,13 @@ class RegistrationController extends AbstractController
             return $security->login($user, UserAuthenticator::class, 'main');
         }
 
-        return $this->render('registration/register.html.twig', [
-            'registrationForm' => $form,
-        ]);
-    }
+        return $this->render(
+            'registration/register.html.twig',
+            [
+                'registrationForm' => $form,
+            ]
+        );
+    }// end register()
+
+
 }
