@@ -89,7 +89,7 @@ class RegistrationController extends AbstractController
                 'registrationForm' => $form->createView(),
             ]
         );
-    } // end register()
+    }// end register()
 
 
     /**
@@ -157,3 +157,4 @@ class RegistrationController extends AbstractController
 
 
 }
+

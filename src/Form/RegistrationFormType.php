@@ -22,10 +22,10 @@ class RegistrationFormType extends AbstractType
 
 
     /**
-     * Builds the registration form.
+     * Construit le formulaire d'inscription.
      *
-     * @param FormBuilderInterface $builder The form builder
-     * @param array                $options The form options
+     * @param FormBuilderInterface $builder instance utilisée pour construire les champs du formulaire
+     * @param array                $options options supplémentaires pour le formulaire
      *
      * @return void
      */
@@ -78,7 +78,6 @@ class RegistrationFormType extends AbstractType
                             ]
                         ),
                     ],
-
                 ]
             )
             ->add(
@@ -128,9 +127,9 @@ class RegistrationFormType extends AbstractType
 
 
     /**
-     * Configures the options for the registration form.
+     * Configure les options par défaut du formulaire.
      *
-     * @param OptionsResolver $resolver The options resolver
+     * @param OptionsResolver $resolver instance pour définir les options
      *
      * @return void
      */
