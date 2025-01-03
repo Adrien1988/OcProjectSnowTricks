@@ -16,17 +16,9 @@ security:
             lazy: true
             provider: app_user_provider
             custom_authenticator: App\Security\UserAuthenticator
-            # form_login:
-            #     login_path: app_login
-            #     check_path: app_login
-            #     default_target_path: /      # Redirection après succès
-            #     enable_csrf: true           # Active la protection CSRF
-            #     username_parameter: email   # Permet d'utiliser 'email' au lieu de 'username'
-            #     password_parameter: password
             logout:
                 path: app_logout
-                # target: /
-            
+                target: /
 
             remember_me:
                 secret: '%kernel.secret%'
