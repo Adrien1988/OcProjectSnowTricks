@@ -56,7 +56,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * Mot de passe haché de l'utilisateur.
      */
     #[ORM\Column(length: 255)]
-    #[Assert\NotBlank(message: 'Le mot de passe est obligatoire.')]
     private ?string $password = null;
 
     /**
