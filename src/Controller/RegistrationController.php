@@ -54,22 +54,25 @@ class RegistrationController extends AbstractController
 
             // Gestion de l'avatar
             $avatarMethod = $form->get('avatarMethod')->getData();
+
             if ('url' === $avatarMethod) {
                 $avatarUrl = $form->get('avatarUrl')->getData();
                 if (null !== $avatarUrl) {
                     $user->setAvatarUrl($avatarUrl);
                 }
-            } elseif ('upload' === $avatarMethod) {
+            }
+
+            if ('upload' === $avatarMethod) {
                 $avatarFile = $form->get('avatarFile')->getData();
-                if (null !== $avatarFile) {
-                    $newFilename = uniqid().'.'.$avatarFile->guessExtension();
-                    $avatarFile->move($this->getParameter('avatars_directory'), $newFilename);
-                    $user->setAvatarUrl('/uploads/avatars/'.$newFilename);
-                } else {
+                if (null === $avatarFile) {
                     $this->addFlash('error', "Vous n'avez pas uploadé d'avatar !");
 
                     return $this->redirectToRoute('app_register');
                 }
+
+                $newFilename = uniqid().'.'.$avatarFile->guessExtension();
+                $avatarFile->move($this->getParameter('avatars_directory'), $newFilename);
+                $user->setAvatarUrl('/uploads/avatars/'.$newFilename);
             }
 
             $entityManager->persist($user);
@@ -157,4 +160,3 @@ class RegistrationController extends AbstractController
 
 
 }
-
