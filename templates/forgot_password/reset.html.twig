@@ -1,0 +1,9 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+<h1>Définir un nouveau mot de passe</h1>
+{{ form_start(form) }}
+{{ form_row(form.plainPassword) }}
+<button type="submit">Réinitialiser</button>
+{{ form_end(form) }}
+{% endblock %}

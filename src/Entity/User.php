@@ -2,14 +2,15 @@
 
 namespace App\Entity;
 
-use App\Repository\UserRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
+use DateTimeImmutable;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\UserRepository;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
-use Symfony\Component\Security\Core\User\UserInterface;
-use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Entité représentant les utilisateurs de l'application.
@@ -88,6 +89,18 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     #[ORM\Column(length: 64, nullable: true)]
     private ?string $activationToken = null;
+
+    /**
+     * Token utilisé pour la réinitialisation du mot de passe.
+     */
+    #[ORM\Column(length: 64, nullable: true)]
+    private ?string $resetToken = null;
+
+    /**
+     * Date d'expiration du token de réinitialisation du mot de passe.
+     */
+    #[ORM\Column(type: 'datetime_immutable', nullable: true)]
+    private ?DateTimeImmutable $resetTokenExpiresAt = null;
 
 
     /**
@@ -203,7 +216,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * Définit l'URL de l'avatar.
      *
-     * @param string|null $avatarUrl L'URL de l'avatar de l'utilisateur. Peut être null si aucun avatar n'est défini.
+     * @param string|null $avatarUrl L'URL de l'avatar de l'utilisateur.
      *
      * @return $this
      */
@@ -229,7 +242,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * Définit si le compte de l'utilisateur est actif.
      *
-     * @param bool $isActive indique si le compte est actif (true) ou inactif (false)
+     * @param bool $isActive indique si le compte est actif ou non
      *
      * @return $this
      */
@@ -255,7 +268,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * Ajoute un commentaire rédigé par l'utilisateur.
      *
-     * @param Comment $comment le commentaire à ajouter à l'utilisateur
+     * @param Comment $comment le commentaire à ajouter
      *
      * @return $this
      */
@@ -273,7 +286,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * Supprime un commentaire rédigé par l'utilisateur.
      *
-     * @param Comment $comment le commentaire à supprimer de l'utilisateur
+     * @param Comment $comment le commentaire à supprimer
      *
      * @return $this
      */
@@ -311,7 +324,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
 
     /**
-     * Récupère l'identifiant pour l'authentification (email dans ce cas).
+     * Récupère l'identifiant pour l'authentification (email).
      *
      * @return string
      */
@@ -335,7 +348,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * Définit le token d'activation.
      *
-     * @param string|null $activationToken le token d'activation à associer à l'utilisateur
+     * @param string|null $activationToken le token d'activation à définir
      *
      * @return $this
      */
@@ -345,6 +358,69 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }// end setActivationToken()
+
+
+    /**
+     * Récupère le token de réinitialisation du mot de passe.
+     *
+     * @return string|null
+     */
+    public function getResetToken(): ?string
+    {
+        return $this->resetToken;
+    }// end getResetToken()
+
+
+    /**
+     * Définit le token de réinitialisation du mot de passe.
+     *
+     * @param string|null $resetToken Le token de réinitialisation
+     *
+     * @return $this
+     */
+    public function setResetToken(?string $resetToken): self
+    {
+        $this->resetToken = $resetToken;
+
+        return $this;
+    }// end setResetToken()
+
+
+    /**
+     * Récupère la date d'expiration du token de réinitialisation.
+     *
+     * @return DateTimeImmutable|null La date d'expiration ou null si elle n'est pas définie
+     */
+    public function getResetTokenExpiresAt(): ?DateTimeImmutable
+    {
+        return $this->resetTokenExpiresAt;
+    }// end getResetTokenExpiresAt()
+
+
+    /**
+     * Définit la date d'expiration du token de réinitialisation.
+     *
+     * @param DateTimeImmutable|null $expiresAt La date d'expiration
+     *
+     * @return $this
+     */
+    public function setResetTokenExpiresAt(?DateTimeImmutable $expiresAt): self
+    {
+        $this->resetTokenExpiresAt = $expiresAt;
+
+        return $this;
+    }// end setResetTokenExpiresAt()
+
+
+    /**
+     * Vérifie si le token de réinitialisation est valide.
+     *
+     * @return bool true si le token est valide, false sinon
+     */
+    public function isResetTokenValid(): bool
+    {
+        return $this->resetToken && $this->resetTokenExpiresAt > new DateTimeImmutable();
+    }// end isResetTokenValid()
 
 
     /**
