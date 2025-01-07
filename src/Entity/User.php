@@ -2,15 +2,14 @@
 
 namespace App\Entity;
 
-use DateTimeImmutable;
-use Doctrine\ORM\Mapping as ORM;
 use App\Repository\UserRepository;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Component\Validator\Constraints as Assert;
-use Symfony\Component\Security\Core\User\UserInterface;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
+use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * Entité représentant les utilisateurs de l'application.
@@ -100,7 +99,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * Date d'expiration du token de réinitialisation du mot de passe.
      */
     #[ORM\Column(type: 'datetime_immutable', nullable: true)]
-    private ?DateTimeImmutable $resetTokenExpiresAt = null;
+    private ?\DateTimeImmutable $resetTokenExpiresAt = null;
 
 
     /**
@@ -216,7 +215,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * Définit l'URL de l'avatar.
      *
-     * @param string|null $avatarUrl L'URL de l'avatar de l'utilisateur.
+     * @param string|null $avatarUrl L'URL de l'avatar de l'utilisateur
      *
      * @return $this
      */
@@ -389,9 +388,9 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * Récupère la date d'expiration du token de réinitialisation.
      *
-     * @return DateTimeImmutable|null La date d'expiration ou null si elle n'est pas définie
+     * @return \DateTimeImmutable|null La date d'expiration ou null si elle n'est pas définie
      */
-    public function getResetTokenExpiresAt(): ?DateTimeImmutable
+    public function getResetTokenExpiresAt(): ?\DateTimeImmutable
     {
         return $this->resetTokenExpiresAt;
     }// end getResetTokenExpiresAt()
@@ -400,11 +399,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     /**
      * Définit la date d'expiration du token de réinitialisation.
      *
-     * @param DateTimeImmutable|null $expiresAt La date d'expiration
+     * @param \DateTimeImmutable|null $expiresAt La date d'expiration
      *
      * @return $this
      */
-    public function setResetTokenExpiresAt(?DateTimeImmutable $expiresAt): self
+    public function setResetTokenExpiresAt(?\DateTimeImmutable $expiresAt): self
     {
         $this->resetTokenExpiresAt = $expiresAt;
 
@@ -419,7 +418,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function isResetTokenValid(): bool
     {
-        return $this->resetToken && $this->resetTokenExpiresAt > new DateTimeImmutable();
+        return $this->resetToken && $this->resetTokenExpiresAt > new \DateTimeImmutable();
     }// end isResetTokenValid()
 
 
