@@ -1,0 +1,33 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des figures{% endblock %}
+
+{% block body %}
+<section class="container my-5">
+    <h1 class="mb-4">Liste des figures</h1>
+    <div class="row">
+        {% for figure in figures %}
+            <div class="col-md-4">
+                <div class="card mb-4 shadow-sm">
+                    {% if figure.imageUrl %}
+                        <img src="{{ figure.imageUrl }}" class="card-img-top" alt="{{ figure.name }}">
+                    {% else %}
+                        <img src="/images/default-figure.jpg" class="card-img-top" alt="Image par défaut">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title">{{ figure.name }}</h5>
+                        <p class="card-text">
+                            {{ figure.description|truncate(100) }}
+                        </p>
+                        <a href="{{ path('app_figure_detail', { id: figure.id }) }}" class="btn btn-primary">Voir les détails</a>
+                        {% if is_granted('ROLE_USER') %}
+                            <a href="{{ path('app_figure_edit', { id: figure.id }) }}" class="btn btn-secondary">Modifier</a>
+                            <a href="{{ path('app_figure_delete', { id: figure.id }) }}" class="btn btn-danger">Supprimer</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}
