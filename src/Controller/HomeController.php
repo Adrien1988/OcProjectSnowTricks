@@ -10,6 +10,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class HomeController extends AbstractController
 {
 
+
     /**
      * Affiche la liste des figures de snowboard.
      *
@@ -21,9 +22,15 @@ class HomeController extends AbstractController
     public function index(FigureRepository $figureRepository): Response
     {
 
-        $figures = $figureRepository->findAll();
-        return $this->render('home/index.html.twig', [
-            'figures' => $figures,
-        ]);
+        $figures = $figureRepository->findAllWithImages();
+
+        return $this->render(
+            'home/index.html.twig',
+            [
+                'figures' => $figures,
+            ]
+        );
     }
+
+
 }
