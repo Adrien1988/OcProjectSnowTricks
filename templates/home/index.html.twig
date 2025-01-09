@@ -1,0 +1,39 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des figures{% endblock %}
+
+{% block body %}
+<section class="container my-5">
+    <h1 class="mb-4 text-center">Figures de Snowboard</h1>
+    <div class="row">
+        {% for figure in figures %}
+            <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
+                <div class="card shadow">
+                    {% if figure.images|length > 0 %}
+                        <img src="{{ asset('uploads/' ~ figure.images[0].url) }}" class="card-img-top" alt="{{ figure.images[0].altText }}">
+                    {% else %}
+                        <img src="{{ asset('/images/default-figure.jpg') }}" class="card-img-top" alt="Image par défaut">
+                    {% endif %}
+                    <div class="card-body">
+                        <h5 class="card-title text-center text-uppercase">{{ figure.name }}</h5>
+                        <p class="card-text text-muted">
+                            {{ figure.description|length > 120 ? figure.description|slice(0, 120) ~ '...' : figure.description }}
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <a href="{{ path('app_figure_detail', { slug: figure.slug }) }}" class="btn btn-primary btn-sm">Voir</a>
+                            {% if is_granted('ROLE_USER') %}
+                                <a href="{{ path('app_figure_edit', { id: figure.id }) }}" class="btn btn-secondary btn-sm">Modifier</a>
+                                <a href="{{ path('app_figure_delete', { id: figure.id }) }}" class="btn btn-danger btn-sm" onclick="return confirm('Voulez-vous vraiment supprimer cette figure ?');">Supprimer</a>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="col-12 text-center">
+                <p class="text-muted">Aucune figure n'est disponible pour le moment. Revenez plus tard !</p>
+            </div>
+        {% endfor %}
+    </div>
+</section>
+{% endblock %}

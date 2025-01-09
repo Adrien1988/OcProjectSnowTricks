@@ -5,6 +5,15 @@
  * This file will be included onto the page via the importmap() Twig function,
  * which should already be in your base.html.twig.
  */
+
+// Import du fichier CSS natif de Bootstrap
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+// Import des composants JavaScript de Bootstrap
+import 'bootstrap';
+
+// Import de vos styles personnalisés si nécessaires
 import './styles/app.css';
 
-console.log('This log comes from assets/app.js - welcome to AssetMapper! 🎉');
+// Exemple de message dans la console pour vérifier que le fichier est bien chargé
+console.log('Bienvenue dans votre fichier assets/app.js - Bootstrap est chargé avec succès ! 🎉');
