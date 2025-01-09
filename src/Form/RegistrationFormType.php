@@ -5,18 +5,18 @@ namespace App\Form;
 use App\Entity\User;
 use Gregwar\CaptchaBundle\Type\CaptchaType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
-use Symfony\Component\Form\Extension\Core\Type\RepeatedType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\IsTrue;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
 
-/**
- * Formulaire d'inscription pour un nouvel utilisateur.
- */
 class RegistrationFormType extends AbstractType
 {
 
@@ -32,23 +32,52 @@ class RegistrationFormType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('username')
             ->add(
-                'email',
-                EmailType::class,
+                'username',
+                null,
                 [
-                    'label' => 'Adresse email',
+                    'label' => 'Nom d\'utilisateur',
+                ]
+            )
+            ->add('email', EmailType::class, ['label' => 'Adresse mail'])
+            ->add(
+                'agreeTerms',
+                CheckboxType::class,
+                [
+                    'mapped'                 => false,
+                    'constraints'            => [
+                        new IsTrue(
+                            [
+                                'message' => 'You should agree to our terms.',
+                            ]
+                        ),
+                    ],
+                    'label' => 'En m\'inscrivant à ce site j\'accepte les termes.',
                 ]
             )
             ->add(
-                'password',
-                RepeatedType::class,
+                'plainPassword',
+                PasswordType::class,
                 [
-                    'type'            => PasswordType::class,
-                    'invalid_message' => 'Les mots de passe doivent correspondre.',
-                    'required'        => true,
-                    'first_options'   => ['label' => 'Mot de passe'],
-                    'second_options'  => ['label' => 'Confirmez le mot de passe'],
+                    // instead of being set onto the object directly,
+                    // this is read and encoded in the controller
+                    'mapped'      => false,
+                    'attr'        => ['autocomplete' => 'new-password'],
+                    'label'       => 'Mot de passe',
+                    'constraints' => [
+                        new NotBlank(
+                            [
+                                'message' => 'Le mot de passe est obligatoire.',
+                            ]
+                        ),
+                        new Length(
+                            [
+                                'min'        => 6,
+                                'minMessage' => 'Le mot de passe doit contenir au moins {{ limit }} caractères.',
+                                'max'        => 4096,
+                            ]
+                        ),
+                    ],
                 ]
             )
             ->add(
@@ -111,7 +140,7 @@ class RegistrationFormType extends AbstractType
                 'data_class' => User::class,
             ]
         );
-    }// end configureOptions()
+    }// end configureOptions
 
 
-}// end class
+}

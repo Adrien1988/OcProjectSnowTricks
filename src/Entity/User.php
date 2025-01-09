@@ -6,6 +6,7 @@ use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -21,6 +22,7 @@ use Symfony\Component\Validator\Constraints as Assert;
         new ORM\UniqueConstraint(name: 'unique_email', columns: ['email']),
     ]
 )]
+#[UniqueEntity(fields: ['email'], message: 'There is already an account with this email')]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     /**
@@ -54,7 +56,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * Mot de passe haché de l'utilisateur.
      */
     #[ORM\Column(length: 255)]
-    #[Assert\NotBlank(message: 'Le mot de passe est obligatoire.')]
     private ?string $password = null;
 
     /**
