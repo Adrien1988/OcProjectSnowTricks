@@ -44,9 +44,7 @@ class Comment
     #[ORM\JoinColumn(nullable: false)]
     private ?User $author = null;
 
-    /**
-     * Figure associée au commentaire.
-     */
+
     #[ORM\ManyToOne(inversedBy: 'comments', cascade: ['persist'])]
     #[ORM\JoinColumn(nullable: false)]
     private ?Figure $figure = null;
@@ -170,7 +168,7 @@ class Comment
         $this->figure = $figure;
 
         return $this;
-    }// end setFigure()
+    }
 
 
 }// end class
