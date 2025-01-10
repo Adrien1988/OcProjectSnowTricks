@@ -47,7 +47,6 @@ class FigureType extends AbstractType
                     ],
                 ]
             )
-            ->add('slug')
             ->add(
                 'figureGroup',
                 TextType::class,
