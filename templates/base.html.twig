@@ -13,13 +13,24 @@
 			<link rel="stylesheet" href="{{ asset('build/app.css') }}">
 		{% endblock %}
 	</head>
-	<body>
-		{% block body %}{% endblock %}
+	<body
+		class="d-flex flex-column min-vh-100">
 
-		{% block javascripts %}
-			<script src="{{ asset('build/runtime.js') }}"></script>
-            <script src="{{ asset('build/vendors.js') }}"></script>
-			<script src="{{ asset('build/app.js') }}"></script>
-		{% endblock %}
-	</body>
-</html>
+		<!-- Navbar -->
+		{% include 'partials/_navbar.html.twig' %}
+
+		<!-- Contenu principal -->
+		<main class="flex-grow-1"> 
+            {% block body %}{% endblock %}
+		</main>
+
+		<!-- Footer -->
+		{% include 'partials/_footer.html.twig' %}
+
+			{% block javascripts %}
+				<script src="{{ asset('build/runtime.js') }}"></script>
+				<script src="{{ asset('build/vendors.js') }}"></script>
+				<script src="{{ asset('build/app.js') }}"></script>
+			{% endblock %}
+		</body>
+	</html>

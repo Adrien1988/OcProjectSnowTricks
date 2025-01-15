@@ -83,7 +83,8 @@ class RegistrationController extends AbstractController
 
             $this->addFlash('success', 'Votre compte a été créé avec succès ! Veuillez vérifier votre email pour l’activer.');
 
-            return $security->login($user, UserAuthenticator::class, 'main');
+            return $this->redirectToRoute('app_login');
+            
         }
 
         return $this->render(
