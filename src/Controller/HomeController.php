@@ -6,19 +6,21 @@ use App\Entity\Figure;
 use App\Form\FigureType;
 use App\Repository\FigureRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
 class HomeController extends AbstractController
 {
 
 
     /**
-     * Affiche la liste des figures de snowboard.
+     * Affiche la liste des figures de snowboard et permet d'en créer une via une modale.
      *
-     * @param FigureRepository $figureRepository Le dépôt des figures
+     * @param FigureRepository       $figureRepository Le dépôt des figures
+     * @param Request                $request          La requête HTTP
+     * @param EntityManagerInterface $entityManager    Gestionnaire d'entités pour persister les données
      *
      * @return Response La réponse HTTP
      */
@@ -28,12 +30,12 @@ class HomeController extends AbstractController
 
         $figures = $figureRepository->findAllWithImages();
 
-         // Création du formulaire pour ajouter une figure
-         $figure = new Figure();
-         $createFigureForm = $this->createForm(FigureType::class, $figure);
-         $createFigureForm->handleRequest($request);
+        // Création du formulaire pour ajouter une figure
+        $figure = new Figure();
+        $createFigureForm = $this->createForm(FigureType::class, $figure);
+        $createFigureForm->handleRequest($request);
 
-          // Gestion de la soumission du formulaire
+        // Gestion de la soumission du formulaire
         if ($createFigureForm->isSubmitted() && $createFigureForm->isValid()) {
             $entityManager->persist($figure);
             $entityManager->flush();
@@ -47,7 +49,7 @@ class HomeController extends AbstractController
         return $this->render(
             'home/index.html.twig',
             [
-                'figures' => $figures,
+                'figures'          => $figures,
                 'createFigureForm' => $createFigureForm->createView(),
             ]
         );
