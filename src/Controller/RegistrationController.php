@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Form\ActivationFormType;
 use App\Form\RegistrationFormType;
-use App\Security\UserAuthenticator;
 use App\Service\MailerService;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -84,7 +83,6 @@ class RegistrationController extends AbstractController
             $this->addFlash('success', 'Votre compte a été créé avec succès ! Veuillez vérifier votre email pour l’activer.');
 
             return $this->redirectToRoute('app_login');
-            
         }
 
         return $this->render(

@@ -43,13 +43,17 @@ class RegistrationFormType extends AbstractType
                     ],
                 ]
             )
-            ->add('email', EmailType::class, [
-                'label' => 'Adresse mail',
-                'attr'  => [
-                    'class'       => 'form-control',
-                    'placeholder' => 'Entrez votre adresse email',
-                ],
-                ])
+            ->add(
+                'email',
+                EmailType::class,
+                [
+                    'label' => 'Adresse mail',
+                    'attr'  => [
+                        'class'       => 'form-control',
+                        'placeholder' => 'Entrez votre adresse email',
+                    ],
+                ]
+            )
             ->add(
                 'agreeTerms',
                 CheckboxType::class,
@@ -76,9 +80,9 @@ class RegistrationFormType extends AbstractType
                     // this is read and encoded in the controller
                     'mapped'      => false,
                     'attr'        => [
-                        'class' => 'form-control',
-                        'placeholder' => 'Entrez votre mot de passe',
-                        'autocomplete' => 'new-password'
+                        'class'        => 'form-control',
+                        'placeholder'  => 'Entrez votre mot de passe',
+                        'autocomplete' => 'new-password',
                     ],
                     'label'       => 'Mot de passe',
                     'constraints' => [
