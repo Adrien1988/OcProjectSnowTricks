@@ -47,7 +47,6 @@ class FigureType extends AbstractType
                     ],
                 ]
             )
-            ->add('slug')
             ->add(
                 'figureGroup',
                 TextType::class,
@@ -57,29 +56,7 @@ class FigureType extends AbstractType
                         'placeholder' => 'Indiquez le groupe de la figure',
                     ],
                 ]
-            )
-            ->add(
-                'images',
-                FileType::class,
-                [
-                    'label'    => 'Images',
-                    'multiple' => true,
-                    'mapped'   => false,
-                    'required' => false,
-                    'attr'     => [
-                        'accept' => 'image/*',
-                    ],
-                ]
-            )
-            ->add(
-                'videos',
-                TextType::class,
-                [
-                    'label'    => 'Videos (URLs ou embeds)',
-                    'required' => false,
-                    'attr'     => ['placeholder' => 'Collez les URLs des videos'],
-                ]
-            );
+                );
     }
 
 
