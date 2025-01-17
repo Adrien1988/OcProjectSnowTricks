@@ -34,7 +34,6 @@ class FigureSlugListener
         $entity = $args->getObject();
 
         if ($entity instanceof Figure) {
-            dump('PrePersist Event Triggered');
             $entity->generateSlug($this->slugger);
         }
     }

@@ -1,0 +1,47 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Créer une nouvelle figure{% endblock %}
+
+{% block body %}
+<section class="container my-5">
+    <h1 class="text-center mb-4">Créer une nouvelle figure</h1>
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-body">
+                    {{ form_start(form, { 'attr': { 'enctype': 'multipart/form-data' } }) }}
+                        <div class="mb-3">
+                            {{ form_label(form.name, 'Nom de la figure', { 'label_attr': { 'class': 'form-label' } }) }}
+                            {{ form_widget(form.name, { 'attr': { 'class': 'form-control', 'placeholder': 'Entrez le nom de la figure' } }) }}
+                            {{ form_errors(form.name) }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form_label(form.description, 'Description', { 'label_attr': { 'class': 'form-label' } }) }}
+                            {{ form_widget(form.description, { 'attr': { 'class': 'form-control', 'placeholder': 'Décrivez la figure' } }) }}
+                            {{ form_errors(form.description) }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form_label(form.figureGroup, 'Groupe de la figure', { 'label_attr': { 'class': 'form-label' } }) }}
+                            {{ form_widget(form.figureGroup, { 'attr': { 'class': 'form-control', 'placeholder': 'Entrez le groupe de la figure' } }) }}
+                            {{ form_errors(form.figureGroup) }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form_label(form.images, 'Images', { 'label_attr': { 'class': 'form-label' } }) }}
+                            {{ form_widget(form.images, { 'attr': { 'class': 'form-control', 'accept': 'image/*' } }) }}
+                            {{ form_errors(form.images) }}
+                        </div>
+                        <div class="mb-3">
+                            {{ form_label(form.videos, 'Vidéos (URLs ou embeds)', { 'label_attr': { 'class': 'form-label' } }) }}
+                            {{ form_widget(form.videos, { 'attr': { 'class': 'form-control', 'placeholder': 'Collez les URLs des vidéos' } }) }}
+                            {{ form_errors(form.videos) }}
+                        </div>
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-primary">Créer la figure</button>
+                        </div>
+                    {{ form_end(form) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

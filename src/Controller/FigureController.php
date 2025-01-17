@@ -45,6 +45,7 @@ class FigureController extends AbstractController
 
         $videoForm = $this->createForm(VideoType::class);
 
+
         return $this->render(
             'figure/detail.html.twig',
             [
