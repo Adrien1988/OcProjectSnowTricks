@@ -224,19 +224,6 @@ class Figure
 
 
     /**
-     * Génère un slug à partir du nom de la figure.
-     *
-     * @param SluggerInterface $slugger service pour créer un slug SEO-friendly
-     *
-     * @return void
-     */
-    public function generateSlug(SluggerInterface $slugger): void
-    {
-        $this->slug = $slugger->slug($this->name)->lower();
-    }
-
-
-    /**
      * Récupère le groupe de la figure.
      *
      * @return string|null

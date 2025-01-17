@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-
 use App\Entity\Figure;
 use App\Form\FigureType;
 use App\Repository\FigureRepository;
