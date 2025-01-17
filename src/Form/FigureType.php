@@ -4,6 +4,7 @@ namespace App\Form;
 
 use App\Entity\Figure;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -54,6 +55,28 @@ class FigureType extends AbstractType
                     'attr'  => [
                         'placeholder' => 'Indiquez le groupe de la figure',
                     ],
+                ]
+            )
+            ->add(
+                'images',
+                FileType::class,
+                [
+                    'label'    => 'Images',
+                    'multiple' => true,
+                    'mapped'   => false,
+                    'required' => false,
+                    'attr'     => [
+                        'accept' => 'image/*',
+                    ],
+                ]
+            )
+            ->add(
+                'videos',
+                TextType::class,
+                [
+                    'label'    => 'Videos (URLs ou embeds)',
+                    'required' => false,
+                    'attr'     => ['placeholder' => 'Collez les URLs des videos'],
                 ]
             );
     }

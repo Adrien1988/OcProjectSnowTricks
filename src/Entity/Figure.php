@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\String\Slugger\SluggerInterface;
 use Symfony\Component\Validator\Constraints as Assert;
 
 /**
@@ -198,6 +199,19 @@ class Figure
 
         return $this;
     }// end setSlug()
+
+
+    /**
+     * Génère un slug à partir du nom de la figure.
+     *
+     * @param SluggerInterface $slugger service pour créer un slug SEO-friendly
+     *
+     * @return void
+     */
+    public function generateSlug(SluggerInterface $slugger): void
+    {
+        $this->slug = $slugger->slug($this->name)->lower();
+    }
 
 
     /**
