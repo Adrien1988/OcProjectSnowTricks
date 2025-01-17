@@ -44,7 +44,6 @@ class FigureController extends AbstractController
         $comments = $figure->getComments()->slice(0, 5);
         $videoForm = $this->createForm(VideoType::class);
 
-
         return $this->render(
             'figure/detail.html.twig',
             [
