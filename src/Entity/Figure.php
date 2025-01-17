@@ -219,7 +219,11 @@ class Figure
      */
     public function generateSlug(SluggerInterface $slugger): void
     {
-        $this->slug = $slugger->slug($this->name)->lower();
+        if($this->name){
+            $this->slug = $slugger->slug($this->name)->lower();
+        } else {
+            throw new \InvalidArgumentException('Le nom de la figure est requis pour générer un slug.');
+        }
     }
 
 

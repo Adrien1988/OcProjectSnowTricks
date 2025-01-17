@@ -2,16 +2,19 @@
 
 namespace App\Controller;
 
+use App\Entity\Video;
+use App\Entity\Figure;
+use App\Form\VideoType;
 use App\Form\FigureType;
 use App\Repository\FigureRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class FigureController extends AbstractController
 {
@@ -40,11 +43,14 @@ class FigureController extends AbstractController
         // Récupère les 5 premiers commentaires
         $comments = $figure->getComments()->slice(0, 5);
 
+        $videoForm = $this->createForm(VideoType::class);
+
         return $this->render(
             'figure/detail.html.twig',
             [
                 'figure'   => $figure,
                 'comments' => $comments,
+                'videoForm' => $videoForm->createView(),
             ]
         );
     }
@@ -138,6 +144,37 @@ class FigureController extends AbstractController
         );
     }
 
+    /**
+     * Ajoute une vidéo à une figure.
+     *
+     * @param Figure $figure L'entité de la figure
+     * @param Request $request La requête HTTP
+     * @param EntityManagerInterface $entityManager Le gestionnaire d'entités
+     * 
+     * @return Response
+     */
+    #[Route('/figure/{id}/add-video', name: 'app_figure_add_video', methods: ['POST'])]
+    public function addVideo(Figure $figure, Request $request, EntityManagerInterface $entityManager): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
+        $video = new Video();
+        $form = $this->createForm(VideoType::class, $video);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $video->setFigure($figure);
+            $entityManager->persist($video);
+            $entityManager->flush();
+
+            $this->addFlash('success', 'La vidéo a été ajoutée avec succès.');
+
+            return $this->redirectToRoute('app_figure_detail', ['slug' => $figure->getSlug()]);
+        }
+
+        $this->addFlash('error', 'Le formulaire de vidéo contient des erreurs.');
+        return $this->redirectToRoute('app_figure_detail', ['slug' => $figure->getSlug()]);
+    }
 
     /**
      * Supprime une figure existante.

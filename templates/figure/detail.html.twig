@@ -54,16 +54,27 @@
     <!-- Section Vidéos -->
     <div class="mt-5">
         <h5 class="text-uppercase">Vidéos</h5>
+
+        {% if is_granted('ROLE_USER') %}
+            <!-- Bouton pour ouvrir la modale d'ajout de vidéo -->
+            <button type="button" class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addVideoModal">
+                Ajouter une vidéo
+            </button>
+        {% endif %}
+
         {% if figure.videos|length > 0 %}
             {% for video in figure.videos %}
                 <div class="ratio ratio-16x9 mb-3">
-                    <iframe src="{{ video.url }}" frameborder="0" allowfullscreen></iframe>
+                    <iframe src="{{ video.embedCode }}" frameborder="0" allowfullscreen></iframe>
                 </div>
             {% endfor %}
         {% else %}
             <p class="text-muted">Aucune vidéo disponible.</p>
         {% endif %}
     </div>
+
+    <!-- Inclure la modale pour le formulaire -->
+    {% include 'figure/_add_video_form.html.twig' with { 'form': videoForm } %}
 
     <hr>
 
