@@ -85,6 +85,14 @@ class Figure
     #[ORM\OneToMany(targetEntity: Video::class, mappedBy: 'figure', orphanRemoval: true, cascade: ['persist'])]
     private Collection $videos;
 
+    /**
+     * Collection des commentaires associés à la figure.
+     *
+     * @var Collection<int, Comment>
+     */
+    #[ORM\OneToMany(targetEntity: Comment::class, mappedBy: 'figure', orphanRemoval: true, cascade: ['persist', 'remove'])]
+    private Collection $comments;
+
 
     /**
      * Constructeur de la classe Figure.
@@ -96,7 +104,8 @@ class Figure
         $this->updatedAt = new \DateTime();
         $this->images = new ArrayCollection();
         $this->videos = new ArrayCollection();
-    }// end __construct()
+        $this->comments = new ArrayCollection();
+    } // end __construct()
 
 
     /**
@@ -109,7 +118,7 @@ class Figure
     public function setUpdatedAtValue(): void
     {
         $this->updatedAt = new \DateTime();
-    }// end setUpdatedAtValue()
+    } // end setUpdatedAtValue()
 
 
     /**
@@ -120,7 +129,7 @@ class Figure
     public function getId(): ?int
     {
         return $this->id;
-    }// end getId()
+    } // end getId()
 
 
     /**
@@ -131,7 +140,7 @@ class Figure
     public function getName(): ?string
     {
         return $this->name;
-    }// end getName()
+    } // end getName()
 
 
     /**
@@ -146,7 +155,7 @@ class Figure
         $this->name = $name;
 
         return $this;
-    }// end setName()
+    } // end setName()
 
 
     /**
@@ -157,7 +166,7 @@ class Figure
     public function getDescription(): ?string
     {
         return $this->description;
-    }// end getDescription()
+    } // end getDescription()
 
 
     /**
@@ -172,7 +181,7 @@ class Figure
         $this->description = $description;
 
         return $this;
-    }// end setDescription()
+    } // end setDescription()
 
 
     /**
@@ -183,7 +192,7 @@ class Figure
     public function getSlug(): ?string
     {
         return $this->slug;
-    }// end getSlug()
+    } // end getSlug()
 
 
     /**
@@ -198,7 +207,7 @@ class Figure
         $this->slug = $slug;
 
         return $this;
-    }// end setSlug()
+    } // end setSlug()
 
 
     /**
@@ -222,7 +231,7 @@ class Figure
     public function getFigureGroup(): ?string
     {
         return $this->figureGroup;
-    }// end getFigureGroup()
+    } // end getFigureGroup()
 
 
     /**
@@ -237,7 +246,7 @@ class Figure
         $this->figureGroup = $figureGroup;
 
         return $this;
-    }// end setFigureGroup()
+    } // end setFigureGroup()
 
 
     /**
@@ -248,7 +257,7 @@ class Figure
     public function getCreatedAt(): ?\DateTimeImmutable
     {
         return $this->createdAt;
-    }// end getCreatedAt()
+    } // end getCreatedAt()
 
 
     /**
@@ -259,7 +268,7 @@ class Figure
     public function getUpdatedAt(): ?\DateTime
     {
         return $this->updatedAt;
-    }// end getUpdatedAt()
+    } // end getUpdatedAt()
 
 
     /**
@@ -270,7 +279,7 @@ class Figure
     public function getImages(): Collection
     {
         return $this->images;
-    }// end getImages()
+    } // end getImages()
 
 
     /**
@@ -288,7 +297,7 @@ class Figure
         }
 
         return $this;
-    }// end addImage()
+    } // end addImage()
 
 
     /**
@@ -307,7 +316,7 @@ class Figure
         }
 
         return $this;
-    }// end removeImage()
+    } // end removeImage()
 
 
     /**
@@ -318,7 +327,7 @@ class Figure
     public function getVideos(): Collection
     {
         return $this->videos;
-    }// end getVideos()
+    } // end getVideos()
 
 
     /**
@@ -336,7 +345,7 @@ class Figure
         }
 
         return $this;
-    }// end addVideo()
+    } // end addVideo()
 
 
     /**
@@ -355,7 +364,7 @@ class Figure
         }
 
         return $this;
-    }// end removeVideo()
+    } // end removeVideo()
 
 
     /**
@@ -367,6 +376,55 @@ class Figure
     {
         return (string) $this->name;
     }// end __toString()
+
+
+    /**
+     * Récupère les commentaires associés à la figure.
+     *
+     * @return Collection<int, Comment>
+     */
+    public function getComments(): Collection
+    {
+        return $this->comments;
+    }
+
+
+    /**
+     * Ajoute un commentaire à la figure.
+     *
+     * @param Comment $comment commentaire à ajouter
+     *
+     * @return $this
+     */
+    public function addComment(Comment $comment): static
+    {
+        if (!$this->comments->contains($comment)) {
+            $this->comments[] = $comment;
+            $comment->setFigure($this);
+        }
+
+        return $this;
+    }
+
+
+    /**
+     * Supprime un commentaire de la figure.
+     *
+     * @param Comment $comment commentaire à supprimer
+     *
+     * @return $this
+     */
+    public function removeComment(Comment $comment): self
+    {
+        if ($this->comments->removeElement($comment)) {
+            // Déconnecte le commentaire de la figure
+            if ($comment->getFigure() === $this) {
+                $comment->setFigure(null);
+            }
+        }
+
+        return $this;
+    }
 
 
 }// end class

@@ -7,6 +7,7 @@ use App\Form\FigureType;
 use App\Repository\FigureRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -15,6 +16,76 @@ use Symfony\Component\Routing\Attribute\Route;
 
 class FigureController extends AbstractController
 {
+
+
+    /**
+     * Affiche la page de détails d'une figure.
+     *
+     * Cette méthode récupère une figure via son slug et affiche son nom, sa description,
+     * son groupe, ses images et ses vidéos, ainsi que l'espace de discussion.
+     *
+     * @param string           $slug             slug de la figure
+     * @param FigureRepository $figureRepository repository pour accéder aux figures
+     *
+     * @return Response la réponse HTTP avec le rendu de la page
+     */
+    #[Route('/figure/{slug}', name: 'app_figure_detail', methods: ['GET'])]
+    public function detail(string $slug, FigureRepository $figureRepository): Response
+    {
+        $figure = $figureRepository->findOneBy(['slug' => $slug]);
+
+        if (!$figure) {
+            throw $this->createNotFoundException('La figure demandée n\'existe pas.');
+        }
+
+        // Récupère les 5 premiers commentaires
+        $comments = $figure->getComments()->slice(0, 5);
+
+        return $this->render(
+            'figure/detail.html.twig',
+            [
+                'figure'   => $figure,
+                'comments' => $comments,
+            ]
+        );
+    }
+
+
+    /**
+     * Charge plus de commentaires via AJAX.
+     *
+     * @param string           $slug             slug de la figure
+     * @param FigureRepository $figureRepository repository pour accéder aux figures
+     *
+     * @return JsonResponse les commentaires supplémentaires
+     */
+    #[Route('/figure/{slug}/comments', name: 'app_figure_load_comments', methods: ['GET'])]
+    public function loadComments(string $slug, FigureRepository $figureRepository): JsonResponse
+    {
+        $figure = $figureRepository->findOneBy(['slug' => $slug]);
+
+        if (!$figure) {
+            return new JsonResponse(['error' => 'Figure introuvable'], 404);
+        }
+
+        // Retourne tous les commentaires sous forme de JSON
+        $comments = $figure->getComments();
+
+        return new JsonResponse(
+            [
+                'comments' => array_map(
+                    function ($comment) {
+                        return [
+                            'author'    => $comment->getAuthor()->getUsername(),
+                            'createdAt' => $comment->getCreatedAt()->format('d/m/Y H:i'),
+                            'content'   => $comment->getContent(),
+                        ];
+                    },
+                    $comments->toArray()
+                ),
+            ]
+        );
+    }
 
 
     /**
