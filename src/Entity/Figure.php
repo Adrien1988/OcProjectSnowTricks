@@ -105,7 +105,6 @@ class Figure
         $this->images = new ArrayCollection();
         $this->videos = new ArrayCollection();
         $this->comments = new ArrayCollection();
-
     } // end __construct()
 
 
