@@ -16,6 +16,7 @@ use Symfony\Component\Routing\Attribute\Route;
 class FigureController extends AbstractController
 {
 
+
     /**
      * Crée une nouvelle figure.
      *
@@ -65,6 +66,7 @@ class FigureController extends AbstractController
             ]
         );
     }
+
 
     /**
      * Modifie une figure existante.
@@ -166,5 +168,5 @@ class FigureController extends AbstractController
         return $this->redirectToRoute('home');
     }
 
- 
+
 }
