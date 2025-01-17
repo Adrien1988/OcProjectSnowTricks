@@ -7,17 +7,16 @@ use App\Form\FigureType;
 use App\Repository\FigureRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Component\Routing\Attribute\Route;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-
 
 class FigureController extends AbstractController
 {
-  
+
+
     /**
      * Crée une nouvelle figure.
      *
@@ -67,6 +66,7 @@ class FigureController extends AbstractController
             ]
         );
     }
+
 
     /**
      * Modifie une figure existante.
@@ -118,4 +118,55 @@ class FigureController extends AbstractController
             ]
         );
     }
+
+
+    /**
+     * Supprime une figure existante.
+     *
+     * Cette méthode permet de supprimer une figure de la base de données après
+     * une confirmation et une validation CSRF.
+     *
+     * @param int                    $id               identifiant de la figure à supprimer
+     * @param EntityManagerInterface $entityManager    gestionnaire d'entités pour la suppression
+     * @param FigureRepository       $figureRepository repository pour accéder aux figures
+     * @param Request                $request          requête HTTP contenant le token CSRF
+     *
+     * @return RedirectResponse redirige vers la liste des figures avec un message
+     */
+    #[Route('/figure/delete/{id}', name: 'app_figure_delete', methods: ['POST'])]
+    public function delete(
+        int $id,
+        EntityManagerInterface $entityManager,
+        FigureRepository $figureRepository,
+        Request $request,
+    ): RedirectResponse {
+
+        // Vérifie que l'utilisateur est authentifié
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
+        // Récupère la figure ou renvoie une erreur 404 si elle n'existe pas
+        $figure = $figureRepository->find($id);
+        if (!$figure) {
+            $this->addFlash('danger', 'La figure demandée n\'existe pas.');
+
+            return $this->redirectToRoute('home');
+        }
+
+        // Vérifie le token CSRF
+        if (!$this->isCsrfTokenValid('delete_figure_'.$figure->getId(), $request->request->get('_token'))) {
+            $this->addFlash('danger', 'Token CSRF invalide.');
+
+            return $this->redirectToRoute('home');
+        }
+
+        // Supprime la figure
+        $entityManager->remove($figure);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'La figure a été supprimée avec succès.');
+
+        return $this->redirectToRoute('home');
+    }
+
+
 }
