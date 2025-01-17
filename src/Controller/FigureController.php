@@ -42,7 +42,6 @@ class FigureController extends AbstractController
 
         // Récupère les 5 premiers commentaires
         $comments = $figure->getComments()->slice(0, 5);
-
         $videoForm = $this->createForm(VideoType::class);
 
         return $this->render(
