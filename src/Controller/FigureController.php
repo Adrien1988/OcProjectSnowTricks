@@ -89,51 +89,70 @@ class FigureController extends AbstractController
 
 
     /**
-     * Crée une nouvelle figure.
+     * Affiche la page de détails d'une figure.
      *
-     * Vérifie que l'utilisateur est authentifié et enregistre la figure en base.
+     * Cette méthode récupère une figure via son slug et affiche son nom, sa description,
+     * son groupe, ses images et ses vidéos, ainsi que l'espace de discussion.
      *
-     * @param Request                $request          requête HTTP
-     * @param EntityManagerInterface $entityManager    gestionnaire d'entités
-     * @param FigureRepository       $figureRepository repository des figures
+     * @param string           $slug             slug de la figure
+     * @param FigureRepository $figureRepository repository pour accéder aux figures
      *
-     * @return Response
+     * @return Response la réponse HTTP avec le rendu de la page
      */
-    #[Route('/figure/new', name: 'app_figure_new')]
-    public function new(Request $request, EntityManagerInterface $entityManager, FigureRepository $figureRepository): Response
+    #[Route('/figure/{slug}', name: 'app_figure_detail', methods: ['GET'])]
+    public function detail(string $slug, FigureRepository $figureRepository): Response
     {
-        $this->denyAccessUnlessGranted('ROLE_USER');
+        $figure = $figureRepository->findOneBy(['slug' => $slug]);
 
-        $figure = new Figure();
-        $form = $this->createForm(FigureType::class, $figure);
-
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            if ($figureRepository->findOneBy(['name' => $figure->getName()])) {
-                $this->addFlash('danger', 'Une figure avec ce nom existe déjà.');
-
-                return $this->render(
-                    'figure/new.html.twig',
-                    [
-                        'form' => $form->createView(),
-                    ]
-                );
-            }
-
-            // Persiste et enregistre la figure
-            $entityManager->persist($figure);
-            $entityManager->flush();
-
-            $this->addFlash('success', 'La figure a été créée avec succès.');
-
-            return $this->redirectToRoute('app_home');
+        if (!$figure) {
+            throw $this->createNotFoundException('La figure demandée n\'existe pas.');
         }
 
+        // Récupère les 5 premiers commentaires
+        $comments = $figure->getComments()->slice(0, 5);
+
         return $this->render(
-            'figure/new.html.twig',
+            'figure/detail.html.twig',
             [
-                'form' => $form->createView(),
+                'figure'   => $figure,
+                'comments' => $comments,
+            ]
+        );
+    }
+
+
+    /**
+     * Charge plus de commentaires via AJAX.
+     *
+     * @param string           $slug             slug de la figure
+     * @param FigureRepository $figureRepository repository pour accéder aux figures
+     *
+     * @return JsonResponse les commentaires supplémentaires
+     */
+    #[Route('/figure/{slug}/comments', name: 'app_figure_load_comments', methods: ['GET'])]
+    public function loadComments(string $slug, FigureRepository $figureRepository): JsonResponse
+    {
+        $figure = $figureRepository->findOneBy(['slug' => $slug]);
+
+        if (!$figure) {
+            return new JsonResponse(['error' => 'Figure introuvable'], 404);
+        }
+
+        // Retourne tous les commentaires sous forme de JSON
+        $comments = $figure->getComments();
+
+        return new JsonResponse(
+            [
+                'comments' => array_map(
+                    function ($comment) {
+                        return [
+                            'author'    => $comment->getAuthor()->getUsername(),
+                            'createdAt' => $comment->getCreatedAt()->format('d/m/Y H:i'),
+                            'content'   => $comment->getContent(),
+                        ];
+                    },
+                    $comments->toArray()
+                ),
             ]
         );
     }

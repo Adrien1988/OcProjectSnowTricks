@@ -37,9 +37,23 @@ class RegistrationFormType extends AbstractType
                 null,
                 [
                     'label' => 'Nom d\'utilisateur',
+                    'attr'  => [
+                        'class'       => 'form-control',
+                        'placeholder' => 'Entrez votre nom d\'utilisateur',
+                    ],
                 ]
             )
-            ->add('email', EmailType::class, ['label' => 'Adresse mail'])
+            ->add(
+                'email',
+                EmailType::class,
+                [
+                    'label' => 'Adresse mail',
+                    'attr'  => [
+                        'class'       => 'form-control',
+                        'placeholder' => 'Entrez votre adresse email',
+                    ],
+                ]
+            )
             ->add(
                 'agreeTerms',
                 CheckboxType::class,
@@ -48,11 +62,14 @@ class RegistrationFormType extends AbstractType
                     'constraints'            => [
                         new IsTrue(
                             [
-                                'message' => 'You should agree to our terms.',
+                                'message' => 'Vous devez accepter nos termes.',
                             ]
                         ),
                     ],
                     'label' => 'En m\'inscrivant à ce site j\'accepte les termes.',
+                    'attr'  => [
+                        'class' => 'form-check-input',
+                    ],
                 ]
             )
             ->add(
@@ -62,7 +79,11 @@ class RegistrationFormType extends AbstractType
                     // instead of being set onto the object directly,
                     // this is read and encoded in the controller
                     'mapped'      => false,
-                    'attr'        => ['autocomplete' => 'new-password'],
+                    'attr'        => [
+                        'class'        => 'form-control',
+                        'placeholder'  => 'Entrez votre mot de passe',
+                        'autocomplete' => 'new-password',
+                    ],
                     'label'       => 'Mot de passe',
                     'constraints' => [
                         new NotBlank(
@@ -93,6 +114,9 @@ class RegistrationFormType extends AbstractType
                     'multiple' => false,
                     'mapped'   => false,
                     'label'    => 'Comment fournir votre avatar ?',
+                    'attr'     => [
+                        'class' => 'form-control',
+                    ],
                 ]
             )
             ->add(
@@ -102,6 +126,10 @@ class RegistrationFormType extends AbstractType
                     'label'    => 'URL de votre avatar',
                     'required' => false,
                     'mapped'   => false,
+                    'attr'     => [
+                        'class'       => 'form-control',
+                        'placeholder' => 'Entrez l\'URL de votre avatar',
+                    ],
                 ]
             )
             ->add(
@@ -111,6 +139,9 @@ class RegistrationFormType extends AbstractType
                     'required' => false,
                     'label'    => 'Fichier avatar',
                     'mapped'   => false,
+                    'attr'     => [
+                        'class' => 'form-control',
+                    ],
                 ]
             )
             ->add(
@@ -121,6 +152,9 @@ class RegistrationFormType extends AbstractType
                     'reload'          => true,
                     'as_url'          => true,
                     'invalid_message' => 'Le code est invalide.',
+                    'attr'            => [
+                        'class' => 'form-control',
+                    ],
                 ]
             );
     }// end buildForm()
