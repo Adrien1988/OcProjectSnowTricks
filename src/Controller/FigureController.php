@@ -138,7 +138,6 @@ class FigureController extends AbstractController
         );
     }
 
-
     /**
      * Modifie une figure existante.
      *
