@@ -39,6 +39,11 @@ Encore
     // Activer PostCSS pour le traitement des fichiers CSS
     .enablePostCssLoader()
 
+    .copyFiles({
+        from: './assets/images',
+        to: 'images/[path][name].[ext]',
+    });
+
     // Support de SCSS (si nécessaire à l'avenir)
     //.enableSassLoader();
 ;

@@ -2,19 +2,19 @@
 
 namespace App\Controller;
 
-use App\Entity\Video;
 use App\Entity\Figure;
-use App\Form\VideoType;
+use App\Entity\Video;
 use App\Form\FigureType;
+use App\Form\VideoType;
 use App\Repository\FigureRepository;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\Routing\Attribute\Route;
 
 class FigureController extends AbstractController
 {
@@ -48,8 +48,8 @@ class FigureController extends AbstractController
         return $this->render(
             'figure/detail.html.twig',
             [
-                'figure'   => $figure,
-                'comments' => $comments,
+                'figure'    => $figure,
+                'comments'  => $comments,
                 'videoForm' => $videoForm->createView(),
             ]
         );
@@ -144,13 +144,14 @@ class FigureController extends AbstractController
         );
     }
 
+
     /**
      * Ajoute une vidéo à une figure.
      *
-     * @param Figure $figure L'entité de la figure
-     * @param Request $request La requête HTTP
+     * @param Figure                 $figure        L'entité de la figure
+     * @param Request                $request       La requête HTTP
      * @param EntityManagerInterface $entityManager Le gestionnaire d'entités
-     * 
+     *
      * @return Response
      */
     #[Route('/figure/{id}/add-video', name: 'app_figure_add_video', methods: ['POST'])]
@@ -173,8 +174,10 @@ class FigureController extends AbstractController
         }
 
         $this->addFlash('error', 'Le formulaire de vidéo contient des erreurs.');
+
         return $this->redirectToRoute('app_figure_detail', ['slug' => $figure->getSlug()]);
     }
+
 
     /**
      * Supprime une figure existante.

@@ -47,7 +47,7 @@ class Figure
      * Slug unique de la figure.
      */
     #[ORM\Column(length: 255, unique: true)]
-    #[Assert\NotBlank(message: 'Le slug est obligatoire.')]
+    // #[Assert\NotBlank(message: 'Le slug est obligatoire.')]
     private ?string $slug = null;
 
     /**
@@ -105,6 +105,7 @@ class Figure
         $this->images = new ArrayCollection();
         $this->videos = new ArrayCollection();
         $this->comments = new ArrayCollection();
+
     } // end __construct()
 
 
@@ -219,10 +220,8 @@ class Figure
      */
     public function generateSlug(SluggerInterface $slugger): void
     {
-        if($this->name){
+        if ($this->name) {
             $this->slug = $slugger->slug($this->name)->lower();
-        } else {
-            throw new \InvalidArgumentException('Le nom de la figure est requis pour générer un slug.');
         }
     }
 

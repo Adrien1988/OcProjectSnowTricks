@@ -7,6 +7,7 @@
         "autoprefixer": "^10.4.20",
         "bootstrap": "^5.3.3",
         "core-js": "^3.38.0",
+        "file-loader": "^6.0.0",
         "postcss-loader": "^8.1.1",
         "regenerator-runtime": "^0.13.9",
         "webpack": "^5.74.0",

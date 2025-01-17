@@ -1,113 +1,134 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ figure.name }} - Détails{% endblock %}
+{% block title %}
+	{{ figure.name }}
+	- Détails
+{% endblock %}
 
 {% block body %}
-<section class="container my-5">
-    <!-- Image principale avec superposition du nom et les boutons Modifier/Supprimer -->
-    <div class="position-relative">
-        {% if figure.images|length > 0 %}
-            <img src="{{ asset('uploads/' ~ figure.images[0].url) }}" class="img-fluid w-100" alt="{{ figure.images[0].altText }}">
-        {% else %}
-            <img src="{{ asset('/images/default-figure.jpg') }}" class="img-fluid w-100" alt="Image par défaut">
-        {% endif %}
+	<section
+		class="container my-5">
+		<!-- Image principale avec superposition du nom et les boutons Modifier/Supprimer -->
+		<div class="position-relative">
+			{% if figure.images|length > 0 %}
+				<img src="{{ asset('uploads/' ~ figure.images[0].url) }}" class="img-fluid w-100" alt="{{ figure.images[0].altText }}">
+			{% else %}
+				<img src="{{ asset('/images/default-figure.jpg') }}" class="img-fluid w-100" alt="Image par défaut">
+			{% endif %}
 
-        <!-- Superposition du nom de la figure -->
-        <div class="position-absolute bottom-0 start-0 p-3 bg-dark text-white bg-opacity-75 w-100">
-            <h1 class="text-uppercase">{{ figure.name }}</h1>
-        </div>
+			<!-- Superposition du nom de la figure -->
+			<div class="position-absolute bottom-0 start-0 p-3 bg-dark text-white bg-opacity-75 w-100">
+				<h1 class="text-uppercase">{{ figure.name }}</h1>
+			</div>
 
-        <!-- Boutons Modifier et Supprimer pour l'image principale -->
-        {% if is_granted('ROLE_USER') %}
-            <div class="position-absolute top-0 end-0 p-3">
-                <button type="button" class="btn btn-secondary btn-sm me-2">Modifier</button>
-                <button type="button" class="btn btn-danger btn-sm">Supprimer</button>
-            </div>
-        {% endif %}
-    </div>
+			<!-- Boutons Modifier et Supprimer pour l'image principale -->
+			{% if is_granted('ROLE_USER') %}
+				<div class="position-absolute top-0 end-0 p-3">
+					<button type="button" class="btn btn-secondary btn-sm me-2">Modifier</button>
+					<button type="button" class="btn btn-danger btn-sm">Supprimer</button>
+				</div>
+			{% endif %}
+		</div>
 
-    <!-- Section Description -->
-    <div class="mt-4">
-        <h5 class="text-uppercase">Description</h5>
-        <p>{{ figure.description }}</p>
+		<!-- Section Description -->
+		<div class="mt-4">
+			<h5 class="text-uppercase">Description</h5>
+			<p>{{ figure.description }}</p>
 
-        <h5 class="text-uppercase">Groupe</h5>
-        <p>{{ figure.figureGroup }}</p>
-    </div>
+			<h5 class="text-uppercase">Groupe</h5>
+			<p>{{ figure.figureGroup }}</p>
+		</div>
 
-    <!-- Section Photos supplémentaires -->
-    <div class="mt-5">
-        <h5 class="text-uppercase">Photos</h5>
-        {% if figure.images|length > 1 %}
-            <div class="row">
-                {% for image in figure.images|slice(1, null) %}
-                    <div class="col-md-4 mb-3">
-                        <img src="{{ asset('uploads/' ~ image.url) }}" class="img-fluid" alt="{{ image.altText }}">
-                    </div>
-                {% endfor %}
-            </div>
-        {% else %}
-            <p class="text-muted">Aucune photo supplémentaire disponible.</p>
-        {% endif %}
-    </div>
+		<!-- Section Photos supplémentaires -->
+		<div class="mt-5">
+			<h5 class="text-uppercase">Photos</h5>
+			{% if figure.images|length > 1 %}
+				<div class="row">
+					{% for image in figure.images|slice(1, null) %}
+						<div class="col-md-4 mb-3">
+							<img src="{{ asset('uploads/' ~ image.url) }}" class="img-fluid" alt="{{ image.altText }}">
+						</div>
+					{% endfor %}
+				</div>
+			{% else %}
+				<p class="text-muted">Aucune photo supplémentaire disponible.</p>
+			{% endif %}
+		</div>
 
-    <!-- Section Vidéos -->
-    <div class="mt-5">
-        <h5 class="text-uppercase">Vidéos</h5>
+		<!-- Section Vidéos -->
+		<div class="mt-5">
+			<h5 class="text-uppercase">Videos</h5>
 
-        {% if is_granted('ROLE_USER') %}
-            <!-- Bouton pour ouvrir la modale d'ajout de vidéo -->
-            <button type="button" class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addVideoModal">
-                Ajouter une vidéo
-            </button>
-        {% endif %}
+			{% if is_granted('ROLE_USER') %}
+				<!-- Bouton pour ouvrir la modale d'ajout de vidéo -->
+				<button type="button" class="btn btn-success mb-3" data-bs-toggle="modal" data-bs-target="#addVideoModal">
+					Add a Video
+				</button>
+			{% endif %}
 
-        {% if figure.videos|length > 0 %}
-            {% for video in figure.videos %}
-                <div class="ratio ratio-16x9 mb-3">
-                    <iframe src="{{ video.embedCode }}" frameborder="0" allowfullscreen></iframe>
-                </div>
-            {% endfor %}
-        {% else %}
-            <p class="text-muted">Aucune vidéo disponible.</p>
-        {% endif %}
-    </div>
+			{% if figure.videos|length > 0 %}
+				{% for video in figure.videos %}
+					<div class="ratio ratio-16x9 mb-3">
+						<iframe src="{{ video.embedCode }}" frameborder="0" allowfullscreen></iframe>
+					</div>
+				{% endfor %}
+			{% else %}
+				<p class="text-muted">No videos available.</p>
+			{% endif %}
+		</div>
 
-    <!-- Inclure la modale pour le formulaire -->
-    {% include 'figure/_add_video_form.html.twig' with { 'form': videoForm } %}
+		<!-- Modal pour ajouter une vidéo -->
+		<div class="modal fade" id="addVideoModal" tabindex="-1" aria-labelledby="addVideoModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="addVideoModalLabel">Add a Video</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						{{ form_start(videoForm, { 'action': path('app_figure_add_video', { id: figure.id }), 'method': 'POST' }) }}
+						{{ form_widget(videoForm) }}
+						<div class="d-grid mt-3">
+							<button type="submit" class="btn btn-primary">Add</button>
+						</div>
+						{{ form_end(videoForm) }}
+					</div>
+				</div>
+			</div>
+		</div>
 
-    <hr>
+		<hr>
 
-    <!-- Section Commentaires -->
-    <div class="comments-section mt-4">
-        <h4>Espace de discussion</h4>
-        <div id="comments-container">
-            {% for comment in comments %}
-                <div class="comment mb-3 p-3 border rounded">
-                    <h6 class="fw-bold">{{ comment.author }}</h6>
-                    <p class="text-muted">{{ comment.createdAt|date('d/m/Y H:i') }}</p>
-                    <p>{{ comment.content }}</p>
-                </div>
-            {% endfor %}
-        </div>
+		<!-- Section Commentaires -->
+		<div class="comments-section mt-4">
+			<h4>Espace de discussion</h4>
+			<div id="comments-container">
+				{% for comment in comments %}
+					<div class="comment mb-3 p-3 border rounded">
+						<h6 class="fw-bold">{{ comment.author }}</h6>
+						<p class="text-muted">{{ comment.createdAt|date('d/m/Y H:i') }}</p>
+						<p>{{ comment.content }}</p>
+					</div>
+				{% endfor %}
+			</div>
 
-        {% if figure.comments|length > 5 %}
-            <div class="text-center mt-4">
-                <button id="load-more-btn" class="btn btn-secondary" data-url="{{ path('app_figure_load_comments', { slug: figure.slug }) }}">
-                    Charger plus de commentaires
-                </button>
-            </div>
-        {% endif %}
+			{% if figure.comments|length > 5 %}
+				<div class="text-center mt-4">
+					<button id="load-more-btn" class="btn btn-secondary" data-url="{{ path('app_figure_load_comments', { slug: figure.slug }) }}">
+						Charger plus de commentaires
+					</button>
+				</div>
+			{% endif %}
 
-        {% if is_granted('ROLE_USER') %}
-            <h5 class="mt-4">Ajouter un commentaire</h5>
-            {{ form_start(commentForm) }}
-                {{ form_row(commentForm.content, { 'attr': { 'class': 'form-control', 'placeholder': 'Votre commentaire...' } }) }}
-                <button type="submit" class="btn btn-primary mt-3">Envoyer</button>
-            {{ form_end(commentForm) }}
-        {% else %}
-            <p class="text-muted">Connectez-vous pour ajouter un commentaire.</p>
-        {% endif %}
-    </div>
-</section>
+			{% if is_granted('ROLE_USER') %}
+				<h5 class="mt-4">Ajouter un commentaire</h5>
+				{{ form_start(commentForm) }}
+				{{ form_row(commentForm.content, { 'attr': { 'class': 'form-control', 'placeholder': 'Votre commentaire...' } }) }}
+				<button type="submit" class="btn btn-primary mt-3">Envoyer</button>
+				{{ form_end(commentForm) }}
+			{% else %}
+				<p class="text-muted">Connectez-vous pour ajouter un commentaire.</p>
+			{% endif %}
+		</div>
+	</section>
 {% endblock %}
