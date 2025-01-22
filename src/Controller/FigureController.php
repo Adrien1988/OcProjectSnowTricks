@@ -209,45 +209,46 @@ class FigureController extends AbstractController
         $form = $this->createForm(ImageType::class, $image);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $uploadedFile = $form->get('file')->getData();
-
-            if ($uploadedFile) {
-                // Gère l'upload du fichier
-                $newFilename = uniqid().'.'.$uploadedFile->guessExtension();
-
-                try {
-                    // Déplacement du fichier uploadé dans le répertoire configuré
-                    $uploadedFile->move(
-                        $this->getParameter('uploads_directory'),
-                        $newFilename
-                    );
-
-                    // Mise à jour des propriétés de l'entité Image
-                    $image->setUrl('/uploads/'.$newFilename);
-                    $image->setFigure($figure);
-
-                    // Persistance de l'entité dans la base de données
-                    $entityManager->persist($image);
-                    $entityManager->flush();
-
-                    // Message de confirmation
-                    $this->addFlash('success', 'L\'image a été ajoutée avec succès.');
-
-                    // Redirection vers la page de détail de la figure
-                    return $this->redirectToRoute('app_figure_detail', ['slug' => $figure->getSlug()]);
-                } catch (FileException $e) {
-                    // Gestion des erreurs lors de l'upload
-                    $this->addFlash('error', 'Erreur lors de l\'upload de l\'image.');
-                }
-            } else {
-                // Message d'erreur si le formulaire est invalide ou si aucun fichier n'est uploadé
-                $this->addFlash('error', 'Aucun fichier sélectionné.');
-            }
-        } else {
+        // Vérifie si le formulaire a été soumis et est valide
+        if (!$form->isSubmitted() || !$form->isValid()) {
             $this->addFlash('error', 'Le formulaire contient des erreurs.');
+
+            return $this->redirectToRoute('app_figure_detail', ['slug' => $figure->getSlug()]);
         }
 
+        // Récupération du fichier uploadé
+        $uploadedFile = $form->get('file')->getData();
+        if (!$uploadedFile) {
+            $this->addFlash('error', 'Aucun fichier sélectionné.');
+
+            return $this->redirectToRoute('app_figure_detail', ['slug' => $figure->getSlug()]);
+        }
+
+        // Gestion de l'upload du fichier
+        $newFilename = uniqid().'.'.$uploadedFile->guessExtension();
+        try {
+            $uploadedFile->move(
+                $this->getParameter('uploads_directory'),
+                $newFilename
+            );
+
+            // Mise à jour des propriétés de l'entité Image
+            $image->setUrl('/uploads/'.$newFilename);
+            $image->setFigure($figure);
+
+            // Persistance de l'entité dans la base de données
+            $entityManager->persist($image);
+            $entityManager->flush();
+
+            // Message de confirmation
+            $this->addFlash('success', 'L\'image a été ajoutée avec succès.');
+        } catch (FileException $e) {
+            // Gestion des erreurs lors de l'upload
+            $this->addFlash('error', 'Erreur lors de l\'upload de l\'image.');
+        }
+
+        // Redirection vers la page de détail de la figure
+        return $this->redirectToRoute('app_figure_detail', ['slug' => $figure->getSlug()]);
     }
 
 
