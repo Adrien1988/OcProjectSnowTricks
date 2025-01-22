@@ -35,19 +35,19 @@ class FigureController extends AbstractController
     public function detail(string $slug, FigureRepository $figureRepository): Response
     {
         // Récupération de la figure avec ses images et vidéos via le repository
-        $figure = $figureRepository->findOneBy(['slug' => $slug]);
+        $figure = $figureRepository->findOneWithRelations($slug);
 
         if (!$figure) {
             throw $this->createNotFoundException('La figure demandée n\'existe pas.');
         }
 
-        // Vérifie si la figure n'a pas d'images, assigne une image par défaut (en backend)
-        if ($figure->getImages()->isEmpty()) {
-            $defaultImage = new Image();
-            $defaultImage->setUrl('/build/images/default-image.jpg');
-            $defaultImage->setAltText('Image par défaut');
-            $figure->addImage($defaultImage);
-        }
+        // // Vérifie si la figure n'a pas d'images, assigne une image par défaut (en backend)
+        // if ($figure->getImages()->isEmpty()) {
+        //     $defaultImage = new Image();
+        //     $defaultImage->setUrl('/build/images/default-image.jpg');
+        //     $defaultImage->setAltText('Image par défaut');
+        //     $figure->addImage($defaultImage);
+        // }
 
         // Création des formulaires pour les images et vidéos
         $imageForm = $this->createForm(ImageType::class);
@@ -209,13 +209,10 @@ class FigureController extends AbstractController
         $form = $this->createForm(ImageType::class, $image);
         $form->handleRequest($request);
 
-        // Vérifie si le formulaire a été soumis
-        if ($form->isSubmitted()) {
-            // Récupération du fichier uploadé
+        if ($form->isSubmitted() && $form->isValid()) {
             $uploadedFile = $form->get('file')->getData();
 
-            // Si le formulaire est valide
-            if ($form->isValid() && $uploadedFile) {
+            if ($uploadedFile) {
                 // Gère l'upload du fichier
                 $newFilename = uniqid().'.'.$uploadedFile->guessExtension();
 
@@ -245,12 +242,12 @@ class FigureController extends AbstractController
                 }
             } else {
                 // Message d'erreur si le formulaire est invalide ou si aucun fichier n'est uploadé
-                $this->addFlash('error', 'Le formulaire contient des erreurs ou aucun fichier n\'a été uploadé.');
+                $this->addFlash('error', 'Aucun fichier sélectionné.');
             }
+        } else {
+            $this->addFlash('error', 'Le formulaire contient des erreurs.');
         }
 
-        // Redirection vers la page de détail en cas d'erreur
-        return $this->redirectToRoute('app_figure_detail', ['slug' => $figure->getSlug()]);
     }
 
 

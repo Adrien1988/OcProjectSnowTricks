@@ -18,8 +18,9 @@
         {% for figure in figures %}
             <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
                 <div class="card shadow">
-                    {% if figure.images|length > 0 %}
-                        <img src="{{ asset('uploads/' ~ figure.images[0].url) }}" class="card-img-top" alt="{{ figure.images[0].altText }}">
+                    {% set mainImage = figure.images|first %}
+                    {% if mainImage and mainImage.url %}
+                        <img src="{{ asset(mainImage.url) }}" class="card-img-top" alt="{{ mainImage.altText|default('Image de la figure') }}">
                     {% else %}
                         <img src="{{ asset('build/images/default-image.jpg') }}" class="card-img-top" alt="Image par défaut">
                     {% endif %}
