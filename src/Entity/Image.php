@@ -23,8 +23,8 @@ class Image
     /**
      * URL de l'image.
      */
-    #[ORM\Column(length: 255)]
-    #[Assert\NotBlank(message: "L'URL de l'image est obligatoire.")]
+    #[ORM\Column(length: 255, nullable: true)]
+    // #[Assert\NotBlank(message: "L'URL de l'image est obligatoire.")]
     #[Assert\Url(message: "L'URL de l'image doit être valide.")]
     private ?string $url = null;
 

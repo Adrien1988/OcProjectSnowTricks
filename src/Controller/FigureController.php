@@ -3,12 +3,15 @@
 namespace App\Controller;
 
 use App\Entity\Figure;
+use App\Entity\Image;
 use App\Entity\Video;
 use App\Form\FigureType;
+use App\Form\ImageType;
 use App\Form\VideoType;
 use App\Repository\FigureRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -23,9 +26,6 @@ class FigureController extends AbstractController
     /**
      * Affiche la page de détails d'une figure.
      *
-     * Cette méthode récupère une figure via son slug et affiche son nom, sa description,
-     * son groupe, ses images et ses vidéos, ainsi que l'espace de discussion.
-     *
      * @param string           $slug             slug de la figure
      * @param FigureRepository $figureRepository repository pour accéder aux figures
      *
@@ -34,21 +34,30 @@ class FigureController extends AbstractController
     #[Route('/figure/{slug}', name: 'app_figure_detail', methods: ['GET'])]
     public function detail(string $slug, FigureRepository $figureRepository): Response
     {
+        // Récupération de la figure avec ses images et vidéos via le repository
         $figure = $figureRepository->findOneBy(['slug' => $slug]);
 
         if (!$figure) {
             throw $this->createNotFoundException('La figure demandée n\'existe pas.');
         }
 
-        // Récupère les 5 premiers commentaires
-        $comments = $figure->getComments()->slice(0, 5);
+        // Vérifie si la figure n'a pas d'images, assigne une image par défaut (en backend)
+        if ($figure->getImages()->isEmpty()) {
+            $defaultImage = new Image();
+            $defaultImage->setUrl('/build/images/default-image.jpg');
+            $defaultImage->setAltText('Image par défaut');
+            $figure->addImage($defaultImage);
+        }
+
+        // Création des formulaires pour les images et vidéos
+        $imageForm = $this->createForm(ImageType::class);
         $videoForm = $this->createForm(VideoType::class);
 
         return $this->render(
             'figure/detail.html.twig',
             [
                 'figure'    => $figure,
-                'comments'  => $comments,
+                'imageForm' => $imageForm->createView(),
                 'videoForm' => $videoForm->createView(),
             ]
         );
@@ -174,6 +183,73 @@ class FigureController extends AbstractController
 
         $this->addFlash('error', 'Le formulaire de vidéo contient des erreurs.');
 
+        return $this->redirectToRoute('app_figure_detail', ['slug' => $figure->getSlug()]);
+    }
+
+
+    /**
+     * Ajoute une image à une figure.
+     *
+     * @param Figure                 $figure        La figure associée
+     *                                              à l'image
+     * @param Request                $request       La requête HTTP contenant les données
+     *                                              du formulaire
+     * @param EntityManagerInterface $entityManager Le gestionnaire d'entités
+     *
+     * @return Response
+     */
+    #[Route('/figure/{id}/add-image', name: 'app_figure_add_image', methods: ['POST'])]
+    public function addImage(Figure $figure, Request $request, EntityManagerInterface $entityManager): Response
+    {
+        // Vérifie que l'utilisateur est authentifié
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
+        // Initialisation de l'entité Image et du formulaire
+        $image = new Image();
+        $form = $this->createForm(ImageType::class, $image);
+        $form->handleRequest($request);
+
+        // Vérifie si le formulaire a été soumis
+        if ($form->isSubmitted()) {
+            // Récupération du fichier uploadé
+            $uploadedFile = $form->get('file')->getData();
+
+            // Si le formulaire est valide
+            if ($form->isValid() && $uploadedFile) {
+                // Gère l'upload du fichier
+                $newFilename = uniqid().'.'.$uploadedFile->guessExtension();
+
+                try {
+                    // Déplacement du fichier uploadé dans le répertoire configuré
+                    $uploadedFile->move(
+                        $this->getParameter('uploads_directory'),
+                        $newFilename
+                    );
+
+                    // Mise à jour des propriétés de l'entité Image
+                    $image->setUrl('/uploads/'.$newFilename);
+                    $image->setFigure($figure);
+
+                    // Persistance de l'entité dans la base de données
+                    $entityManager->persist($image);
+                    $entityManager->flush();
+
+                    // Message de confirmation
+                    $this->addFlash('success', 'L\'image a été ajoutée avec succès.');
+
+                    // Redirection vers la page de détail de la figure
+                    return $this->redirectToRoute('app_figure_detail', ['slug' => $figure->getSlug()]);
+                } catch (FileException $e) {
+                    // Gestion des erreurs lors de l'upload
+                    $this->addFlash('error', 'Erreur lors de l\'upload de l\'image.');
+                }
+            } else {
+                // Message d'erreur si le formulaire est invalide ou si aucun fichier n'est uploadé
+                $this->addFlash('error', 'Le formulaire contient des erreurs ou aucun fichier n\'a été uploadé.');
+            }
+        }
+
+        // Redirection vers la page de détail en cas d'erreur
         return $this->redirectToRoute('app_figure_detail', ['slug' => $figure->getSlug()]);
     }
 
