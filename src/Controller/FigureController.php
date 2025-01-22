@@ -41,14 +41,6 @@ class FigureController extends AbstractController
             throw $this->createNotFoundException('La figure demandée n\'existe pas.');
         }
 
-        // // Vérifie si la figure n'a pas d'images, assigne une image par défaut (en backend)
-        // if ($figure->getImages()->isEmpty()) {
-        //     $defaultImage = new Image();
-        //     $defaultImage->setUrl('/build/images/default-image.jpg');
-        //     $defaultImage->setAltText('Image par défaut');
-        //     $figure->addImage($defaultImage);
-        // }
-
         // Création des formulaires pour les images et vidéos
         $imageForm = $this->createForm(ImageType::class);
         $videoForm = $this->createForm(VideoType::class);
@@ -167,22 +159,28 @@ class FigureController extends AbstractController
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
 
+        // Initialisation de l'entité Video et du formulaire
         $video = new Video();
         $form = $this->createForm(VideoType::class, $video);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $video->setFigure($figure);
-            $entityManager->persist($video);
-            $entityManager->flush();
-
-            $this->addFlash('success', 'La vidéo a été ajoutée avec succès.');
+        // Vérification si le formulaire a été soumis
+        if (!$form->isSubmitted() || !$form->isValid()) {
+            $this->addFlash('error', 'Le formulaire de vidéo contient des erreurs.');
 
             return $this->redirectToRoute('app_figure_detail', ['slug' => $figure->getSlug()]);
         }
 
-        $this->addFlash('error', 'Le formulaire de vidéo contient des erreurs.');
+        // Association de la vidéo avec la figure
+        $video->setFigure($figure);
 
+        // Sauvegarde dans la base de données
+        $entityManager->persist($video);
+        $entityManager->flush();
+
+        $this->addFlash('success', 'La vidéo a été ajoutée avec succès.');
+
+        // Redirection vers la page de détail
         return $this->redirectToRoute('app_figure_detail', ['slug' => $figure->getSlug()]);
     }
 

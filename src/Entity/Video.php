@@ -29,6 +29,10 @@ class Video
         max: 255,
         maxMessage: "Le code d'intégration ne doit pas dépasser {{ limit }} caractères."
     )]
+    #[Assert\Regex(
+        pattern: "/<iframe.*>.*<\/iframe>/",
+        message: "Le code d'intégration doit être un iframe valide."
+    )]
     private ?string $embedCode = null;
 
     /**
