@@ -75,6 +75,7 @@ class Figure
      * @var Collection<int, Image>
      */
     #[ORM\OneToMany(targetEntity: Image::class, mappedBy: 'figure', orphanRemoval: true, cascade: ['persist'])]
+    #[ORM\OrderBy(['id' => 'ASC'])]
     private Collection $images;
 
     /**
