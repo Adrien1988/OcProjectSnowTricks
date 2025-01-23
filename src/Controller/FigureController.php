@@ -8,10 +8,10 @@ use App\Entity\Video;
 use App\Form\FigureType;
 use App\Form\ImageType;
 use App\Form\VideoType;
+use App\Repository\CommentRepository;
 use App\Repository\FigureRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -24,56 +24,34 @@ class FigureController extends AbstractController
     /**
      * Affiche la page de détails d'une figure.
      *
-     * @param string           $slug             slug de la figure
-     * @param FigureRepository $figureRepository repository pour accéder aux figures
+     * @param string            $slug              slug de la figure
+     * @param FigureRepository  $figureRepository  repository pour accéder
+     *                                             aux figures
+     * @param CommentRepository $commentRepository Le repository pour accéder aux commentaires
+     * @param Request           $request           La
+     *                                             requête
+     *                                             HTTP
      *
      * @return Response la réponse HTTP avec le rendu de la page
      */
     #[Route('/figure/{slug}', name: 'app_figure_detail', methods: ['GET'])]
-    public function detail(string $slug, FigureRepository $figureRepository): Response
+    public function detail(string $slug, FigureRepository $figureRepository, CommentRepository $commentRepository, Request $request): Response
     {
         $figure = $this->findFigureBySlug($slug, $figureRepository);
+
+        // Récupération de la pagination des commentaires
+        $page = $request->query->getInt('page', 1); // Par défaut, page 1
+        $commentsData = $commentRepository->findByFigureWithPagination($figure->getId(), $page, 10);
 
         return $this->render(
             'figure/detail.html.twig',
             [
-                'figure'    => $figure,
-                'imageForm' => $this->createForm(ImageType::class)->createView(),
-                'videoForm' => $this->createForm(VideoType::class)->createView(),
-            ]
-        );
-    }
-
-
-    /**
-     * Charge plus de commentaires via AJAX.
-     *
-     * @param string           $slug             Le slug de la figure
-     * @param FigureRepository $figureRepository Le repository pour accéder aux figures
-     *
-     * @return JsonResponse Les commentaires supplémentaires en format JSON
-     */
-    #[Route('/figure/{slug}/comments', name: 'app_figure_load_comments', methods: ['GET'])]
-    public function loadComments(string $slug, FigureRepository $figureRepository): JsonResponse
-    {
-        $figure = $figureRepository->findOneBy(['slug' => $slug]);
-
-        if (!$figure) {
-            return new JsonResponse(['error' => 'Figure introuvable'], 404);
-        }
-
-        $comments = $figure->getComments();
-
-        return new JsonResponse(
-            [
-                'comments' => array_map(
-                    fn ($comment) => [
-                        'author'    => $comment->getAuthor()->getUsername(),
-                        'createdAt' => $comment->getCreatedAt()->format('d/m/Y H:i'),
-                        'content'   => $comment->getContent(),
-                    ],
-                    $comments->toArray()
-                ),
+                'figure'      => $figure,
+                'comments'    => $commentsData['items'],
+                'currentPage' => $commentsData['currentPage'],
+                'lastPage'    => $commentsData['lastPage'],
+                'imageForm'   => $this->createForm(ImageType::class)->createView(),
+                'videoForm'   => $this->createForm(VideoType::class)->createView(),
             ]
         );
     }
@@ -153,6 +131,46 @@ class FigureController extends AbstractController
         $this->saveEntity($entityManager, $image, 'L\'image a été ajoutée avec succès.');
 
         return $this->redirectToFigureDetail($figure);
+    }
+
+
+    /**
+     * Récupère et affiche les commentaires d'une figure avec pagination.
+     *
+     * Cette méthode permet de charger les commentaires associés à une figure,
+     * triés du plus récent au plus ancien, avec une pagination (10 par page).
+     *
+     * @param string            $slug              Le slug de la figure
+     * @param Request           $request           La requête HTTP contenant les paramètres de pagination
+     * @param FigureRepository  $figureRepository  Le repository pour accéder aux figures
+     * @param CommentRepository $commentRepository Le repository pour accéder aux commentaires
+     *
+     * @return Response La réponse HTTP contenant le rendu des commentaires
+     */
+    #[Route('/figure/{slug}/comments', name: 'app_figure_comments', methods: ['GET'])]
+    public function comments(
+        string $slug,
+        Request $request,
+        FigureRepository $figureRepository,
+        CommentRepository $commentRepository,
+    ): Response {
+        $figure = $figureRepository->findOneBy(['slug' => $slug]);
+
+        if (!$figure) {
+            throw $this->createNotFoundException('Figure introuvable.');
+        }
+
+        $page = $request->query->getInt('page', 1);
+        $comments = $commentRepository->findByFigureWithPagination($figure->getId(), $page, 10);
+
+        return $this->render(
+            'figure/comments.html.twig',
+            [
+                'figure'   => $figure,
+                'comments' => $comments,
+                'page'     => $page,
+            ]
+        );
     }
 
 

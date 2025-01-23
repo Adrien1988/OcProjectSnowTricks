@@ -27,27 +27,50 @@ class CommentRepository extends ServiceEntityRepository
     }// end __construct()
 
 
-    // **
-    // * @return Comment[] Returns an array of Comment objects
-    // */
-    // public function findByExampleField($value): array
-    // {
-    // return $this->createQueryBuilder('c')
-    // ->andWhere('c.exampleField = :val')
-    // ->setParameter('val', $value)
-    // ->orderBy('c.id', 'ASC')
-    // ->setMaxResults(10)
-    // ->getQuery()
-    // ->getResult()
-    // ;
-    // }
-    // public function findOneBySomeField($value): ?Comment
-    // {
-    // return $this->createQueryBuilder('c')
-    // ->andWhere('c.exampleField = :val')
-    // ->setParameter('val', $value)
-    // ->getQuery()
-    // ->getOneOrNullResult()
-    // ;
-    // }
+    /**
+     * Récupère les commentaires d'une figure avec pagination et tri.
+     *
+     * @param int $figureId L'identifiant de la figure
+     * @param int $page     Le numéro de la page
+     * @param int $limit    Le nombre de commentaires par page
+     *
+     * @return array Un tableau contenant les commentaires paginés
+     */
+    public function findByFigureWithPagination(int $figureId, int $page = 1, int $limit = 10): array
+    {
+        try {
+            $query = $this->createQueryBuilder('c')
+                ->where('c.figure = :figureId')
+                ->setParameter('figureId', $figureId)
+                ->orderBy('c.createdAt', 'DESC')
+                ->setFirstResult(($page - 1) * $limit)
+                ->setMaxResults($limit)
+                ->getQuery();
+
+            // Requête pour compter le nombre total de commentaires
+            $totalComments = $this->createQueryBuilder('c')
+                ->select('COUNT(c.id)')
+                ->where('c.figure = :figureId')
+                ->setParameter('figureId', $figureId)
+                ->getQuery()
+                ->getSingleScalarResult();
+
+            // Calculez le nombre total de pages, au minimum 1
+            $lastPage = max((int) ceil($totalComments / $limit), 1);
+
+            return [
+                'items'       => $query->getResult(),
+                'currentPage' => $page,
+                'lastPage'    => $lastPage,
+            ];
+        } catch (\Exception $e) {
+            return [
+                'items'       => [],
+                'currentPage' => 1,
+                'lastPage'    => 1,
+            ];
+        }
+    }
+
+
 }// end class
