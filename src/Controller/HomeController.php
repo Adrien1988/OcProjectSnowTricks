@@ -10,6 +10,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 class HomeController extends AbstractController
 {
@@ -21,11 +22,12 @@ class HomeController extends AbstractController
      * @param FigureRepository       $figureRepository Le dépôt des figures
      * @param Request                $request          La requête HTTP
      * @param EntityManagerInterface $entityManager    Gestionnaire d'entités pour persister les données
+     * @param SluggerInterface       $slugger          Interface permettant de transformer une chaîne en slug unique
      *
      * @return Response La réponse HTTP
      */
     #[Route('/', name: 'app_home', methods: ['GET', 'POST'])]
-    public function index(FigureRepository $figureRepository, Request $request, EntityManagerInterface $entityManager): Response
+    public function index(FigureRepository $figureRepository, Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
     {
 
         $figures = $figureRepository->findAllWithImages();
@@ -37,12 +39,14 @@ class HomeController extends AbstractController
 
         // Gestion de la soumission du formulaire
         if ($createFigureForm->isSubmitted() && $createFigureForm->isValid()) {
+            // Générer le slug avant la persistance
+            $figure->generateSlug($slugger);
+
             $entityManager->persist($figure);
             $entityManager->flush();
 
             $this->addFlash('success', 'La figure a été créée avec succès.');
 
-            // Redirige pour éviter la resoumission du formulaire
             return $this->redirectToRoute('app_home');
         }
 

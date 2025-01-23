@@ -47,7 +47,7 @@ class Figure
      * Slug unique de la figure.
      */
     #[ORM\Column(length: 255, unique: true)]
-    #[Assert\NotBlank(message: 'Le slug est obligatoire.')]
+    // #[Assert\NotBlank(message: 'Le slug est obligatoire.')]
     private ?string $slug = null;
 
     /**
@@ -219,7 +219,9 @@ class Figure
      */
     public function generateSlug(SluggerInterface $slugger): void
     {
-        $this->slug = $slugger->slug($this->name)->lower();
+        if ($this->name) {
+            $this->slug = $slugger->slug($this->name)->lower();
+        }
     }
 
 

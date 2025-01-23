@@ -2,6 +2,7 @@
 
 namespace App\Form;
 
+use App\DataTransformer\SlugTransformer;
 use App\Entity\Figure;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
@@ -11,6 +12,19 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class FigureType extends AbstractType
 {
+
+    private SlugTransformer $slugTransformer;
+
+
+    /**
+     * Constructeur du formulaire FigureType.
+     *
+     * @param SlugTransformer $slugTransformer Transforme le champ 'name' en un slug valide
+     */
+    public function __construct(SlugTransformer $slugTransformer)
+    {
+        $this->slugTransformer = $slugTransformer;
+    }
 
 
     /**
@@ -56,6 +70,9 @@ class FigureType extends AbstractType
                     ],
                 ]
             );
+
+        // Appliquer le transformer au champ "name"
+        $builder->get('name')->addModelTransformer($this->slugTransformer);
     }
 
 

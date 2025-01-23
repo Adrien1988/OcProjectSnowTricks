@@ -48,4 +48,28 @@ class FigureRepository extends ServiceEntityRepository
     }
 
 
+    /**
+     * Récupère une figure avec ses relations (images, vidéos, commentaires) en une seule requête.
+     *
+     * Cette méthode utilise des jointures pour inclure les relations liées à une figure spécifique
+     * en fonction de son slug. Elle optimise les performances en limitant le nombre de requêtes SQL nécessaires.
+     *
+     * @param string $slug le slug de la figure
+     *
+     * @return Figure|null la figure correspondante ou null si elle n'existe pas
+     */
+    public function findOneWithRelations(string $slug): ?Figure
+    {
+        return $this->createQueryBuilder('f')
+            ->leftJoin('f.images', 'i')
+            ->addSelect('i')
+            ->leftJoin('f.videos', 'v')
+            ->addSelect('v')
+            ->where('f.slug = :slug')
+            ->setParameter('slug', $slug)
+            ->getQuery()
+            ->getOneOrNullResult();
+    }
+
+
 }// end class
