@@ -11,7 +11,6 @@ use App\Form\VideoType;
 use App\Repository\FigureRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\File\Exception\FileException;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -194,105 +193,6 @@ class FigureController extends AbstractController
                 'figure' => $figure,
             ]
         );
-    }
-
-
-    /**
-     * Ajoute une vidéo à une figure.
-     *
-     * @param Figure                 $figure        L'entité de la figure
-     * @param Request                $request       La requête HTTP
-     * @param EntityManagerInterface $entityManager Le gestionnaire d'entités
-     *
-     * @return Response
-     */
-    #[Route('/figure/{id}/add-video', name: 'app_figure_add_video', methods: ['POST'])]
-    public function addVideo(Figure $figure, Request $request, EntityManagerInterface $entityManager): Response
-    {
-        $this->denyAccessUnlessGranted('ROLE_USER');
-
-        $video = new Video();
-        $form = $this->createForm(VideoType::class, $video);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $video->setFigure($figure);
-            $entityManager->persist($video);
-            $entityManager->flush();
-
-            $this->addFlash('success', 'La vidéo a été ajoutée avec succès.');
-
-            return $this->redirectToRoute('app_figure_detail', ['slug' => $figure->getSlug()]);
-        }
-
-        $this->addFlash('error', 'Le formulaire de vidéo contient des erreurs.');
-
-        return $this->redirectToRoute('app_figure_detail', ['slug' => $figure->getSlug()]);
-    }
-
-
-    /**
-     * Ajoute une image à une figure.
-     *
-     * @param Figure                 $figure        La figure associée
-     *                                              à l'image
-     * @param Request                $request       La requête HTTP contenant les données
-     *                                              du formulaire
-     * @param EntityManagerInterface $entityManager Le gestionnaire d'entités
-     *
-     * @return Response
-     */
-    #[Route('/figure/{id}/add-image', name: 'app_figure_add_image', methods: ['POST'])]
-    public function addImage(Figure $figure, Request $request, EntityManagerInterface $entityManager): Response
-    {
-        // Vérifie que l'utilisateur est authentifié
-        $this->denyAccessUnlessGranted('ROLE_USER');
-
-        // Initialisation de l'entité Image et du formulaire
-        $image = new Image();
-        $form = $this->createForm(ImageType::class, $image);
-        $form->handleRequest($request);
-
-        // Vérifie si le formulaire a été soumis et est valide
-        if (!$form->isSubmitted() || !$form->isValid()) {
-            $this->addFlash('error', 'Le formulaire contient des erreurs.');
-
-            return $this->redirectToRoute('app_figure_detail', ['slug' => $figure->getSlug()]);
-        }
-
-        // Récupération du fichier uploadé
-        $uploadedFile = $form->get('file')->getData();
-        if (!$uploadedFile) {
-            $this->addFlash('error', 'Aucun fichier sélectionné.');
-
-            return $this->redirectToRoute('app_figure_detail', ['slug' => $figure->getSlug()]);
-        }
-
-        // Gestion de l'upload du fichier
-        $newFilename = uniqid().'.'.$uploadedFile->guessExtension();
-        try {
-            $uploadedFile->move(
-                $this->getParameter('uploads_directory'),
-                $newFilename
-            );
-
-            // Mise à jour des propriétés de l'entité Image
-            $image->setUrl('/uploads/'.$newFilename);
-            $image->setFigure($figure);
-
-            // Persistance de l'entité dans la base de données
-            $entityManager->persist($image);
-            $entityManager->flush();
-
-            // Message de confirmation
-            $this->addFlash('success', 'L\'image a été ajoutée avec succès.');
-        } catch (FileException $e) {
-            // Gestion des erreurs lors de l'upload
-            $this->addFlash('error', 'Erreur lors de l\'upload de l\'image.');
-        }
-
-        // Redirection vers la page de détail de la figure
-        return $this->redirectToRoute('app_figure_detail', ['slug' => $figure->getSlug()]);
     }
 
 
