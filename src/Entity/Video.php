@@ -23,10 +23,10 @@ class Video
     /**
      * Code d'intégration de la vidéo (embed code).
      */
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 1000)]
     #[Assert\NotBlank(message: "Le code d'intégration de la vidéo est obligatoire.")]
     #[Assert\Length(
-        max: 255,
+        max: 1000,
         maxMessage: "Le code d'intégration ne doit pas dépasser {{ limit }} caractères."
     )]
     #[Assert\Regex(

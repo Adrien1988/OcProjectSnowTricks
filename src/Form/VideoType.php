@@ -7,6 +7,9 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Symfony\Component\Validator\Constraints\Length;
+use Symfony\Component\Validator\Constraints\NotBlank;
+use Symfony\Component\Validator\Constraints\Regex;
 
 class VideoType extends AbstractType
 {
@@ -32,6 +35,25 @@ class VideoType extends AbstractType
                         'placeholder' => 'Exemple : <iframe ...></iframe>',
                         'rows'        => 5,
                         'class'       => 'form-control',
+                    ],
+                    'constraints' => [
+                        new NotBlank(
+                            [
+                                'message' => "Le code d'intégration est obligatoire.",
+                            ]
+                        ),
+                        new Length(
+                            [
+                                'max'        => 1000,
+                                'maxMessage' => "Le code d'intégration ne doit pas dépasser {{ limit }} caractères.",
+                            ]
+                        ),
+                        new Regex(
+                            [
+                                'pattern' => "/<iframe.*>.*<\/iframe>/",
+                                'message' => "Le code d'intégration doit être un iframe valide.",
+                            ]
+                        ),
                     ],
                 ]
             );

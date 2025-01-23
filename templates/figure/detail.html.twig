@@ -68,7 +68,7 @@
                 <div class="col-md-4 mb-3">
                     <div class="card">
                         <div class="ratio ratio-16x9">
-                            <iframe src="{{ video.embedCode }}" frameborder="0" allowfullscreen></iframe>
+                            {{ video.embedCode|raw }}
                         </div>
                     </div>
                 </div>

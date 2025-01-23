@@ -164,23 +164,34 @@ class FigureController extends AbstractController
         $form = $this->createForm(VideoType::class, $video);
         $form->handleRequest($request);
 
-        // Vérification si le formulaire a été soumis
+        // Vérifie si le formulaire a été soumis et est valide
         if (!$form->isSubmitted() || !$form->isValid()) {
-            $this->addFlash('error', 'Le formulaire de vidéo contient des erreurs.');
+            $this->addFlash('error', 'Le formulaire contient des erreurs.');
 
             return $this->redirectToRoute('app_figure_detail', ['slug' => $figure->getSlug()]);
         }
 
-        // Association de la vidéo avec la figure
+        // Sanitize et valider le code d'intégration
+        $embedCode = $video->getEmbedCode();
+        if (!preg_match('/<iframe.*>.*<\/iframe>/', $embedCode)) {
+            $this->addFlash('error', 'Le code d\'intégration n\'est pas valide. Veuillez entrer un iframe valide.');
+
+            return $this->redirectToRoute('app_figure_detail', ['slug' => $figure->getSlug()]);
+        }
+
         $video->setFigure($figure);
 
-        // Sauvegarde dans la base de données
-        $entityManager->persist($video);
-        $entityManager->flush();
+        try {
+            $entityManager->persist($video);
+            $entityManager->flush();
 
-        $this->addFlash('success', 'La vidéo a été ajoutée avec succès.');
+            // Message de confirmation
+            $this->addFlash('success', 'La vidéo a été ajoutée avec succès.');
+        } catch (\Exception $e) {
+            // Gestion des erreurs d'enregistrement
+            $this->addFlash('error', 'Une erreur est survenue lors de l\'ajout de la vidéo.');
+        }
 
-        // Redirection vers la page de détail
         return $this->redirectToRoute('app_figure_detail', ['slug' => $figure->getSlug()]);
     }
 
