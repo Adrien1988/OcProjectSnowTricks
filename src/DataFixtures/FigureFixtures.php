@@ -21,7 +21,7 @@ class FigureFixtures extends Fixture
     /**
      * Constructeur.
      *
-     * @param UserPasswordHasherInterface $passwordHasher Service pour hacher les mots de passe des utilisateurs.
+     * @param UserPasswordHasherInterface $passwordHasher service pour hacher les mots de passe des utilisateurs
      */
     public function __construct(UserPasswordHasherInterface $passwordHasher)
     {
@@ -32,7 +32,7 @@ class FigureFixtures extends Fixture
     /**
      * Charge les données de test dans la base de données.
      *
-     * @param ObjectManager $manager Gestionnaire d'entités Doctrine.
+     * @param ObjectManager $manager gestionnaire d'entités Doctrine
      *
      * @return void
      */
