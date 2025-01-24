@@ -1,7 +1,6 @@
 doctrine:
     dbal:
         url: '%env(resolve:DATABASE_URL)%'
-        schema_filter: '~^(?!.*migrations).*$~'
         profiling_collect_backtrace: '%kernel.debug%'
         use_savepoints: true
     orm:
