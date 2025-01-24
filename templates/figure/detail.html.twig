@@ -1,136 +1,182 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}{{ figure.name }} - Détails{% endblock %}
+{% block title %}
+	{{ figure.name }}
+	- Détails
+{% endblock %}
 
 {% block body %}
-<section class="container my-5">
-    <!-- Image principale avec superposition du nom et les boutons Modifier/Supprimer -->
-    <div class="position-relative">
-        {% set mainImage = figure.images|first %}
-        {% if mainImage and mainImage.url %}
-            <img src="{{ asset(mainImage.url) }}" class="img-fluid w-100" alt="{{ mainImage.altText|default('Image de la figure') }}">
-        {% else %}
-            <img src="{{ asset('build/images/default-image.jpg') }}" class="img-fluid w-100" alt="Image par défaut">
-        {% endif %}
+	<section
+		class="container my-5">
+		<!-- Image principale avec superposition du nom et les boutons Modifier/Supprimer -->
+		<div class="position-relative">
+			{% set mainImage = figure.images|first %}
+			{% if mainImage and mainImage.url %}
+				<img src="{{ asset(mainImage.url) }}" class="img-fluid w-100" alt="{{ mainImage.altText|default('Image de la figure') }}">
+			{% else %}
+				<img src="{{ asset('build/images/default-image.jpg') }}" class="img-fluid w-100" alt="Image par défaut">
+			{% endif %}
 
-        <!-- Superposition du nom de la figure -->
-        <div class="position-absolute bottom-0 start-0 p-3 bg-dark text-white bg-opacity-75 w-100">
-            <h1 class="text-uppercase">{{ figure.name }}</h1>
-        </div>
+			<!-- Superposition du nom de la figure -->
+			<div class="position-absolute bottom-0 start-0 p-3 bg-dark text-white bg-opacity-75 w-100">
+				<h1 class="text-uppercase">{{ figure.name }}</h1>
+			</div>
 
-        <!-- Boutons Modifier et Supprimer pour l'image principale -->
-        {% if is_granted('ROLE_USER') %}
-            <div class="btn-group position-absolute top-0 end-0 p-3">
-                <button type="button" class="btn btn-secondary btn-sm">✏️</button>
-                <button type="button" class="btn btn-danger btn-sm">🗑️</button>
-            </div>
-        {% endif %}
-    </div>
+			<!-- Boutons Modifier et Supprimer pour l'image principale -->
+			{% if is_granted('ROLE_USER') %}
+				<div class="btn-group position-absolute top-0 end-0 p-3">
+					<button type="button" class="btn btn-secondary btn-sm">✏️</button>
+					<button type="button" class="btn btn-danger btn-sm">🗑️</button>
+				</div>
+			{% endif %}
+		</div>
 
-    <!-- Section Description -->
-    <div class="mt-4">
-        <h5 class="text-uppercase">Description</h5>
-        <p>{{ figure.description }}</p>
+		<!-- Section Description -->
+		<div class="mt-4">
+			<h5 class="text-uppercase">Description</h5>
+			<p>{{ figure.description }}</p>
 
-        <h5 class="text-uppercase">Groupe</h5>
-        <p>{{ figure.figureGroup }}</p>
-    </div>
+			<h5 class="text-uppercase">Groupe</h5>
+			<p>{{ figure.figureGroup }}</p>
+		</div>
 
-    <!-- Section Images supplémentaires -->
-    <div class="mt-5">
-        <h5 class="text-uppercase">Images</h5>
-        <div class="row">
-            {% for image in figure.images %}
-                <div class="col-md-3 col-sm-6 mb-3">
-                    <div class="card">
-                        <img src="{{ asset(image.url) }}" class="card-img-top" alt="{{ image.altText|default('Image supplémentaire') }}" style="object-fit: cover; height: 200px; width: 100%;">
-                    </div>
-                </div>
-            {% endfor %}
-            {% if is_granted('ROLE_USER') %}
-                <!-- Carte pour ajouter une nouvelle image -->
-                <div class="col-md-3 col-sm-6 mb-3">
-                    <div class="card text-center border-secondary" style="cursor: pointer; height: 200px;" data-bs-toggle="modal" data-bs-target="#addImageModal">
-                        <div class="card-body d-flex align-items-center justify-content-center">
-                            <span class="fs-1 text-secondary">+</span>
-                        </div>
-                    </div>
-                </div>
+		<!-- Section Images supplémentaires -->
+		<div class="mt-5">
+			<h5 class="text-uppercase">Images</h5>
+			<div class="row">
+				{% for image in figure.images %}
+					<div class="col-md-3 col-sm-6 mb-3">
+						<div class="card">
+							<img src="{{ asset(image.url) }}" class="card-img-top" alt="{{ image.altText|default('Image supplémentaire') }}" style="object-fit: cover; height: 200px; width: 100%;">
+						</div>
+					</div>
+				{% endfor %}
+				{% if is_granted('ROLE_USER') %}
+					<!-- Carte pour ajouter une nouvelle image -->
+					<div class="col-md-3 col-sm-6 mb-3">
+						<div class="card text-center border-secondary" style="cursor: pointer; height: 200px;" data-bs-toggle="modal" data-bs-target="#addImageModal">
+							<div class="card-body d-flex align-items-center justify-content-center">
+								<span class="fs-1 text-secondary">+</span>
+							</div>
+						</div>
+					</div>
+				{% endif %}
+			</div>
+		</div>
+
+		<!-- Vidéos -->
+		<div class="mt-5">
+			<h5 class="text-uppercase">Vidéos</h5>
+			<div class="row">
+				{% for video in figure.videos %}
+					<div class="col-md-4 mb-3">
+						<div class="card">
+							<div class="ratio ratio-16x9">
+								{{ video.embedCode|raw }}
+							</div>
+						</div>
+					</div>
+				{% endfor %}
+				{% if is_granted('ROLE_USER') %}
+					<div class="col-md-4 mb-3">
+						<div class="card text-center border-secondary" style="cursor: pointer; height: 200px;" data-bs-toggle="modal" data-bs-target="#addVideoModal">
+							<div class="card-body d-flex align-items-center justify-content-center">
+								<span class="fs-1 text-secondary">+</span>
+							</div>
+						</div>
+					</div>
+				{% endif %}
+			</div>
+		</div>
+
+		<!-- Section des commentaires -->
+		<div class="mt-5">
+			<h5 class="text-uppercase">Commentaires</h5>
+            {% if comments is not empty %}
+			<div>
+				{% for comment in comments %}
+					<div class="border p-3 mb-3 rounded">
+						<div class="d-flex align-items-center mb-2">
+							<img src="{{ asset(comment.author.photo) }}" class="rounded-circle me-2" alt="{{ comment.author.fullName }}" style="width: 40px; height: 40px; object-fit: cover;">
+							<strong>{{ comment.author.fullName }}</strong>
+							<small class="text-muted ms-3">{{ comment.createdAt|date('d/m/Y H:i') }}</small>
+						</div>
+						<p>{{ comment.content }}</p>
+					</div>
+				{% endfor %}
+			</div>
+            {% else %}
+                <p class="text-muted">Aucun commentaire disponible pour cette figure.</p>
             {% endif %}
-        </div>
-    </div>
 
-    <!-- Vidéos -->
-    <div class="mt-5">
-        <h5 class="text-uppercase">Vidéos</h5>
-        <div class="row">
-            {% for video in figure.videos %}
-                <div class="col-md-4 mb-3">
-                    <div class="card">
-                        <div class="ratio ratio-16x9">
-                            {{ video.embedCode|raw }}
-                        </div>
-                    </div>
-                </div>
-            {% endfor %}
-            {% if is_granted('ROLE_USER') %}
-                <div class="col-md-4 mb-3">
-                    <div class="card text-center border-secondary" style="cursor: pointer; height: 200px;" data-bs-toggle="modal" data-bs-target="#addVideoModal">
-                        <div class="card-body d-flex align-items-center justify-content-center">
-                            <span class="fs-1 text-secondary">+</span>
-                        </div>
-                    </div>
-                </div>
-            {% endif %}
-        </div>
-    </div>
+			<!-- Pagination -->
+			<nav aria-label="Pagination">
+				<ul class="pagination justify-content-center mt-4">
+					{% if currentPage > 1 %}
+						<li class="page-item">
+							<a class="page-link" href="{{ path('app_figure_detail', { slug: figure.slug, page: currentPage - 1 }) }}">Précédent</a>
+						</li>
+					{% endif %}
+					{% for i in 1..lastPage %}
+						<li class="page-item {% if i == currentPage %}active{% endif %}">
+							<a class="page-link" href="{{ path('app_figure_detail', { slug: figure.slug, page: i }) }}">{{ i }}</a>
+						</li>
+					{% endfor %}
+					{% if currentPage < lastPage %}
+						<li class="page-item">
+							<a class="page-link" href="{{ path('app_figure_detail', { slug: figure.slug, page: currentPage + 1 }) }}">Suivant</a>
+						</li>
+					{% endif %}
+				</ul>
+			</nav>
+		</div>
 
-    <!-- Modal pour ajouter une image -->
-    <div class="modal fade" id="addImageModal" tabindex="-1" aria-labelledby="addImageModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addImageModalLabel">Ajouter une image</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    {{ form_start(imageForm, { 'action': path('app_figure_add_image', { id: figure.id }), 'method': 'POST', 'attr': { 'enctype': 'multipart/form-data' } }) }}
-                    {{ form_widget(imageForm) }}
-                    <div class="d-grid mt-3">
-                        <button type="submit" class="btn btn-primary">Ajouter</button>
-                    </div>
-                    {{ form_end(imageForm) }}
-                </div>
-            </div>
-        </div>
-    </div>
+		<!-- Modal pour ajouter une image -->
+		<div class="modal fade" id="addImageModal" tabindex="-1" aria-labelledby="addImageModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="addImageModalLabel">Ajouter une image</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						{{ form_start(imageForm, { 'action': path('app_figure_add_image', { id: figure.id }), 'method': 'POST', 'attr': { 'enctype': 'multipart/form-data' } }) }}
+						{{ form_widget(imageForm) }}
+						<div class="d-grid mt-3">
+							<button type="submit" class="btn btn-primary">Ajouter</button>
+						</div>
+						{{ form_end(imageForm) }}
+					</div>
+				</div>
+			</div>
+		</div>
 
-    <!-- Modal pour ajouter une vidéo -->
-    <div class="modal fade" id="addVideoModal" tabindex="-1" aria-labelledby="addVideoModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="addVideoModalLabel">Ajouter une vidéo</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    {{ form_start(videoForm, { 'action': path('app_figure_add_video', { id: figure.id }), 'method': 'POST' }) }}
-                    {{ form_widget(videoForm) }}
-                    <div class="d-grid mt-3">
-                        <button type="submit" class="btn btn-primary">Ajouter</button>
-                    </div>
-                    {{ form_end(videoForm) }}
-                </div>
-            </div>
-        </div>
-    </div>
+		<!-- Modal pour ajouter une vidéo -->
+		<div class="modal fade" id="addVideoModal" tabindex="-1" aria-labelledby="addVideoModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="addVideoModalLabel">Ajouter une vidéo</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						{{ form_start(videoForm, { 'action': path('app_figure_add_video', { id: figure.id }), 'method': 'POST' }) }}
+						{{ form_widget(videoForm) }}
+						<div class="d-grid mt-3">
+							<button type="submit" class="btn btn-primary">Ajouter</button>
+						</div>
+						{{ form_end(videoForm) }}
+					</div>
+				</div>
+			</div>
+		</div>
 
-    <hr>
-    {% for message in app.flashes('success') %}
-        <div class="alert alert-success">{{ message }}</div>
-    {% endfor %}
-    {% for message in app.flashes('error') %}
-        <div class="alert alert-danger">{{ message }}</div>
-    {% endfor %}
-</section>
+		<hr>
+		{% for message in app.flashes('success') %}
+			<div class="alert alert-success">{{ message }}</div>
+		{% endfor %}
+		{% for message in app.flashes('error') %}
+			<div class="alert alert-danger">{{ message }}</div>
+		{% endfor %}
+	</section>
 {% endblock %}
