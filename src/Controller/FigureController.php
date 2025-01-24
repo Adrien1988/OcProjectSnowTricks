@@ -2,9 +2,11 @@
 
 namespace App\Controller;
 
+use App\Entity\Comment;
 use App\Entity\Figure;
 use App\Entity\Image;
 use App\Entity\Video;
+use App\Form\CommentType;
 use App\Form\FigureType;
 use App\Form\ImageType;
 use App\Form\VideoType;
@@ -52,6 +54,7 @@ class FigureController extends AbstractController
                 'lastPage'    => $commentsData['lastPage'],
                 'imageForm'   => $this->createForm(ImageType::class)->createView(),
                 'videoForm'   => $this->createForm(VideoType::class)->createView(),
+                'commentForm' => $this->createForm(CommentType::class)->createView(),
             ]
         );
     }
@@ -131,6 +134,51 @@ class FigureController extends AbstractController
         $this->saveEntity($entityManager, $image, 'L\'image a été ajoutée avec succès.');
 
         return $this->redirectToFigureDetail($figure);
+    }
+
+
+    /**
+     * Ajoute un commentaire à une figure.
+     *
+     * Cette méthode permet aux utilisateurs connectés d'ajouter un commentaire
+     * à une figure spécifique. Le commentaire est sauvegardé dans la base de données
+     * et l'utilisateur est redirigé vers la page de la figure.
+     *
+     * @param string                 $slug             Le slug de la figure
+     * @param Request                $request          La requête HTTP contenant les données du formulaire
+     * @param FigureRepository       $figureRepository Le repository pour accéder aux figures
+     * @param EntityManagerInterface $entityManager    Le gestionnaire d'entités pour sauvegarder les données
+     *
+     * @return RedirectResponse La redirection vers la page de détail de la figure
+     */
+    #[Route('/figure/{slug}/add-comment', name: 'app_figure_add_comment', methods: ['POST'])]
+    public function addComment(string $slug, Request $request, FigureRepository $figureRepository, EntityManagerInterface $entityManager): RedirectResponse
+    {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
+        $figure = $figureRepository->findOneBy(['slug' => $slug]);
+        if (!$figure) {
+            throw $this->createNotFoundException('Figure introuvable.');
+        }
+
+        $comment = new Comment();
+        $form = $this->createForm(CommentType::class, $comment);
+        $form->handleRequest($request);
+
+        if ($this->handleFormErrors($form, 'Une erreur est survenue. Veuillez vérifier votre saisie.', $figure)) {
+            return $this->redirectToFigureDetail($figure);
+        }
+
+        $comment->setAuthor($this->getUser());
+        $comment->setFigure($figure);
+
+        $this->saveEntity($entityManager, $comment, 'Votre commentaire a été ajouté avec succès.');
+
+        $this->addFlash('success', 'Votre commentaire a été ajouté avec succès.');
+
+        // Redirige vers la page de détail de la figure
+        return $this->redirectToFigureDetail($figure);
+
     }
 
 
