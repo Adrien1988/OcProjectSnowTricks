@@ -433,4 +433,15 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }// end __toString()
 
 
+    /**
+     * Récupère l'URL de l'avatar ou une valeur par défaut.
+     *
+     * @return string
+     */
+    public function getAvatarUrlOrDefault(): string
+    {
+        return $this->avatarUrl ?? 'build/images/default-avatar.png';
+    }
+
+
 }// end class
