@@ -223,7 +223,7 @@ class FigureController extends AbstractController
 
 
     /**
-     * Modifie une figure existante.
+     * Modifie une figure existante avec une interface similaire à la vue détail.
      *
      * @param int                    $id               L'identifiant de la figure à modifier
      * @param Request                $request          La requête HTTP contenant les données
@@ -233,25 +233,42 @@ class FigureController extends AbstractController
      * @return Response La réponse HTTP avec le formulaire de modification
      */
     #[Route('/figure/edit/{id}', name: 'app_figure_edit', methods: ['GET', 'POST'])]
-    public function edit(int $id, Request $request, EntityManagerInterface $entityManager, FigureRepository $figureRepository): Response
-    {
+    public function edit(
+        int $id,
+        Request $request,
+        EntityManagerInterface $entityManager,
+        FigureRepository $figureRepository,
+    ): Response {
         $this->denyAccessUnlessGranted('ROLE_USER');
 
+        // Récupérer la figure
         $figure = $figureRepository->find($id);
         if (!$figure) {
             throw $this->createNotFoundException('La figure demandée n\'existe pas.');
         }
 
+        // Créer le formulaire de modification
         $form = $this->createForm(FigureType::class, $figure);
         $form->handleRequest($request);
 
+        // Vérifie si le formulaire a été soumis et est valide
         if ($form->isSubmitted() && $form->isValid()) {
+            // Persiste et enregistre les modifications
             $entityManager->flush();
+
+            // Ajoute un message flash de succès
             $this->addFlash('success', 'La figure a été modifiée avec succès.');
 
-            return $this->redirectToRoute('home');
+            // Redirige vers la page de détail de la figure
+            return $this->redirectToRoute('app_figure_detail', ['slug' => $figure->getSlug()]);
         }
 
+        // Si le formulaire n'est pas valide, affiche les erreurs et reste sur la page
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $this->addFlash('error', 'Veuillez corriger les erreurs dans le formulaire.');
+        }
+
+        // Rendu de la page d'édition avec le formulaire et les détails de la figure
         return $this->render(
             'figure/edit.html.twig',
             [
@@ -273,19 +290,33 @@ class FigureController extends AbstractController
      * @return RedirectResponse La redirection vers la liste des figures
      */
     #[Route('/figure/delete/{id}', name: 'app_figure_delete', methods: ['POST'])]
-    public function delete(int $id, EntityManagerInterface $entityManager, FigureRepository $figureRepository, Request $request): RedirectResponse
-    {
+    public function delete(
+        int $id,
+        EntityManagerInterface $entityManager,
+        FigureRepository $figureRepository,
+        Request $request,
+    ): RedirectResponse {
         $this->denyAccessUnlessGranted('ROLE_USER');
 
+        // Récupérer la figure
         $figure = $figureRepository->find($id);
-        if (!$figure || !$this->isCsrfTokenValid('delete_figure_'.$figure->getId(), $request->request->get('_token'))) {
-            $this->addFlash('error', 'Token CSRF invalide ou figure introuvable.');
+        if (!$figure) {
+            $this->addFlash('error', 'Figure introuvable.');
 
             return $this->redirectToRoute('home');
         }
 
+        // Vérifier le token CSRF
+        if (!$this->isCsrfTokenValid('delete_figure_'.$figure->getId(), $request->request->get('_token'))) {
+            $this->addFlash('error', 'Token CSRF invalide.');
+
+            return $this->redirectToFigureDetail($figure);
+        }
+
+        // Supprimer la figure
         $entityManager->remove($figure);
         $entityManager->flush();
+
         $this->addFlash('success', 'La figure a été supprimée avec succès.');
 
         return $this->redirectToRoute('home');

@@ -1,47 +1,83 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Modifier une figure{% endblock %}
+{% block title %}Modifier la figure : {{ figure.name }}{% endblock %}
 
 {% block body %}
 <section class="container my-5">
-    <h1 class="text-center mb-4">Modifier la figure : {{ figure.name }}</h1>
-    <div class="row justify-content-center">
-        <div class="col-md-8 col-lg-6">
-            <div class="card shadow-sm">
-                <div class="card-body">
-                    {{ form_start(form, { 'attr': { 'enctype': 'multipart/form-data' } }) }}
-                        <div class="mb-3">
-                            {{ form_label(form.name, 'Nom de la figure', { 'label_attr': { 'class': 'form-label' } }) }}
-                            {{ form_widget(form.name, { 'attr': { 'class': 'form-control', 'placeholder': 'Entrez le nom de la figure' } }) }}
-                            {{ form_errors(form.name) }}
-                        </div>
-                        <div class="mb-3">
-                            {{ form_label(form.description, 'Description', { 'label_attr': { 'class': 'form-label' } }) }}
-                            {{ form_widget(form.description, { 'attr': { 'class': 'form-control', 'placeholder': 'Décrivez la figure' } }) }}
-                            {{ form_errors(form.description) }}
-                        </div>
-                        <div class="mb-3">
-                            {{ form_label(form.figureGroup, 'Groupe de la figure', { 'label_attr': { 'class': 'form-label' } }) }}
-                            {{ form_widget(form.figureGroup, { 'attr': { 'class': 'form-control', 'placeholder': 'Indiquez le groupe de la figure' } }) }}
-                            {{ form_errors(form.figureGroup) }}
-                        </div>
-                        <div class="mb-3">
-                            {{ form_label(form.images, 'Images', { 'label_attr': { 'class': 'form-label' } }) }}
-                            {{ form_widget(form.images, { 'attr': { 'class': 'form-control', 'accept': 'image/*' } }) }}
-                            {{ form_errors(form.images) }}
-                        </div>
-                        <div class="mb-3">
-                            {{ form_label(form.videos, 'Vidéos (URLs ou embeds)', { 'label_attr': { 'class': 'form-label' } }) }}
-                            {{ form_widget(form.videos, { 'attr': { 'class': 'form-control', 'placeholder': 'Collez les URLs des vidéos' } }) }}
-                            {{ form_errors(form.videos) }}
-                        </div>
-                        <div class="d-grid mt-4">
-                            <button type="submit" class="btn btn-primary">Modifier la figure</button>
-                        </div>
-                    {{ form_end(form) }}
-                </div>
-            </div>
+    <h1 class="text-center">Modifier la figure : {{ figure.name }}</h1>
+
+    {{ form_start(form) }}
+    <div class="mt-4">
+        <div class="mb-3">
+            {{ form_label(form.name) }}
+            {{ form_widget(form.name) }}
+            {{ form_errors(form.name) }}
+        </div>
+        <div class="mb-3">
+            {{ form_label(form.description) }}
+            {{ form_widget(form.description) }}
+            {{ form_errors(form.description) }}
+        </div>
+        <div class="mb-3">
+            {{ form_label(form.figureGroup) }}
+            {{ form_widget(form.figureGroup) }}
+            {{ form_errors(form.figureGroup) }}
         </div>
     </div>
+
+    <!-- Section Images -->
+    <div class="mt-5">
+        <h5 class="text-uppercase">Images</h5>
+        <div class="row">
+            {% for image in figure.images %}
+                <div class="col-md-3 col-sm-6 mb-3">
+                    <div class="card">
+                        <img src="{{ asset(image.url) }}" class="card-img-top" alt="{{ image.altText|default('Image supplémentaire') }}" style="object-fit: cover; height: 200px; width: 100%;">
+                        {% if is_granted('ROLE_USER') %}
+                            <form method="post" action="{{ path('app_image_delete', { id: image.id }) }}">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete_image_' ~ image.id) }}">
+                                <button type="submit" class="btn btn-danger btn-sm mt-2">Supprimer</button>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Section Vidéos -->
+    <div class="mt-5">
+        <h5 class="text-uppercase">Vidéos</h5>
+        <div class="row">
+            {% for video in figure.videos %}
+                <div class="col-md-4 mb-3">
+                    <div class="card">
+                        <div class="ratio ratio-16x9">
+                            {{ video.embedCode|raw }}
+                        </div>
+                        {% if is_granted('ROLE_USER') %}
+                            <form method="post" action="{{ path('app_video_delete', { id: video.id }) }}">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete_video_' ~ video.id) }}">
+                                <button type="submit" class="btn btn-danger btn-sm mt-2">Supprimer</button>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Boutons d'action -->
+    <div class="d-flex justify-content-between mt-5">
+        <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+
+        <form method="post" action="{{ path('app_figure_delete', { id: figure.id }) }}">
+            <input type="hidden" name="_token" value="{{ csrf_token('delete_figure_' ~ figure.id) }}">
+            <button type="submit" class="btn btn-danger">Supprimer la figure</button>
+        </form>
+    </div>
+    {{ form_end(form) }}
+
+    <a href="{{ path('app_figure_detail', { slug: figure.slug }) }}" class="btn btn-secondary mt-4">Retour aux détails</a>
 </section>
 {% endblock %}
