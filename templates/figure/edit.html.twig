@@ -1,83 +1,103 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Modifier la figure : {{ figure.name }}{% endblock %}
+{% block title %}Modifier la figure - {{ figure.name }}{% endblock %}
 
 {% block body %}
 <section class="container my-5">
-    <h1 class="text-center">Modifier la figure : {{ figure.name }}</h1>
+    <h1 class="text-center">{{ figure.name }}</h1>
 
-    {{ form_start(form) }}
+    <!-- Image principale avec modification/suppression -->
+    <div class="position-relative">
+        {% set mainImage = figure.images|first %}
+        {% if mainImage and mainImage.url %}
+            <img src="{{ asset(mainImage.url) }}" class="img-fluid w-100" alt="{{ mainImage.altText|default('Image de la figure') }}">
+        {% else %}
+            <img src="{{ asset('build/images/default-image.jpg') }}" class="img-fluid w-100" alt="Image par défaut">
+        {% endif %}
+
+        <!-- Boutons Modifier et Supprimer pour l'image principale -->
+        {% if is_granted('ROLE_USER') %}
+            <div class="position-absolute top-0 end-0 p-2">
+                <button class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#editMainImageModal">✏️</button>
+                <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteMainImageModal">🗑️</button>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Galerie multimédia (images + vidéos alignées) -->
     <div class="mt-4">
-        <div class="mb-3">
-            {{ form_label(form.name) }}
-            {{ form_widget(form.name) }}
-            {{ form_errors(form.name) }}
-        </div>
-        <div class="mb-3">
-            {{ form_label(form.description) }}
-            {{ form_widget(form.description) }}
-            {{ form_errors(form.description) }}
-        </div>
-        <div class="mb-3">
-            {{ form_label(form.figureGroup) }}
-            {{ form_widget(form.figureGroup) }}
-            {{ form_errors(form.figureGroup) }}
-        </div>
-    </div>
+        <h5 class="text-uppercase">Médias</h5>
+        <div class="d-flex flex-wrap align-items-start gap-3">
 
-    <!-- Section Images -->
-    <div class="mt-5">
-        <h5 class="text-uppercase">Images</h5>
-        <div class="row">
             {% for image in figure.images %}
-                <div class="col-md-3 col-sm-6 mb-3">
-                    <div class="card">
-                        <img src="{{ asset(image.url) }}" class="card-img-top" alt="{{ image.altText|default('Image supplémentaire') }}" style="object-fit: cover; height: 200px; width: 100%;">
-                        {% if is_granted('ROLE_USER') %}
-                            <form method="post" action="{{ path('app_image_delete', { id: image.id }) }}">
-                                <input type="hidden" name="_token" value="{{ csrf_token('delete_image_' ~ image.id) }}">
-                                <button type="submit" class="btn btn-danger btn-sm mt-2">Supprimer</button>
-                            </form>
-                        {% endif %}
+                <div class="position-relative" style="width: 150px;">
+                    <img src="{{ asset(image.url) }}" class="rounded" style="width: 100%; height: 100px; object-fit: cover;" alt="{{ image.altText|default('Image supplémentaire') }}">
+                    <div class="position-absolute top-0 start-0 p-1">
+                        <button class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#editImageModal-{{ image.id }}">✏️</button>
+                        <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteImageModal-{{ image.id }}">🗑️</button>
                     </div>
                 </div>
             {% endfor %}
-        </div>
-    </div>
 
-    <!-- Section Vidéos -->
-    <div class="mt-5">
-        <h5 class="text-uppercase">Vidéos</h5>
-        <div class="row">
             {% for video in figure.videos %}
-                <div class="col-md-4 mb-3">
-                    <div class="card">
-                        <div class="ratio ratio-16x9">
-                            {{ video.embedCode|raw }}
-                        </div>
-                        {% if is_granted('ROLE_USER') %}
-                            <form method="post" action="{{ path('app_video_delete', { id: video.id }) }}">
-                                <input type="hidden" name="_token" value="{{ csrf_token('delete_video_' ~ video.id) }}">
-                                <button type="submit" class="btn btn-danger btn-sm mt-2">Supprimer</button>
-                            </form>
-                        {% endif %}
+                <div class="position-relative" style="width: 200px;">
+                    <div class="ratio ratio-16x9">
+                        {{ video.embedCode|raw }}
+                    </div>
+                    <div class="position-absolute top-0 start-0 p-1">
+                        <button class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#editVideoModal-{{ video.id }}">✏️</button>
+                        <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteVideoModal-{{ video.id }}">🗑️</button>
                     </div>
                 </div>
             {% endfor %}
+
         </div>
     </div>
 
-    <!-- Boutons d'action -->
-    <div class="d-flex justify-content-between mt-5">
-        <button type="submit" class="btn btn-primary">Enregistrer les modifications</button>
+    <!-- Formulaire de modification -->
+    <div class="mt-5">
+        {{ form_start(form, { 'attr': { 'class': 'form' } }) }}
+            <div class="mb-3">
+                {{ form_label(form.name, 'Nom de la figure', { 'label_attr': { 'class': 'form-label' } }) }}
+                {{ form_widget(form.name, { 'attr': { 'class': 'form-control' } }) }}
+            </div>
+            <div class="mb-3">
+                {{ form_label(form.figureGroup, 'Groupe', { 'label_attr': { 'class': 'form-label' } }) }}
+                {{ form_widget(form.figureGroup, { 'attr': { 'class': 'form-select' } }) }}
+            </div>
+            <div class="mb-3">
+                {{ form_label(form.description, 'Description', { 'label_attr': { 'class': 'form-label' } }) }}
+                {{ form_widget(form.description, { 'attr': { 'class': 'form-control', 'rows': 5 } }) }}
+            </div>
 
-        <form method="post" action="{{ path('app_figure_delete', { id: figure.id }) }}">
-            <input type="hidden" name="_token" value="{{ csrf_token('delete_figure_' ~ figure.id) }}">
-            <button type="submit" class="btn btn-danger">Supprimer la figure</button>
-        </form>
+            <div class="d-flex justify-content-between">
+                <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteFigureModal">Supprimer</button>
+                <button type="submit" class="btn btn-primary">Enregistrer</button>
+            </div>
+        {{ form_end(form) }}
     </div>
-    {{ form_end(form) }}
-
-    <a href="{{ path('app_figure_detail', { slug: figure.slug }) }}" class="btn btn-secondary mt-4">Retour aux détails</a>
 </section>
+
+<!-- Modal de confirmation de suppression -->
+<div class="modal fade" id="deleteFigureModal" tabindex="-1" aria-labelledby="deleteFigureModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteFigureModalLabel">Confirmer la suppression</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Êtes-vous sûr de vouloir supprimer cette figure ?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                <form method="post" action="{{ path('app_figure_delete', { id: figure.id }) }}">
+                    <input type="hidden" name="_token" value="{{ csrf_token('delete_figure_' ~ figure.id) }}">
+                    <button type="submit" class="btn btn-danger">Supprimer</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
