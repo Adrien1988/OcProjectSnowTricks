@@ -207,8 +207,6 @@ class FigureController extends AbstractController
                 } else {
                     $this->addFlash('error', 'Erreur lors de l\'upload de l\'image.');
                 }
-            } else {
-                $this->addFlash('error', 'Aucun fichier sélectionné.');
             }
         }
 
