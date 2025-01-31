@@ -5,6 +5,7 @@ namespace App\Form;
 use App\DataTransformer\SlugTransformer;
 use App\Entity\Figure;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -62,11 +63,23 @@ class FigureType extends AbstractType
             )
             ->add(
                 'figureGroup',
-                TextType::class,
+                ChoiceType::class,
                 [
-                    'label' => 'Groupe de la figure',
-                    'attr'  => [
-                        'placeholder' => 'Indiquez le groupe de la figure',
+                    'label'       => false, // Supprime le label au-dessus du champ
+                    'choices'     => [
+                        'Grabs'              => 'grabs',
+                        'Rotations'          => 'rotations',
+                        'Flips'              => 'flips',
+                        'Rotations Désaxées' => 'rotations_desaxees',
+                        'Slides'             => 'slides',
+                        'One Foot Tricks'    => 'one_foot_tricks',
+                        'Old School'         => 'old_school',
+                    ],
+                    'placeholder' => 'Sélectionnez un groupe',
+                    'empty_data'  => '', // Pour éviter qu'une valeur vide pose problème
+                    'required'    => true,
+                    'attr'        => [
+                        'class' => 'form-select w-auto text-center',
                     ],
                 ]
             );
