@@ -163,13 +163,17 @@ class FigureController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            if ($this->isEmbedCodeValid($video->getEmbedCode())) {
-                $video->setFigure($figure);
-                if ($this->saveEntity($entityManager, $video, 'La vidéo a été ajoutée avec succès.')) {
-                    return $this->redirectToFigureDetail($figure);
-                }
-            } else {
+            // Vérification de la validité du code d'intégration
+            if (!$this->isEmbedCodeValid($video->getEmbedCode())) {
+                // On ajoute un message d'erreur et on redirige si le code n'est pas valide
                 $this->addFlash('error', 'Le code d\'intégration n\'est pas valide.');
+                return $this->redirectToFigureDetail($figure);
+            }
+    
+            // Si le code est valide, on associe la vidéo à la figure et on enregistre
+            $video->setFigure($figure);
+            if ($this->saveEntity($entityManager, $video, 'La vidéo a été ajoutée avec succès.')) {
+                return $this->redirectToFigureDetail($figure);
             }
         }
 
@@ -196,18 +200,29 @@ class FigureController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $uploadedFile = $form->get('file')->getData();
-            if ($uploadedFile) {
-                $newFilename = $this->uploadFile($uploadedFile, 'uploads_directory');
-                if ($newFilename) {
-                    $image->setUrl('/uploads/'.$newFilename);
-                    $image->setFigure($figure);
-                    if ($this->saveEntity($entityManager, $image, 'L\'image a été ajoutée avec succès.')) {
-                        return $this->redirectToFigureDetail($figure);
-                    }
-                } else {
-                    $this->addFlash('error', 'Erreur lors de l\'upload de l\'image.');
-                }
+    
+            // Si aucun fichier n’est transmis, on redirige immédiatement
+            if (!$uploadedFile) {
+                return $this->redirectToFigureDetail($figure);
             }
+    
+            // Tentative d’upload
+            $newFilename = $this->uploadFile($uploadedFile, 'uploads_directory');
+            if (!$newFilename) {
+                $this->addFlash('error', 'Erreur lors de l\'upload de l\'image.');
+                return $this->redirectToFigureDetail($figure);
+            }
+    
+            // Tout est OK, on paramètre l’entité et on enregistre
+            $image->setUrl('/uploads/' . $newFilename);
+            $image->setFigure($figure);
+    
+            if ($this->saveEntity($entityManager, $image, 'L\'image a été ajoutée avec succès.')) {
+                return $this->redirectToFigureDetail($figure);
+            }
+    
+            // En cas d’échec de la sauvegarde (ex. exception en BDD), on informe l’utilisateur
+            $this->addFlash('error', 'Erreur lors de la sauvegarde de l\'image.');
         }
 
         return $this->redirectToFigureDetail($figure);
