@@ -54,8 +54,6 @@ class FigureController extends AbstractController
             if ($this->saveEntity($entityManager, $figure, 'La figure a été modifiée avec succès.')) {
                 return $this->redirectToFigureDetail($figure);
             }
-        } else {
-            $this->addFlash('error', 'Une erreur est survenue lors de la modification.');
         }
 
         return $this->render(
@@ -173,8 +171,6 @@ class FigureController extends AbstractController
             } else {
                 $this->addFlash('error', 'Le code d\'intégration n\'est pas valide.');
             }
-        } else {
-            $this->addFlash('error', 'Le formulaire de vidéo contient des erreurs.');
         }
 
         return $this->redirectToFigureDetail($figure);
@@ -214,8 +210,6 @@ class FigureController extends AbstractController
             } else {
                 $this->addFlash('error', 'Aucun fichier sélectionné.');
             }
-        } else {
-            $this->addFlash('error', 'Le formulaire de l\'image contient des erreurs.');
         }
 
         return $this->redirectToFigureDetail($figure);
@@ -257,8 +251,6 @@ class FigureController extends AbstractController
             if ($this->saveEntity($entityManager, $comment, 'Votre commentaire a été ajouté avec succès.')) {
                 return $this->redirectToFigureDetail($figure);
             }
-        } else {
-            $this->addFlash('error', 'Une erreur est survenue. Veuillez vérifier votre saisie.');
         }
 
         return $this->redirectToFigureDetail($figure);
@@ -383,7 +375,7 @@ class FigureController extends AbstractController
 
             return true;
         } catch (\Exception $e) {
-            $this->addFlash('error', 'Une erreur est survenue lors de la sauvegarde.');
+            $this->addFlash('error', 'Une erreur est survenue lors de la sauvegarde : '.$e->getMessage());
 
             return false;
         }
