@@ -7,7 +7,6 @@ use App\Entity\Image;
 use App\Form\ImageType;
 use App\Service\FigureService;
 use App\Service\FileUploader;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,11 +21,12 @@ class FigureImageController extends AbstractController
     /**
      * Ajoute une image à une figure.
      *
-     * @param Figure                 $figure        La figure associée à l'image
-     * @param Request                $request       La requête HTTP contenant les données du formulaire
-     * @param EntityManagerInterface $entityManager Le gestionnaire d'entités
+     * @param Figure        $figure        La figure associée à l'image
+     * @param Request       $request       La requête HTTP contenant les données du formulaire
+     * @param FileUploader  $fileUploader  Service de gestion des fichiers
+     * @param FigureService $figureService Service pour gérer les figures
      *
-     * @return RedirectResponse La redirection vers la page de détails
+     * @return RedirectResponse La redirection vers la page de détails de la figure
      */
     #[Route('/add/{id}', name: 'app_figure_add_image', methods: ['POST'])]
     public function addImage(Figure $figure, Request $request, FileUploader $fileUploader, FigureService $figureService): RedirectResponse
@@ -74,6 +74,13 @@ class FigureImageController extends AbstractController
 
     /**
      * Modifie une image existante.
+     *
+     * @param Image         $image         L'image à modifier
+     * @param Request       $request       La requête HTTP contenant les données du formulaire
+     * @param FileUploader  $fileUploader  Service de gestion des fichiers
+     * @param FigureService $figureService Service pour gérer les figures
+     *
+     * @return RedirectResponse La redirection vers la page de détails de la figure
      */
     #[Route('/edit/{id}', name: 'app_figure_edit_image', methods: ['POST'])]
     public function editImage(Image $image, Request $request, FileUploader $fileUploader, FigureService $figureService): Response
@@ -110,6 +117,13 @@ class FigureImageController extends AbstractController
 
     /**
      * Supprime une image existante.
+     *
+     * @param Image         $image         L'image à supprimer
+     * @param Request       $request       La requête HTTP contenant le token CSRF
+     * @param FigureService $figureService Service pour gérer les figures
+     * @param FileUploader  $fileUploader  Service de gestion des fichiers
+     *
+     * @return RedirectResponse La redirection vers la page de détails de la figure
      */
     #[Route('/delete/{id}', name: 'app_figure_delete_image', methods: ['POST'])]
     public function deleteImage(Image $image, Request $request, FigureService $figureService, FileUploader $fileUploader): RedirectResponse

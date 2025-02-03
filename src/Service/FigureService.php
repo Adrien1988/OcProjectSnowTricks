@@ -49,9 +49,8 @@ class FigureService
     /**
      * Sauvegarde ou supprime une entité en base de données.
      *
-     * @param object $entity         L'entité à sauvegarder ou supprimer
-     * @param string $successMessage Message de succès à afficher
-     * @param bool   $remove         Indique si l'entité doit être supprimée (true) ou sauvegardée (false)
+     * @param object $entity L'entité à sauvegarder ou supprimer
+     * @param bool   $remove Indique si l'entité doit être supprimée (true) ou sauvegardée (false)
      *
      * @return bool True si l'opération réussit, sinon False
      */

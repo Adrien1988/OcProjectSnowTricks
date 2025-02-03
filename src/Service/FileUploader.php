@@ -42,6 +42,13 @@ class FileUploader
     }
 
 
+    /**
+     * Supprime un fichier du serveur.
+     *
+     * @param string $filePath Le chemin du fichier à supprimer
+     *
+     * @return bool Retourne true si la suppression a réussi, sinon false
+     */
     public function remove(string $filePath): bool
     {
         $absolutePath = $this->targetDirectory.'/'.basename($filePath);

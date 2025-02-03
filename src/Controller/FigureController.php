@@ -27,7 +27,7 @@ class FigureController extends AbstractController
      *
      * @param int           $id            L'identifiant de la figure à modifier
      * @param Request       $request       La requête HTTP contenant les données
-     * @param FigureService $figureService
+     * @param FigureService $figureService Service pour gérer les figures
      *
      * @return Response La réponse HTTP avec le formulaire de modification
      */
@@ -69,7 +69,7 @@ class FigureController extends AbstractController
      * Supprime une figure existante.
      *
      * @param int              $id               L'identifiant de la figure à supprimer
-     * @param FigureService    $figureService
+     * @param FigureService    $figureService    Service pour gérer les figures
      * @param FigureRepository $figureRepository Le repository pour accéder aux figures
      * @param Request          $request          La requête HTTP contenant le token CSRF
      *
@@ -151,7 +151,7 @@ class FigureController extends AbstractController
      *
      * @param Figure        $figure        L'entité de la figure
      * @param Request       $request       La requête HTTP
-     * @param FigureService $figureService
+     * @param FigureService $figureService Service pour gérer les figures
      *
      * @return RedirectResponse La redirection vers la page de détails
      */
@@ -193,7 +193,7 @@ class FigureController extends AbstractController
      * @param string           $slug             Le slug de la figure
      * @param Request          $request          La requête HTTP contenant les données du formulaire
      * @param FigureRepository $figureRepository Le repository pour accéder aux figures
-     * @param FigureService    $figureService
+     * @param FigureService    $figureService    Service pour gérer les figures
      *
      * @return RedirectResponse La redirection vers la page de détail de la figure
      */
