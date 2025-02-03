@@ -59,14 +59,16 @@ class FigureService
         try {
             if ($remove) {
                 $this->entityManager->remove($entity);
-            } else {
+            }
+
+            if (!$remove) {
                 $this->entityManager->persist($entity);
             }
 
             $this->entityManager->flush();
 
             return true;
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return false;
         }
     }

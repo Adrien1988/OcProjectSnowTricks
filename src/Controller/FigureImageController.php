@@ -92,15 +92,17 @@ class FigureImageController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $uploadedFile = $form->get('file')->getData();
+
             if ($uploadedFile) {
                 $newFilename = $fileUploader->upload($uploadedFile);
-                if ($newFilename) {
-                    $image->setUrl('/uploads/'.$newFilename);
-                } else {
+
+                if (!$newFilename) {
                     $this->addFlash('error', 'Erreur lors de l\'upload.');
 
                     return $this->redirectToRoute('app_figure_edit_image', ['id' => $image->getId()]);
                 }
+
+                $image->setUrl('/uploads/'.$newFilename);
             }
 
             if ($figureService->saveEntity($image)) {
@@ -112,6 +114,7 @@ class FigureImageController extends AbstractController
             $this->addFlash('error', 'Erreur lors de la modification de l\'image.');
         }
 
+        return $this->redirectToRoute('app_figure_edit_image', ['id' => $image->getId()]);
     }
 
 
