@@ -59,7 +59,6 @@
 			</div>
 		</div>
 
-
 		<!-- Formulaire de modification centré et réduit -->
 		<div class="mt-5">
 			{{ form_start(form, { 'attr': { 'class': 'form w-50 mx-auto' } }) }}
@@ -89,27 +88,76 @@
 		</div>
 
 		{{ form_end(form) }}
-	</div>
-</section>
+	</section>
 
-<!-- Modal de confirmation de suppression -->
-<div class="modal fade" id="deleteFigureModal" tabindex="-1" aria-labelledby="deleteFigureModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title" id="deleteFigureModalLabel">Confirmer la suppression</h5>
-				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-			</div>
-			<div class="modal-body">
-				Êtes-vous sûr de vouloir supprimer cette figure ?
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-				<form method="post" action="{{ path('app_figure_delete', { id: figure.id }) }}">
-					<input type="hidden" name="_token" value="{{ csrf_token('delete_figure_' ~ figure.id) }}">
-					<button type="submit" class="btn btn-danger">Supprimer</button>
-				</form>
+	<!-- Modal de confirmation de suppression de la figure -->
+	<div class="modal fade" id="deleteFigureModal" tabindex="-1" aria-labelledby="deleteFigureModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="deleteFigureModalLabel">Confirmer la suppression</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					Êtes-vous sûr de vouloir supprimer cette figure ?
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+					<form method="post" action="{{ path('app_figure_delete', { id: figure.id }) }}">
+						<input type="hidden" name="_token" value="{{ csrf_token('delete_figure_' ~ figure.id) }}">
+						<button type="submit" class="btn btn-danger">Supprimer</button>
+					</form>
+				</div>
 			</div>
 		</div>
 	</div>
-</div>{% endblock %}
+
+	<!-- Modales pour l'édition et la suppression des images -->
+	{% for image in figure.images %}
+		<div class="modal fade" id="editImageModal-{{ image.id }}" tabindex="-1" aria-labelledby="editImageModalLabel-{{ image.id }}" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="editImageModalLabel-{{ image.id }}">Modifier l’image</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						<form method="post" action="{{ path('app_figure_edit_image', { id: image.id }) }}" enctype="multipart/form-data">
+							<div class="mb-3">
+								<label class="form-label">Nouvelle image</label>
+								<input type="file" name="file" class="form-control">
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+								<button type="submit" class="btn btn-primary">Enregistrer</button>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="modal fade" id="deleteImageModal-{{ image.id }}" tabindex="-1" aria-labelledby="deleteImageModalLabel-{{ image.id }}" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="deleteImageModalLabel-{{ image.id }}">Confirmer la suppression</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						Êtes-vous sûr de vouloir supprimer cette image ?
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+						<form method="post" action="{{ path('app_figure_delete_image', { id: image.id }) }}">
+							<input type="hidden" name="_token" value="{{ csrf_token('delete_image_' ~ image.id) }}">
+							<button type="submit" class="btn btn-danger">Supprimer</button>
+						</form>
+
+					</div>
+				</div>
+			</div>
+		</div>
+	{% endfor %}
+
+{% endblock %}
