@@ -3,13 +3,11 @@
 namespace App\Controller;
 
 use App\Entity\Comment;
-use App\Entity\Figure;
 use App\Form\CommentType;
 use App\Form\FigureType;
 use App\Form\ImageType;
 use App\Form\VideoType;
 use App\Repository\CommentRepository;
-use App\Repository\FigureRepository;
 use App\Service\FigureService;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -81,10 +79,12 @@ class FigureController extends AbstractController
     /**
      * Supprime une figure existante.
      *
-     * @param int              $id               L'identifiant de la figure à supprimer
-     * @param FigureService    $figureService    Service pour gérer les figures
-     * @param FigureRepository $figureRepository Le repository pour accéder aux figures
-     * @param Request          $request          La requête HTTP contenant le token CSRF
+     * @param int           $id            L'identifiant de la figure
+     *                                     à supprimer
+     * @param FigureService $figureService Service pour gérer
+     *                                     les figures
+     * @param Request       $request       La requête HTTP contenant le
+     *                                     token CSRF
      *
      * @return RedirectResponse La redirection vers la liste des figures
      */
@@ -92,17 +92,16 @@ class FigureController extends AbstractController
     public function delete(
         int $id,
         FigureService $figureService,
-        FigureRepository $figureRepository,
         Request $request,
     ): RedirectResponse {
         $this->denyAccessUnlessGranted('ROLE_USER');
 
         // Récupérer la figure
-        $figure = $figureRepository->find($id);
+        $figure = $figureService->findFigureById($id);
         if (!$figure) {
             $this->addFlash('error', 'Figure introuvable.');
 
-            return $this->redirectToRoute('home');
+            return $this->redirectToRoute('app_home');
         }
 
         // Vérifier le token CSRF
@@ -115,7 +114,7 @@ class FigureController extends AbstractController
         if ($figureService->saveEntity($figure, true)) {
             $this->addFlash('success', 'Figure supprimée avec succès.');
 
-            return $this->redirectToRoute('home');
+            return $this->redirectToRoute('app_home');
         }
 
         return $figureService->redirectToFigureDetail($figure);
@@ -125,9 +124,9 @@ class FigureController extends AbstractController
     /**
      * Affiche la page de détails d'une figure.
      *
-     * @param string            $slug              slug de la figure
-     * @param FigureRepository  $figureRepository  repository pour accéder
-     *                                             aux figures
+     * @param int               $id                L'identifiant de la figure
+     *                                             à modifier
+     * @param FigureService     $figureService     Service pour gérer les figures
      * @param CommentRepository $commentRepository Le repository pour accéder aux commentaires
      * @param Request           $request           La
      *                                             requête
@@ -135,10 +134,10 @@ class FigureController extends AbstractController
      *
      * @return Response la réponse HTTP avec le rendu de la page
      */
-    #[Route('/figure/{slug}', name: 'app_figure_detail', methods: ['GET'])]
-    public function detail(string $slug, FigureRepository $figureRepository, CommentRepository $commentRepository, Request $request): Response
+    #[Route('/figure/{id}', name: 'app_figure_detail', methods: ['GET'])]
+    public function detail(int $id, FigureService $figureService, CommentRepository $commentRepository, Request $request): Response
     {
-        $figure = $this->findFigureBySlug($slug, $figureRepository);
+        $figure = $figureService->findFigureById($id);
 
         // Récupération de la pagination des commentaires
         $page = $request->query->getInt('page', 1); // Par défaut, page 1
@@ -166,19 +165,20 @@ class FigureController extends AbstractController
      * à une figure spécifique. Le commentaire est sauvegardé dans la base de données
      * et l'utilisateur est redirigé vers la page de la figure.
      *
-     * @param string           $slug             Le slug de la figure
-     * @param Request          $request          La requête HTTP contenant les données du formulaire
-     * @param FigureRepository $figureRepository Le repository pour accéder aux figures
-     * @param FigureService    $figureService    Service pour gérer les figures
+     * @param int           $id            L'identifiant de la figure à modifier
+     * @param Request       $request       La requête HTTP contenant les données
+     *                                     du formulaire
+     * @param FigureService $figureService Service pour gérer
+     *                                     les figures
      *
      * @return RedirectResponse La redirection vers la page de détail de la figure
      */
-    #[Route('/figure/{slug}/add-comment', name: 'app_figure_add_comment', methods: ['POST'])]
-    public function addComment(string $slug, Request $request, FigureRepository $figureRepository, FigureService $figureService): RedirectResponse
+    #[Route('/figure/{id}/add-comment', name: 'app_figure_add_comment', methods: ['POST'])]
+    public function addComment(int $id, Request $request, FigureService $figureService): RedirectResponse
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
 
-        $figure = $figureRepository->findOneBy(['slug' => $slug]);
+        $figure = $figureService->findFigureById($id);
         if (!$figure) {
             throw $this->createNotFoundException('Figure introuvable.');
         }
@@ -209,21 +209,23 @@ class FigureController extends AbstractController
      * Cette méthode permet de charger les commentaires associés à une figure,
      * triés du plus récent au plus ancien, avec une pagination (10 par page).
      *
-     * @param string            $slug              Le slug de la figure
+     * @param int               $id                L'identifiant de la figure
+     *                                             à modifier
      * @param Request           $request           La requête HTTP contenant les paramètres de pagination
-     * @param FigureRepository  $figureRepository  Le repository pour accéder aux figures
+     * @param FigureService     $figureService     Service pour gérer
+     *                                             les figures
      * @param CommentRepository $commentRepository Le repository pour accéder aux commentaires
      *
      * @return Response La réponse HTTP contenant le rendu des commentaires
      */
-    #[Route('/figure/{slug}/comments', name: 'app_figure_comments', methods: ['GET'])]
+    #[Route('/figure/{id}/comments', name: 'app_figure_comments', methods: ['GET'])]
     public function comments(
-        string $slug,
+        int $id,
         Request $request,
-        FigureRepository $figureRepository,
+        FigureService $figureService,
         CommentRepository $commentRepository,
     ): Response {
-        $figure = $figureRepository->findOneBy(['slug' => $slug]);
+        $figure = $figureService->findFigureById($id);
 
         if (!$figure) {
             throw $this->createNotFoundException('Figure introuvable.');
@@ -240,26 +242,6 @@ class FigureController extends AbstractController
                 'page'     => $page,
             ]
         );
-    }
-
-
-    /**
-     * Trouve une figure par son slug ou lance une exception.
-     *
-     * @param string           $slug             Le slug de la figure
-     * @param FigureRepository $figureRepository Le repository pour accéder aux figures
-     *
-     * @return Figure La figure trouvée
-     */
-    private function findFigureBySlug(string $slug, FigureRepository $figureRepository): Figure
-    {
-        $figure = $figureRepository->findOneWithRelations($slug);
-
-        if (!$figure) {
-            throw $this->createNotFoundException('La figure demandée n\'existe pas.');
-        }
-
-        return $figure;
     }
 
 

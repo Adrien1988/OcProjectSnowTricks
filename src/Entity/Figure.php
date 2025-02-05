@@ -44,9 +44,9 @@ class Figure
     private ?string $description = null;
 
     /**
-     * Slug unique de la figure.
+     * Slug de la figure.
      */
-    #[ORM\Column(length: 255, unique: true)]
+    #[ORM\Column(length: 255)]
     // #[Assert\NotBlank(message: 'Le slug est obligatoire.')]
     private ?string $slug = null;
 

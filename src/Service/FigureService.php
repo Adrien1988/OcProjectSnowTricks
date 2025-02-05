@@ -83,7 +83,7 @@ class FigureService
      */
     public function redirectToFigureDetail(Figure $figure): RedirectResponse
     {
-        return new RedirectResponse($this->urlGenerator->generate('app_figure_detail', ['slug' => $figure->getSlug()]));
+        return new RedirectResponse($this->urlGenerator->generate('app_figure_detail', ['id' => $figure->getId()]));
     }
 
 
