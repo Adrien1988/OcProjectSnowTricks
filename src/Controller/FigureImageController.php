@@ -82,7 +82,7 @@ class FigureImageController extends AbstractController
      *
      * @return RedirectResponse La redirection vers la page de détails de la figure
      */
-    #[Route('/edit/{id}', name: 'app_figure_edit_image', methods: ['POST'])]
+    #[Route('/edit/{id}', name: 'app_figure_edit_image', methods: ['GET', 'POST'])]
     public function editImage(Image $image, Request $request, FileUploader $fileUploader, FigureService $figureService): Response
     {
         $this->denyAccessUnlessGranted('ROLE_USER');

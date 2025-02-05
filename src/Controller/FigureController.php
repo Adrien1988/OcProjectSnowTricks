@@ -47,6 +47,12 @@ class FigureController extends AbstractController
         $form = $this->createForm(FigureType::class, $figure);
         $form->handleRequest($request);
 
+        // Création des formulaires d'édition pour chaque image
+        $imageForms = [];
+        foreach ($figure->getImages() as $image) {
+            $imageForms[$image->getId()] = $this->createForm(ImageType::class, $image)->createView();
+        }
+
         if ($form->isSubmitted() && $form->isValid()) {
             if ($figureService->saveEntity($figure)) {
                 $this->addFlash('success', 'La figure a été éditée avec succès.');
@@ -58,8 +64,9 @@ class FigureController extends AbstractController
         return $this->render(
             'figure/edit.html.twig',
             [
-                'form'   => $form->createView(),
-                'figure' => $figure,
+                'form'       => $form->createView(),
+                'figure'     => $figure,
+                'imageForms' => $imageForms,
             ]
         );
     }
