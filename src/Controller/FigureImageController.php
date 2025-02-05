@@ -98,13 +98,13 @@ class FigureImageController extends AbstractController
             $uploadedFile = $form->get('file')->getData();
             if ($uploadedFile) {
                 $newFilename = $fileUploader->upload($uploadedFile);
-                if ($newFilename) {
-                    $image->setUrl('/uploads/'.$newFilename);
-                } else {
+                if (!$newFilename) {
                     $this->addFlash('error', 'Erreur lors de l\'upload.');
 
                     return $this->redirectToRoute('app_figure_edit', ['id' => $image->getFigure()->getId()]);
                 }
+
+                $image->setUrl('/uploads/'.$newFilename);
             }
 
             if ($figureService->saveEntity($image)) {
