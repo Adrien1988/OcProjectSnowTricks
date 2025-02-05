@@ -67,7 +67,7 @@ class FigureVideoController extends AbstractController
      * @param FigureService $figureService Service pour gérer les
      *                                     figures
      *
-     * @return RedirectResponse      La redirection vers la page d'édition de la figure
+     * @return RedirectResponse La redirection vers la page d'édition de la figure
      */
     #[Route('/edit/{id}', name: 'app_figure_edit_video', methods: ['GET', 'POST'])]
     public function editVideo(
@@ -129,7 +129,7 @@ class FigureVideoController extends AbstractController
             return $this->redirectToRoute('app_figure_edit', ['id' => $figure->getId()]);
         }
 
-            $this->addFlash('error', 'Erreur lors de la suppression de la vidéo.');
+        $this->addFlash('error', 'Erreur lors de la suppression de la vidéo.');
 
         return $this->redirectToRoute('app_figure_edit', ['id' => $figure->getId()]);
     }
