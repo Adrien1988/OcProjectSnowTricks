@@ -30,7 +30,7 @@ class ImageType extends AbstractType
             [
                 'label'       => 'Télécharger une image',
                 'mapped'      => false,
-                'required'    => true,
+                'required'    => false,
                 'constraints' => [
                     new File(
                         [
@@ -59,7 +59,11 @@ class ImageType extends AbstractType
     {
         $resolver->setDefaults(
             [
-                'data_class' => Image::class,
+                'data_class'        => Image::class,
+                'validation_groups' => function ($form) {
+                    // Si l'image a déjà une ID, alors c'est une modification → pas de validation sur 'url'
+                    return $form->getData() && $form->getData()->getId() ? ['edit'] : ['Default'];
+                },
             ]
         );
     }

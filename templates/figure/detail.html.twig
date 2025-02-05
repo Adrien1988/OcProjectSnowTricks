@@ -6,6 +6,12 @@
 {% endblock %}
 
 {% block body %}
+	{% for message in app.flashes('success') %}
+		<div class="alert alert-success">{{ message }}</div>
+	{% endfor %}
+	{% for message in app.flashes('error') %}
+		<div class="alert alert-danger">{{ message }}</div>
+	{% endfor %}
 	<section
 		class="container my-5">
 		<!-- Image principale avec superposition du nom et les boutons Modifier/Supprimer -->
@@ -189,12 +195,4 @@
 			</div>
 		</div>
 	</div>
-
-	<hr>
-	{% for message in app.flashes('success') %}
-		<div class="alert alert-success">{{ message }}</div>
-	{% endfor %}
-	{% for message in app.flashes('error') %}
-		<div class="alert alert-danger">{{ message }}</div>
-	{% endfor %}
 </section>{% endblock %}

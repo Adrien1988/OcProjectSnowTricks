@@ -5,6 +5,12 @@
 {% endblock %}
 
 {% block body %}
+	{% for message in app.flashes('success') %}
+		<div class="alert alert-success">{{ message }}</div>
+	{% endfor %}
+	{% for message in app.flashes('error') %}
+		<div class="alert alert-danger">{{ message }}</div>
+	{% endfor %}
 	<section
 		class="container my-5">
 		<!-- Image principale avec superposition du titre -->
@@ -33,7 +39,6 @@
 		<div class="mt-4 text-center">
 			<h5 class="text-uppercase">Médias</h5>
 			<div class="d-flex flex-wrap justify-content-center gap-4">
-
 				{% for image in figure.images %}
 					<div class="text-center" style="width: 200px;">
 						<img src="{{ asset(image.url) }}" class="rounded mb-2" style="width: 100%; height: 140px; object-fit: cover;" alt="{{ image.altText|default('Image supplémentaire') }}">
@@ -55,28 +60,20 @@
 						</div>
 					</div>
 				{% endfor %}
-
 			</div>
 		</div>
-
 
 		<!-- Formulaire de modification centré et réduit -->
 		<div class="mt-5">
 			{{ form_start(form, { 'attr': { 'class': 'form w-50 mx-auto' } }) }}
-
-			<!-- Modification du nom -->
 			<div class="mb-3">
 				{{ form_label(form.name, 'Nom de la figure', { 'label_attr': { 'class': 'form-label' } }) }}
 				{{ form_widget(form.name, { 'attr': { 'class': 'form-control' } }) }}
 			</div>
-
-			<!-- Description -->
 			<div class="mb-3">
 				{{ form_label(form.description, 'Description', { 'label_attr': { 'class': 'form-label' } }) }}
 				{{ form_widget(form.description, { 'attr': { 'class': 'form-control', 'rows': 5 } }) }}
 			</div>
-
-			<!-- Sélection du groupe avec placeholder + boutons sur la même ligne -->
 			<div class="mb-3 d-flex align-items-center justify-content-between gap-3">
 				<div class="flex-grow-1">
 					{{ form_widget(form.figureGroup, { 'attr': { 'class': 'form-select w-auto text-muted' } }) }}
@@ -86,30 +83,77 @@
 					<button type="submit" class="btn btn-primary">Enregistrer</button>
 				</div>
 			</div>
+			{{ form_end(form) }}
+		</div>
+	</section>
+
+	<!-- Modal de confirmation de suppression de la figure -->
+	<div class="modal fade" id="deleteFigureModal" tabindex="-1" aria-labelledby="deleteFigureModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="deleteFigureModalLabel">Confirmer la suppression</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					Êtes-vous sûr de vouloir supprimer cette figure ?
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+					<form method="post" action="{{ path('app_figure_delete', { id: figure.id }) }}">
+						<input type="hidden" name="_token" value="{{ csrf_token('delete_figure_' ~ figure.id) }}">
+						<button type="submit" class="btn btn-danger">Supprimer</button>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Modales pour l'édition et la suppression des images -->
+	{% for image in figure.images %}
+		<div class="modal fade" id="editImageModal-{{ image.id }}" tabindex="-1" aria-labelledby="editImageModalLabel-{{ image.id }}" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="editImageModalLabel-{{ image.id }}">Modifier l’image</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						{{ form_start(imageForms[image.id], {
+                        'action': path('app_figure_edit_image', { id: image.id }),
+                        'method': 'POST',
+                        'attr': { 'enctype': 'multipart/form-data' }
+                    }) }}
+						{{ form_row(imageForms[image.id].file) }}
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+							<button type="submit" class="btn btn-primary">Enregistrer</button>
+						</div>
+						{{ form_end(imageForms[image.id]) }}
+					</div>
+				</div>
+			</div>
 		</div>
 
-		{{ form_end(form) }}
-	</div>
-</section>
-
-<!-- Modal de confirmation de suppression -->
-<div class="modal fade" id="deleteFigureModal" tabindex="-1" aria-labelledby="deleteFigureModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-header">
-				<h5 class="modal-title" id="deleteFigureModalLabel">Confirmer la suppression</h5>
-				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-			</div>
-			<div class="modal-body">
-				Êtes-vous sûr de vouloir supprimer cette figure ?
-			</div>
-			<div class="modal-footer">
-				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-				<form method="post" action="{{ path('app_figure_delete', { id: figure.id }) }}">
-					<input type="hidden" name="_token" value="{{ csrf_token('delete_figure_' ~ figure.id) }}">
-					<button type="submit" class="btn btn-danger">Supprimer</button>
-				</form>
+		<div class="modal fade" id="deleteImageModal-{{ image.id }}" tabindex="-1" aria-labelledby="deleteImageModalLabel-{{ image.id }}" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="deleteImageModalLabel-{{ image.id }}">Confirmer la suppression</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						Êtes-vous sûr de vouloir supprimer cette image ?
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+						<form method="post" action="{{ path('app_figure_delete_image', { id: image.id }) }}">
+							<input type="hidden" name="_token" value="{{ csrf_token('delete_image_' ~ image.id) }}">
+							<button type="submit" class="btn btn-danger">Supprimer</button>
+						</form>
+					</div>
+				</div>
 			</div>
 		</div>
-	</div>
-</div>{% endblock %}
+	{% endfor %}
+{% endblock %}
