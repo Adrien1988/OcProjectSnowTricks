@@ -124,7 +124,7 @@
 							{{ form_errors(commentForm) }}
 						</div>
 					{% endif %}
-					{{ form_start(commentForm, { 'action': path('app_figure_add_comment', { 'slug': figure.slug }), 'method': 'POST' }) }}
+					{{ form_start(commentForm, { 'action': path('app_figure_add_comment', { 'id': figure.id }), 'method': 'POST' }) }}
 					{{ form_widget(commentForm) }}
 					<div class="d-grid mt-3">
 						<button type="submit" class="btn btn-primary">Publier</button>
@@ -138,17 +138,17 @@
 				<ul class="pagination justify-content-center mt-4">
 					{% if currentPage > 1 %}
 						<li class="page-item">
-							<a class="page-link" href="{{ path('app_figure_detail', { slug: figure.slug, page: currentPage - 1 }) }}">Précédent</a>
+							<a class="page-link" href="{{ path('app_figure_detail', { id: figure.id, page: currentPage - 1 }) }}">Précédent</a>
 						</li>
 					{% endif %}
 					{% for i in 1..lastPage %}
 						<li class="page-item {% if i == currentPage %}active{% endif %}">
-							<a class="page-link" href="{{ path('app_figure_detail', { slug: figure.slug, page: i }) }}">{{ i }}</a>
+							<a class="page-link" href="{{ path('app_figure_detail', { id: figure.id, page: i }) }}">{{ i }}</a>
 						</li>
 					{% endfor %}
 					{% if currentPage < lastPage %}
 						<li class="page-item">
-							<a class="page-link" href="{{ path('app_figure_detail', { slug: figure.slug, page: currentPage + 1 }) }}">Suivant</a>
+							<a class="page-link" href="{{ path('app_figure_detail', { id: figure.id, page: currentPage + 1 }) }}">Suivant</a>
 						</li>
 					{% endif %}
 				</ul>
