@@ -156,4 +156,54 @@
 			</div>
 		</div>
 	{% endfor %}
+
+    <!-- Modales pour l'édition et la suppression des vidéos -->
+    {% for video in figure.videos %}
+        <div class="modal fade" id="editVideoModal-{{ video.id }}" tabindex="-1" aria-labelledby="editVideoModalLabel-{{ video.id }}" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="editVideoModalLabel-{{ video.id }}">Modifier la vidéo</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        {{ form_start(videoForms[video.id], {
+                            'action': path('app_figure_edit_video', { id: video.id }),
+                            'method': 'POST'
+                        }) }}
+                        <div class="mb-3">
+                            {{ form_label(videoForms[video.id].embedCode, 'Code d\'intégration de la vidéo', { 'label_attr': { 'class': 'form-label' } }) }}
+                            {{ form_widget(videoForms[video.id].embedCode, { 'attr': { 'class': 'form-control' } }) }}
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                            <button type="submit" class="btn btn-primary">Enregistrer</button>
+                        </div>
+                        {{ form_end(videoForms[video.id]) }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="modal fade" id="deleteVideoModal-{{ video.id }}" tabindex="-1" aria-labelledby="deleteVideoModalLabel-{{ video.id }}" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="deleteVideoModalLabel-{{ video.id }}">Confirmer la suppression</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        Êtes-vous sûr de vouloir supprimer cette vidéo ?
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                        <form method="post" action="{{ path('app_figure_delete_video', { id: video.id }) }}">
+                            <input type="hidden" name="_token" value="{{ csrf_token('delete_video_' ~ video.id) }}">
+                            <button type="submit" class="btn btn-danger">Supprimer</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
 {% endblock %}

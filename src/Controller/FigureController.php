@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\Comment;
 use App\Entity\Figure;
-use App\Entity\Video;
 use App\Form\CommentType;
 use App\Form\FigureType;
 use App\Form\ImageType;
@@ -53,6 +52,12 @@ class FigureController extends AbstractController
             $imageForms[$image->getId()] = $this->createForm(ImageType::class, $image)->createView();
         }
 
+        // Génération des formulaires d'édition pour chaque vidéo
+        $videoForms = [];
+        foreach ($figure->getVideos() as $video) {
+            $videoForms[$video->getId()] = $this->createForm(VideoType::class, $video)->createView();
+        }
+
         if ($form->isSubmitted() && $form->isValid()) {
             if ($figureService->saveEntity($figure)) {
                 $this->addFlash('success', 'La figure a été éditée avec succès.');
@@ -67,6 +72,7 @@ class FigureController extends AbstractController
                 'form'       => $form->createView(),
                 'figure'     => $figure,
                 'imageForms' => $imageForms,
+                'videoForms' => $videoForms,
             ]
         );
     }
@@ -150,43 +156,6 @@ class FigureController extends AbstractController
                 'commentForm' => $this->createForm(CommentType::class)->createView(),
             ]
         );
-    }
-
-
-    /**
-     * Ajoute une vidéo à une figure.
-     *
-     * @param Figure        $figure        L'entité de la figure
-     * @param Request       $request       La requête HTTP
-     * @param FigureService $figureService Service pour gérer les figures
-     *
-     * @return RedirectResponse La redirection vers la page de détails
-     */
-    #[Route('/figure/{id}/add-video', name: 'app_figure_add_video', methods: ['POST'])]
-    public function addVideo(Figure $figure, Request $request, FigureService $figureService): RedirectResponse
-    {
-        $this->denyAccessUnlessGranted('ROLE_USER');
-
-        $form = $this->createForm(VideoType::class, $video = new Video());
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            // Vérification de la validité du code d'intégration
-            if (!$this->isEmbedCodeValid($video->getEmbedCode())) {
-                // On ajoute un message d'erreur et on redirige si le code n'est pas valide
-                $this->addFlash('error', 'Le code d\'intégration n\'est pas valide.');
-
-                return $figureService->redirectToFigureDetail($figure);
-            }
-
-            // Si le code est valide, on associe la vidéo à la figure et on enregistre
-            $video->setFigure($figure);
-            if ($figureService->saveEntity($video)) {
-                return $figureService->redirectToFigureDetail($figure);
-            }
-        }
-
-        return $figureService->redirectToFigureDetail($figure);
     }
 
 
@@ -291,19 +260,6 @@ class FigureController extends AbstractController
         }
 
         return $figure;
-    }
-
-
-    /**
-     * Vérifie si le code d'intégration de la vidéo est valide.
-     *
-     * @param string|null $embedCode Le code d'intégration à vérifier
-     *
-     * @return bool Renvoie true si le code est valide
-     */
-    private function isEmbedCodeValid(?string $embedCode): bool
-    {
-        return $embedCode && preg_match('/<iframe.*>.*<\/iframe>/', $embedCode);
     }
 
 
