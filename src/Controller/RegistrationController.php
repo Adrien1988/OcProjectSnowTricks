@@ -51,29 +51,6 @@ class RegistrationController extends AbstractController
             $token = bin2hex(random_bytes(32));
             $user->setActivationToken($token);
 
-            // Gestion de l'avatar
-            $avatarMethod = $form->get('avatarMethod')->getData();
-
-            if ('url' === $avatarMethod) {
-                $avatarUrl = $form->get('avatarUrl')->getData();
-                if (null !== $avatarUrl) {
-                    $user->setAvatarUrl($avatarUrl);
-                }
-            }
-
-            if ('upload' === $avatarMethod) {
-                $avatarFile = $form->get('avatarFile')->getData();
-                if (null === $avatarFile) {
-                    $this->addFlash('error', "Vous n'avez pas uploadé d'avatar !");
-
-                    return $this->redirectToRoute('app_register');
-                }
-
-                $newFilename = uniqid().'.'.$avatarFile->guessExtension();
-                $avatarFile->move($this->getParameter('avatars_directory'), $newFilename);
-                $user->setAvatarUrl('/uploads/avatars/'.$newFilename);
-            }
-
             $entityManager->persist($user);
             $entityManager->flush();
 
