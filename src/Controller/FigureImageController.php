@@ -83,8 +83,12 @@ class FigureImageController extends AbstractController
      * @return RedirectResponse La redirection vers la page de détails de la figure
      */
     #[Route('/edit/{id}', name: 'app_figure_edit_image', methods: ['GET', 'POST'])]
-    public function editImage(Image $image, Request $request, FileUploader $fileUploader, FigureService $figureService): Response
-    {
+    public function editImage(
+        Image $image,
+        Request $request,
+        FileUploader $fileUploader,
+        FigureService $figureService,
+    ): Response {
         $this->denyAccessUnlessGranted('ROLE_USER');
 
         $form = $this->createForm(ImageType::class, $image);
@@ -92,29 +96,26 @@ class FigureImageController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $uploadedFile = $form->get('file')->getData();
-
             if ($uploadedFile) {
                 $newFilename = $fileUploader->upload($uploadedFile);
-
-                if (!$newFilename) {
+                if ($newFilename) {
+                    $image->setUrl('/uploads/'.$newFilename);
+                } else {
                     $this->addFlash('error', 'Erreur lors de l\'upload.');
 
-                    return $this->redirectToRoute('app_figure_edit_image', ['id' => $image->getId()]);
+                    return $this->redirectToRoute('app_figure_edit', ['id' => $image->getFigure()->getId()]);
                 }
-
-                $image->setUrl('/uploads/'.$newFilename);
             }
 
             if ($figureService->saveEntity($image)) {
                 $this->addFlash('success', 'Image modifiée avec succès.');
 
-                return $figureService->redirectToFigureDetail($image->getFigure());
+                // ✅ Vérification avant redirection pour éviter une boucle infinie
+                return $this->redirectToRoute('app_figure_edit', ['id' => $image->getFigure()->getId()]);
             }
-
-            $this->addFlash('error', 'Erreur lors de la modification de l\'image.');
         }
 
-        return $this->redirectToRoute('app_figure_edit_image', ['id' => $image->getId()]);
+        return $this->redirectToRoute('app_figure_edit', ['id' => $image->getFigure()->getId()]);
     }
 
 
@@ -138,25 +139,25 @@ class FigureImageController extends AbstractController
         if (!$this->isCsrfTokenValid('delete_image_'.$image->getId(), $request->request->get('_token'))) {
             $this->addFlash('error', 'Token CSRF invalide.');
 
-            return $figureService->redirectToFigureDetail($figure);
+            return $this->redirectToRoute('app_figure_edit', ['id' => $figure->getId()]);
         }
 
         // ✅ Suppression du fichier image physique
         if (!$fileUploader->remove($image->getUrl())) {
             $this->addFlash('error', 'Erreur lors de la suppression du fichier image.');
 
-            return $figureService->redirectToFigureDetail($figure);
+            return $this->redirectToRoute('app_figure_edit', ['id' => $figure->getId()]);
         }
 
         if ($figureService->saveEntity($image, true)) {
             $this->addFlash('success', 'Image supprimée avec succès.');
 
-            return $figureService->redirectToFigureDetail($figure);
+            return $this->redirectToRoute('app_figure_edit', ['id' => $figure->getId()]);
         }
 
         $this->addFlash('error', 'Erreur lors de la suppression de l\'image.');
 
-        return $figureService->redirectToFigureDetail($figure);
+        return $this->redirectToRoute('app_figure_edit', ['id' => $figure->getId()]);
     }
 
 

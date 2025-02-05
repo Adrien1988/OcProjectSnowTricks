@@ -1,9 +1,18 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Modifier la figure - {{ figure.name }}{% endblock %}
+{% block title %}Modifier la figure -
+	{{ figure.name }}
+{% endblock %}
 
 {% block body %}
-	<section class="container my-5">
+	{% for message in app.flashes('success') %}
+		<div class="alert alert-success">{{ message }}</div>
+	{% endfor %}
+	{% for message in app.flashes('error') %}
+		<div class="alert alert-danger">{{ message }}</div>
+	{% endfor %}
+	<section
+		class="container my-5">
 		<!-- Image principale avec superposition du titre -->
 		<div class="position-relative text-center">
 			{% set mainImage = figure.images|first %}
@@ -111,15 +120,15 @@
 					</div>
 					<div class="modal-body">
 						{{ form_start(imageForms[image.id], {
-							'action': path('app_figure_edit_image', { id: image.id }),
-							'method': 'POST',
-							'attr': { 'enctype': 'multipart/form-data' }
-						}) }}
-							{{ form_row(imageForms[image.id].file) }}
-							<div class="modal-footer">
-								<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-								<button type="submit" class="btn btn-primary">Enregistrer</button>
-							</div>
+                        'action': path('app_figure_edit_image', { id: image.id }),
+                        'method': 'POST',
+                        'attr': { 'enctype': 'multipart/form-data' }
+                    }) }}
+						{{ form_row(imageForms[image.id].file) }}
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+							<button type="submit" class="btn btn-primary">Enregistrer</button>
+						</div>
 						{{ form_end(imageForms[image.id]) }}
 					</div>
 				</div>
