@@ -6,6 +6,7 @@ use App\Entity\Comment;
 use App\Form\CommentType;
 use App\Form\FigureType;
 use App\Form\ImageType;
+use App\Form\MainImageType;
 use App\Form\VideoType;
 use App\Repository\CommentRepository;
 use App\Service\FigureService;
@@ -44,6 +45,9 @@ class FigureController extends AbstractController
         $form = $this->createForm(FigureType::class, $figure);
         $form->handleRequest($request);
 
+        // Création du formulaire pour modifier l'image principale
+        $mainImageForm = $this->createForm(MainImageType::class, null, ['figure' => $figure])->createView();
+
         // Création des formulaires d'édition pour chaque image
         $imageForms = [];
         foreach ($figure->getImages() as $image) {
@@ -67,10 +71,11 @@ class FigureController extends AbstractController
         return $this->render(
             'figure/edit.html.twig',
             [
-                'form'       => $form->createView(),
-                'figure'     => $figure,
-                'imageForms' => $imageForms,
-                'videoForms' => $videoForms,
+                'form'           => $form->createView(),
+                'figure'         => $figure,
+                'mainImageForm'  => $mainImageForm,
+                'imageForms'     => $imageForms,
+                'videoForms'     => $videoForms,
             ]
         );
     }

@@ -5,8 +5,10 @@ namespace App\Controller;
 use App\Entity\Figure;
 use App\Entity\Image;
 use App\Form\ImageType;
+use App\Form\MainImageType;
 use App\Service\FigureService;
 use App\Service\FileUploader;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -156,6 +158,41 @@ class FigureImageController extends AbstractController
         }
 
         $this->addFlash('error', 'Erreur lors de la suppression de l\'image.');
+
+        return $this->redirectToRoute('app_figure_edit', ['id' => $figure->getId()]);
+    }
+
+
+    /**
+     * Change l'image principale d'une figure.
+     *
+     * @param Figure        $figure        La figure concernée
+     * @param Request       $request       La requête HTTP contenant le formulaire
+     * @param FigureService $figureService Service pour gérer les figures
+     *
+     * @return RedirectResponse Redirige vers la page d'édition de la figure
+     */
+    #[Route('/main-image/{id}', name: 'app_figure_set_main_image', methods: ['POST'])]
+    public function setMainImage(Figure $figure, Request $request, FigureService $figureService, EntityManagerInterface $entityManager): RedirectResponse
+    {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
+        $form = $this->createForm(MainImageType::class, null, ['figure' => $figure]);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $imageId = $form->get('mainImage')->getData();
+            $image = $entityManager->getRepository(Image::class)->find($imageId);
+
+            if ($image) {
+                $figure->setMainImage($image);
+                $entityManager->persist($figure);
+                $entityManager->flush();
+                $this->addFlash('success', 'L\'image principale a été mise à jour avec succès.');
+            } else {
+                $this->addFlash('error', 'Erreur lors de la mise à jour de l\'image principale.');
+            }
+        }
 
         return $this->redirectToRoute('app_figure_edit', ['id' => $figure->getId()]);
     }
