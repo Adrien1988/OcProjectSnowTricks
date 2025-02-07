@@ -13,6 +13,7 @@ use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Email;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Routing\Generator\UrlGeneratorInterface;
 use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 
 /**
@@ -87,13 +88,17 @@ class SecurityController extends AbstractController
 
                 $entityManager->flush();
 
-                $resetUrl = $this->generateUrl('app_reset_password', ['token' => $token], true);
+                $resetUrl = $this->generateUrl('app_reset_password', ['token' => $token], UrlGeneratorInterface::ABSOLUTE_URL);
 
                 $emailMessage = (new Email())
                     ->from('no-reply@example.com')
                     ->to($user->getEmail())
                     ->subject('Réinitialisation de votre mot de passe')
-                    ->html('<p>Cliquez sur ce lien pour réinitialiser votre mot de passe :</p><a href="'.$resetUrl.'">'.$resetUrl.'</a>');
+                    ->html(
+                        '<p>Cliquez sur le bouton ci-dessous pour réinitialiser votre mot de passe :</p>
+                    <p><a href="'.$resetUrl.'" style="display: inline-block; padding: 10px 15px; background-color: #007bff; 
+                        color: white; text-decoration: none; border-radius: 5px;">Réinitialiser mon mot de passe</a></p>'
+                    );
 
                 $mailer->send($emailMessage);
 
