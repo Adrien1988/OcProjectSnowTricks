@@ -59,17 +59,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private ?string $password = null;
 
     /**
-     * URL de l'avatar de l'utilisateur.
-     */
-    #[ORM\Column(length: 255, nullable: true)]
-    #[Assert\Length(
-        max: 255,
-        maxMessage: "L'URL de l'avatar ne doit pas dépasser {{ limit }} caractères."
-    )]
-    #[Assert\Url(message: 'L’URL de l’avatar n’est pas valide.')]
-    private ?string $avatarUrl = null;
-
-    /**
      * Indique si le compte de l'utilisateur est actif.
      */
     #[ORM\Column(nullable: false, options: ['default' => false])]
@@ -199,32 +188,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }// end setPassword()
-
-
-    /**
-     * Récupère l'URL de l'avatar.
-     *
-     * @return string|null
-     */
-    public function getAvatarUrl(): ?string
-    {
-        return $this->avatarUrl;
-    }// end getAvatarUrl()
-
-
-    /**
-     * Définit l'URL de l'avatar.
-     *
-     * @param string|null $avatarUrl L'URL de l'avatar de l'utilisateur
-     *
-     * @return $this
-     */
-    public function setAvatarUrl(?string $avatarUrl): static
-    {
-        $this->avatarUrl = $avatarUrl;
-
-        return $this;
-    }// end setAvatarUrl()
 
 
     /**
@@ -431,17 +394,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         return $this->username ?? 'Utilisateur';
     }// end __toString()
-
-
-    /**
-     * Récupère l'URL de l'avatar ou une valeur par défaut.
-     *
-     * @return string
-     */
-    public function getAvatarUrlOrDefault(): string
-    {
-        return $this->avatarUrl ?? 'build/images/default-avatar.png';
-    }
 
 
 }// end class

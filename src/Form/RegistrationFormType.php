@@ -6,11 +6,8 @@ use App\Entity\User;
 use Gregwar\CaptchaBundle\Type\CaptchaType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
-use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
-use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\PasswordType;
-use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Symfony\Component\Validator\Constraints\IsTrue;
@@ -98,49 +95,6 @@ class RegistrationFormType extends AbstractType
                                 'max'        => 4096,
                             ]
                         ),
-                    ],
-                ]
-            )
-            ->add(
-                'avatarMethod',
-                ChoiceType::class,
-                [
-                    'choices' => [
-                        'Ajouter l\'avatar ultérieurement' => 'none',
-                        'URL'                              => 'url',
-                        'Uploader un fichier'              => 'upload',
-                    ],
-                    'expanded' => true,
-                    'multiple' => false,
-                    'mapped'   => false,
-                    'label'    => 'Comment fournir votre avatar ?',
-                    'attr'     => [
-                        'class' => 'form-control',
-                    ],
-                ]
-            )
-            ->add(
-                'avatarUrl',
-                TextType::class,
-                [
-                    'label'    => 'URL de votre avatar',
-                    'required' => false,
-                    'mapped'   => false,
-                    'attr'     => [
-                        'class'       => 'form-control',
-                        'placeholder' => 'Entrez l\'URL de votre avatar',
-                    ],
-                ]
-            )
-            ->add(
-                'avatarFile',
-                FileType::class,
-                [
-                    'required' => false,
-                    'label'    => 'Fichier avatar',
-                    'mapped'   => false,
-                    'attr'     => [
-                        'class' => 'form-control',
                     ],
                 ]
             )
