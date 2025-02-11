@@ -54,7 +54,7 @@
                             <div class="d-flex flex-wrap justify-content-center gap-3" id="imageSelectionContainer">
                                 {% for image in figure.images %}
                                     <label class="d-block text-center image-label" style="cursor: pointer;">
-                                        <input type="radio" name="{{ mainImageForm.mainImage.vars.full_name }}" value="{{ image.id }}" {% if figure.mainImage == image %}checked{% endif %} style="display: none;">
+                                        <input type="radio" name="{{ mainImageForm.mainImage.vars.full_name }}" value="{{ image.id }}" {% if figure.mainImage == image %}checked{% endif %} class="visually-hidden">
                                         <img src="{{ asset(image.url) }}" class="img-thumbnail border {% if figure.mainImage == image %}border-primary{% endif %}" alt="Image principale" style="width: 120px; height: 120px; object-fit: cover;">
                                     </label>
                                 {% endfor %}
@@ -136,6 +136,11 @@
                     // Cocher le bouton radio associé
                     this.querySelector("input[type='radio']").checked = true;
                 });
+            });
+
+            // Supprimer les anciens boutons radios en doublon
+            document.querySelectorAll("input[type='radio']").forEach(radio => {
+                radio.classList.add("visually-hidden"); // 🔥 Assure qu'ils sont invisibles
             });
         });
     </script>
