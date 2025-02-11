@@ -1,147 +1,188 @@
 {% extends 'base.html.twig' %}
 
 {% block title %}
-    {{ figure.name }} - Détails
+	{{ figure.name }}
+	- Détails
 {% endblock %}
 
 {% block body %}
-    {% for message in app.flashes('success') %}
-        <div class="alert alert-success">{{ message }}</div>
-    {% endfor %}
-    {% for message in app.flashes('error') %}
-        <div class="alert alert-danger">{{ message }}</div>
-    {% endfor %}
+	{% for message in app.flashes('success') %}
+		<div class="alert alert-success">{{ message }}</div>
+	{% endfor %}
+	{% for message in app.flashes('error') %}
+		<div class="alert alert-danger">{{ message }}</div>
+	{% endfor %}
 
-    <section class="container my-5">
-        <!-- Image principale avec superposition du nom et les boutons Modifier/Supprimer -->
-        <div class="position-relative text-center">
-            {% if figure.mainImage %}
-                <img src="{{ asset(figure.mainImage.url) }}" class="img-fluid w-100" alt="{{ figure.mainImage.altText|default('Image de la figure') }}">
-            {% else %}
-                <img src="{{ asset('build/images/default-image.jpg') }}" class="img-fluid w-100" alt="Image par défaut">
-            {% endif %}
+	<section
+		class="container my-5">
+		<!-- Image principale avec superposition du nom et les boutons Modifier/Supprimer -->
+		<div class="position-relative text-center">
+			{% if figure.mainImage and figure.mainImage.url %}
+				<img src="{{ asset(figure.mainImage.url) }}" class="img-fluid w-100" alt="{{ figure.mainImage.altText|default('Image de la figure') }}">
+			{% else %}
+				<img src="{{ asset('build/images/default-image.jpg') }}" class="img-fluid w-100" alt="Image par défaut">
+			{% endif %}
 
-            <!-- Superposition du nom de la figure -->
-            <div class="position-absolute bottom-0 start-0 p-3 bg-dark text-white bg-opacity-75 w-100">
-                <h1 class="text-uppercase">{{ figure.name }}</h1>
-            </div>
+			<!-- Superposition du nom de la figure -->
+			<h1 class="position-absolute top-50 start-50 translate-middle text-white bg-dark bg-opacity-75 px-3 py-2 rounded">{{ figure.name }}</h1>
 
-            <!-- Boutons Modifier et Supprimer pour l'image principale -->
-            {% if is_granted('ROLE_USER') %}
-                <div class="btn-group position-absolute top-0 end-0 p-3">
-                    <button type="button" class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#editMainImageModal">✏️</button>
-                    <button type="button" class="btn btn-danger btn-sm">🗑️</button>
-                </div>
-            {% endif %}
-        </div>
+			<!-- Boutons Modifier et Supprimer pour l'image principale -->
+			{% if is_granted('ROLE_USER') %}
+				<div class="position-absolute top-0 end-0 p-2 d-flex">
+					<button class="btn btn-secondary btn-sm rounded-0" data-bs-toggle="modal" data-bs-target="#editMainImageModal">✏️</button>
+					<button class="btn btn-danger btn-sm rounded-0" data-bs-toggle="modal" data-bs-target="#deleteMainImageModal">🗑️</button>
+				</div>
+			{% endif %}
+		</div>
 
-        <!-- Modale de modification de l'image principale -->
-        <div class="modal fade" id="editMainImageModal" tabindex="-1" aria-labelledby="editMainImageModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="editMainImageModalLabel">Modifier l'image principale</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        {{ form_start(mainImageForm, {
+		<!-- Modale de modification de l'image principale -->
+		<div class="modal fade" id="editMainImageModal" tabindex="-1" aria-labelledby="editMainImageModalLabel" aria-hidden="true">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="editMainImageModalLabel">Modifier l'image principale</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						{{ form_start(mainImageForm, {
                             'action': path('app_figure_set_main_image', { id: figure.id }),
                             'method': 'POST'
                         }) }}
 
-                        <div class="mb-3 text-center">
-                            <label class="form-label">Sélectionnez l'image principale</label>
-                            <div class="d-flex flex-wrap justify-content-center gap-3" id="imageSelectionContainer">
-                                {% for image in figure.images %}
-                                    <label class="d-block text-center image-label" style="cursor: pointer;">
-                                        <input type="radio" name="{{ mainImageForm.mainImage.vars.full_name }}" value="{{ image.id }}" {% if figure.mainImage == image %}checked{% endif %} class="visually-hidden">
-                                        <img src="{{ asset(image.url) }}" class="img-thumbnail border {% if figure.mainImage == image %}border-primary{% endif %}" alt="Image principale" style="width: 120px; height: 120px; object-fit: cover;">
-                                    </label>
-                                {% endfor %}
-                            </div>
-                        </div>
+						<div class="mb-3 text-center">
+							<label class="form-label">Sélectionnez l'image principale</label>
+							<div class="d-flex flex-wrap justify-content-center gap-3">
+								{% for radio in mainImageForm.mainImage %}
+									{% set imageUrl = radio.vars.attr['data-image-url']|default('build/images/default-image.jpg') %}
+									<label class="d-block text-center" style="cursor: pointer;">
+										{{ form_widget(radio, { 'attr': { 'style': 'display: none;' } }) }}
+										<img src="{{ asset(imageUrl) }}" class="img-thumbnail border {% if radio.vars.checked %}border-primary{% endif %}" alt="Image principale" style="width: 120px; height: 120px; object-fit: cover;" onclick="this.previousElementSibling.checked = true; highlightSelected(this);">
+									</label>
+								{% endfor %}
+							</div>
+						</div>
 
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                            {{ form_widget(mainImageForm.save) }}
-                        </div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+							{{ form_widget(mainImageForm.save) }}
+						</div>
 
-                        {{ form_end(mainImageForm) }}
+						{{ form_end(mainImageForm) }}
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<script>
+			function highlightSelected(img) {
+document.querySelectorAll('.img-thumbnail').forEach(el => el.classList.remove('border-primary'));
+img.classList.add('border-primary');
+}
+		</script>
+
+		<!-- Section Description -->
+		<div class="mt-4">
+			<h5 class="text-uppercase">Description</h5>
+			<p>{{ figure.description }}</p>
+
+			<h5 class="text-uppercase">Groupe</h5>
+			<p>{{ figure.figureGroup }}</p>
+		</div>
+
+<!-- Section pour ajouter des images -->
+        {% if is_granted('ROLE_USER') %}
+            <div class="mt-4">
+                <h5 class="text-uppercase">Ajouter une Image</h5>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addImageModal">➕ Ajouter une image</button>
+            </div>
+        {% endif %}
+
+        <!-- Modale pour ajouter une image -->
+        <div class="modal fade" id="addImageModal" tabindex="-1" aria-labelledby="addImageModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addImageModalLabel">Ajouter une image</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        {{ form_start(imageForm, { 'action': path('app_figure_add_image', { id: figure.id }), 'method': 'POST', 'attr': { 'enctype': 'multipart/form-data' } }) }}
+                        {{ form_widget(imageForm) }}
+                        <div class="d-grid mt-3">
+                            <button type="submit" class="btn btn-primary">Ajouter</button>
+                        </div>
+                        {{ form_end(imageForm) }}
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Section Description -->
-        <div class="mt-4">
-            <h5 class="text-uppercase">Description</h5>
-            <p>{{ figure.description }}</p>
+        <!-- Section pour ajouter des vidéos -->
+        {% if is_granted('ROLE_USER') %}
+            <div class="mt-4">
+                <h5 class="text-uppercase">Ajouter une Vidéo</h5>
+                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addVideoModal">➕ Ajouter une vidéo</button>
+            </div>
+        {% endif %}
 
-            <h5 class="text-uppercase">Groupe</h5>
-            <p>{{ figure.figureGroup }}</p>
-        </div>
-
-        <!-- Section des commentaires -->
-        <div class="mt-5">
-            <h5 class="text-uppercase">Commentaires</h5>
-            {% if comments is not empty %}
-                <div>
-                    {% for comment in comments %}
-                        <div class="border p-3 mb-3 rounded">
-                            <div class="d-flex align-items-center mb-2">
-                                <strong>{{ comment.author.username }}</strong>
-                                <small class="text-muted ms-3">{{ comment.createdAt|date('d/m/Y H:i') }}</small>
-                            </div>
-                            <p>{{ comment.content }}</p>
-                        </div>
-                    {% endfor %}
-                </div>
-            {% else %}
-                <p class="text-muted">Aucun commentaire disponible pour cette figure.</p>
-            {% endif %}
-
-            <!-- Formulaire pour ajouter un commentaire -->
-            {% if is_granted('ROLE_USER') %}
-                <div class="mt-4">
-                    <h5 class="text-uppercase">Ajouter un commentaire</h5>
-                    {% if form_errors(commentForm) %}
-                        <div class="alert alert-danger">
-                            {{ form_errors(commentForm) }}
-                        </div>
-                    {% endif %}
-                    {{ form_start(commentForm, { 'action': path('app_figure_add_comment', { 'id': figure.id }), 'method': 'POST' }) }}
-                    {{ form_widget(commentForm) }}
-                    <div class="d-grid mt-3">
-                        <button type="submit" class="btn btn-primary">Publier</button>
+        <!-- Modale pour ajouter une vidéo -->
+        <div class="modal fade" id="addVideoModal" tabindex="-1" aria-labelledby="addVideoModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="addVideoModalLabel">Ajouter une vidéo</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
-                    {{ form_end(commentForm) }}
+                    <div class="modal-body">
+                        {{ form_start(videoForm, { 'action': path('app_figure_add_video', { id: figure.id }), 'method': 'POST' }) }}
+                        {{ form_widget(videoForm) }}
+                        <div class="d-grid mt-3">
+                            <button type="submit" class="btn btn-primary">Ajouter</button>
+                        </div>
+                        {{ form_end(videoForm) }}
+                    </div>
                 </div>
-            {% endif %}
+            </div>
         </div>
-    </section>
 
-    <!-- Script JavaScript pour gérer la sélection des images et éviter le double affichage -->
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const labels = document.querySelectorAll(".image-label");
+		<!-- Section des commentaires -->
+		<div class="mt-5">
+			<h5 class="text-uppercase">Commentaires</h5>
+			{% if comments is not empty %}
+				<div>
+					{% for comment in comments %}
+						<div class="border p-3 mb-3 rounded">
+							<div class="d-flex align-items-center mb-2">
+								<strong>{{ comment.author.username }}</strong>
+								<small class="text-muted ms-3">{{ comment.createdAt|date('d/m/Y H:i') }}</small>
+							</div>
+							<p>{{ comment.content }}</p>
+						</div>
+					{% endfor %}
+				</div>
+			{% else %}
+				<p class="text-muted">Aucun commentaire disponible pour cette figure.</p>
+			{% endif %}
 
-            labels.forEach(label => {
-                label.addEventListener("click", function () {
-                    // Retirer la classe "border-primary" de toutes les images
-                    labels.forEach(l => l.querySelector("img").classList.remove("border-primary"));
+			<!-- Formulaire pour ajouter un commentaire -->
+			{% if is_granted('ROLE_USER') %}
+				<div class="mt-4">
+					<h5 class="text-uppercase">Ajouter un commentaire</h5>
+					{% if form_errors(commentForm) %}
+						<div class="alert alert-danger">
+							{{ form_errors(commentForm) }}
+						</div>
+					{% endif %}
+					{{ form_start(commentForm, { 'action': path('app_figure_add_comment', { 'id': figure.id }), 'method': 'POST' }) }}
+					{{ form_widget(commentForm) }}
+					<div class="d-grid mt-3">
+						<button type="submit" class="btn btn-primary">Publier</button>
+					</div>
+					{{ form_end(commentForm) }}
+				</div>
+			{% endif %}
+		</div>
+	</section>
 
-                    // Ajouter la classe "border-primary" à l'image sélectionnée
-                    this.querySelector("img").classList.add("border-primary");
-
-                    // Cocher le bouton radio associé
-                    this.querySelector("input[type='radio']").checked = true;
-                });
-            });
-
-            // Supprimer les anciens boutons radios en doublon
-            document.querySelectorAll("input[type='radio']").forEach(radio => {
-                radio.classList.add("visually-hidden"); // 🔥 Assure qu'ils sont invisibles
-            });
-        });
-    </script>
+	
 {% endblock %}
