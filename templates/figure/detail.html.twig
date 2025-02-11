@@ -133,13 +133,30 @@ img.classList.add('border-primary');
             </div>
         </div>
 
-        <!-- Section pour ajouter des vidéos -->
-        {% if is_granted('ROLE_USER') %}
-            <div class="mt-4">
-                <h5 class="text-uppercase">Ajouter une Vidéo</h5>
-                <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#addVideoModal">➕ Ajouter une vidéo</button>
-            </div>
-        {% endif %}
+        <!-- Vidéos -->
+		<div class="mt-5">
+			<h5 class="text-uppercase">Vidéos</h5>
+			<div class="row">
+				{% for video in figure.videos %}
+					<div class="col-md-4 mb-3">
+						<div class="card">
+							<div class="ratio ratio-16x9">
+								{{ video.embedCode|raw }}
+							</div>
+						</div>
+					</div>
+				{% endfor %}
+				{% if is_granted('ROLE_USER') %}
+					<div class="col-md-4 mb-3">
+						<div class="card text-center border-secondary" style="cursor: pointer; height: 200px;" data-bs-toggle="modal" data-bs-target="#addVideoModal">
+							<div class="card-body d-flex align-items-center justify-content-center">
+								<span class="fs-1 text-secondary">+</span>
+							</div>
+						</div>
+					</div>
+				{% endif %}
+			</div>
+		</div>
 
         <!-- Modale pour ajouter une vidéo -->
         <div class="modal fade" id="addVideoModal" tabindex="-1" aria-labelledby="addVideoModalLabel" aria-hidden="true">
