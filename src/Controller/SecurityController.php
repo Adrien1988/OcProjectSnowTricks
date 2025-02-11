@@ -43,7 +43,7 @@ class SecurityController extends AbstractController
         $lastUsername = $authenticationUtils->getLastUsername();
 
         return $this->render('security/login.html.twig', ['last_username' => $lastUsername, 'error' => $error]);
-    }// end login()
+    } // end login()
 
 
     /**
@@ -59,7 +59,7 @@ class SecurityController extends AbstractController
     public function logout(): void
     {
         throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
-    }// end logout()
+    } // end logout()
 
 
     /**
@@ -155,7 +155,6 @@ class SecurityController extends AbstractController
         }
 
         return $this->render('security/reset_password.html.twig', ['form' => $form->createView()]);
-
     }
 
 

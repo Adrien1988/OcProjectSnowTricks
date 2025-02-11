@@ -144,6 +144,31 @@ class FigureController extends AbstractController
     {
         $figure = $figureService->findFigureById($id);
 
+        // Création du formulaire pour modifier l'image principale
+        $mainImageForm = $this->createForm(MainImageType::class, null, ['figure' => $figure]);
+        $mainImageForm->handleRequest($request);
+
+        if ($mainImageForm->isSubmitted() && $mainImageForm->isValid()) {
+            // Récupération de l'image sélectionnée
+            $selectedImageId = $mainImageForm->get('mainImage')->getData();
+            $selectedImage = null;
+
+            foreach ($figure->getImages() as $image) {
+                if ($image->getId() == $selectedImageId) {
+                    $selectedImage = $image;
+                    break;
+                }
+            }
+
+            if ($selectedImage) {
+                $figure->setMainImage($selectedImage);
+                $figureService->saveEntity($figure);
+                $this->addFlash('success', 'Image principale mise à jour.');
+
+                return $this->redirectToRoute('app_figure_detail', ['id' => $figure->getId()]);
+            }
+        }
+
         // Récupération de la pagination des commentaires
         $page = $request->query->getInt('page', 1); // Par défaut, page 1
         $commentsData = $commentRepository->findByFigureWithPagination($figure->getId(), $page, 10);
@@ -151,13 +176,14 @@ class FigureController extends AbstractController
         return $this->render(
             'figure/detail.html.twig',
             [
-                'figure'      => $figure,
-                'comments'    => $commentsData['items'],
-                'currentPage' => $commentsData['currentPage'],
-                'lastPage'    => $commentsData['lastPage'],
-                'imageForm'   => $this->createForm(ImageType::class)->createView(),
-                'videoForm'   => $this->createForm(VideoType::class)->createView(),
-                'commentForm' => $this->createForm(CommentType::class)->createView(),
+                'figure'        => $figure,
+                'comments'      => $commentsData['items'],
+                'currentPage'   => $commentsData['currentPage'],
+                'lastPage'      => $commentsData['lastPage'],
+                'imageForm'     => $this->createForm(ImageType::class)->createView(),
+                'videoForm'     => $this->createForm(VideoType::class)->createView(),
+                'commentForm'   => $this->createForm(CommentType::class)->createView(),
+                'mainImageForm' => $mainImageForm->createView(),
             ]
         );
     }

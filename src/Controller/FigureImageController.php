@@ -8,7 +8,6 @@ use App\Form\ImageType;
 use App\Form\MainImageType;
 use App\Service\FigureService;
 use App\Service\FileUploader;
-use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -166,35 +165,50 @@ class FigureImageController extends AbstractController
     /**
      * Change l'image principale d'une figure.
      *
-     * @param Figure        $figure        La figure concernée
+     * @param int           $id            L'identifiant de la figure
      * @param Request       $request       La requête HTTP contenant le formulaire
      * @param FigureService $figureService Service pour gérer les figures
      *
      * @return RedirectResponse Redirige vers la page d'édition de la figure
      */
-    #[Route('/main-image/{id}', name: 'app_figure_set_main_image', methods: ['POST'])]
-    public function setMainImage(Figure $figure, Request $request, FigureService $figureService, EntityManagerInterface $entityManager): RedirectResponse
+    #[Route('/figure/{id}/set-main-image', name: 'app_figure_set_main_image', methods: ['POST'])]
+    public function setMainImage(int $id, Request $request, FigureService $figureService): RedirectResponse
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
+
+        $figure = $figureService->findFigureById($id);
+        if (!$figure) {
+            $this->addFlash('error', 'Figure introuvable.');
+
+            return $this->redirectToRoute('app_home');
+        }
 
         $form = $this->createForm(MainImageType::class, null, ['figure' => $figure]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $imageId = $form->get('mainImage')->getData();
-            $image = $entityManager->getRepository(Image::class)->find($imageId);
+            $referer = $form->get('referer')->getData(); // Récupération de l'URL d'origine
 
-            if ($image) {
-                $figure->setMainImage($image);
-                $entityManager->persist($figure);
-                $entityManager->flush();
-                $this->addFlash('success', 'L\'image principale a été mise à jour avec succès.');
-            } else {
-                $this->addFlash('error', 'Erreur lors de la mise à jour de l\'image principale.');
+            // Récupération de l'image sélectionnée
+            foreach ($figure->getImages() as $image) {
+                if ($image->getId() == $imageId) {
+                    $figure->setMainImage($image);
+                    break;
+                }
             }
+
+            if ($figureService->saveEntity($figure)) {
+                $this->addFlash('success', 'Image principale modifiée avec succès.');
+            } else {
+                $this->addFlash('error', 'Erreur lors de la modification de l\'image principale.');
+            }
+
+            // Redirection vers la page d'origine
+            return $this->redirect($referer ?: $this->generateUrl('app_figure_detail', ['id' => $id]));
         }
 
-        return $this->redirectToRoute('app_figure_edit', ['id' => $figure->getId()]);
+        return $this->redirectToRoute('app_figure_detail', ['id' => $id]);
     }
 
 
