@@ -214,6 +214,27 @@ img.classList.add('border-primary');
 					{{ form_end(commentForm) }}
 				</div>
 			{% endif %}
+
+            <!-- Pagination -->
+			<nav aria-label="Pagination">
+				<ul class="pagination justify-content-center mt-4">
+					{% if currentPage > 1 %}
+						<li class="page-item">
+							<a class="page-link" href="{{ path('app_figure_detail', { id: figure.id, page: currentPage - 1 }) }}">Précédent</a>
+						</li>
+					{% endif %}
+					{% for i in 1..lastPage %}
+						<li class="page-item {% if i == currentPage %}active{% endif %}">
+							<a class="page-link" href="{{ path('app_figure_detail', { id: figure.id, page: i }) }}">{{ i }}</a>
+						</li>
+					{% endfor %}
+					{% if currentPage < lastPage %}
+						<li class="page-item">
+							<a class="page-link" href="{{ path('app_figure_detail', { id: figure.id, page: currentPage + 1 }) }}">Suivant</a>
+						</li>
+					{% endif %}
+				</ul>
+			</nav>
 		</div>
 	</section>
 
