@@ -5,174 +5,165 @@
 {% endblock %}
 
 {% block body %}
-	{% for message in app.flashes('success') %}
-		<div class="alert alert-success">{{ message }}</div>
-	{% endfor %}
-	{% for message in app.flashes('error') %}
-		<div class="alert alert-danger">{{ message }}</div>
-	{% endfor %}
-	<section
-		class="container my-5">
-		<!-- Image principale avec superposition du titre -->
-		<div class="position-relative text-center">
-			{% set mainImage = figure.images|first %}
-			{% if mainImage and mainImage.url %}
-				<img src="{{ asset(mainImage.url) }}" class="img-fluid w-100" alt="{{ mainImage.altText|default('Image de la figure') }}">
-			{% else %}
-				<img src="{{ asset('build/images/default-image.jpg') }}" class="img-fluid w-100" alt="Image par défaut">
-			{% endif %}
+{% include "partials/_flashes.html.twig" %}
 
-			<h1 class="position-absolute top-50 start-50 translate-middle text-white bg-dark bg-opacity-75 px-3 py-2 rounded">
-				{{ figure.name }}
-			</h1>
+<section
+	class="container my-5">
+	<!-- Image principale avec superposition du titre -->
+	<div class="position-relative text-center">
+		{% include "partials/_main_image.html.twig" %}
 
-			<!-- Boutons Modifier et Supprimer pour l'image principale -->
-			{% if is_granted('ROLE_USER') %}
-				<div class="position-absolute top-0 end-0 p-2 d-flex">
-					<button class="btn btn-secondary btn-sm rounded-0" data-bs-toggle="modal" data-bs-target="#editMainImageModal">✏️</button>
-					<button class="btn btn-danger btn-sm rounded-0" data-bs-toggle="modal" data-bs-target="#deleteMainImageModal">🗑️</button>
-				</div>
-			{% endif %}
-		</div>
+		<h1 class="position-absolute top-50 start-50 translate-middle text-white bg-dark bg-opacity-75 px-3 py-2 rounded">
+			{{ figure.name }}
+		</h1>
 
-		<!-- Galerie multimédia (images + vidéos alignées) -->
-		<div class="mt-4 text-center">
-			<h5 class="text-uppercase">Médias</h5>
-			<div class="d-flex flex-wrap justify-content-center gap-4">
-				{% for image in figure.images %}
-					<div class="text-center" style="width: 200px;">
-						<img src="{{ asset(image.url) }}" class="rounded mb-2" style="width: 100%; height: 140px; object-fit: cover;" alt="{{ image.altText|default('Image supplémentaire') }}">
-						<div class="d-flex justify-content-center">
-							<button class="btn btn-secondary btn-sm rounded-0" data-bs-toggle="modal" data-bs-target="#editImageModal-{{ image.id }}">✏️</button>
-							<button class="btn btn-danger btn-sm rounded-0" data-bs-toggle="modal" data-bs-target="#deleteImageModal-{{ image.id }}">🗑️</button>
-						</div>
+		<!-- Boutons Modifier et Supprimer pour l'image principale -->
+		{% include "partials/_main_image_buttons.html.twig" %}
+	</div>
+
+	{% include "partials/_edit_main_image_modal.html.twig" %}
+
+	<!-- Modale de suppression de l'image principale -->
+	{% include "partials/_delete_main_image_modal.html.twig" %}
+
+	<!-- Galerie multimédia (images + vidéos alignées) -->
+	<div class="mt-4 text-center">
+		<h5 class="text-uppercase">Médias</h5>
+		<div class="d-flex flex-wrap justify-content-center gap-4">
+			{% for image in figure.images %}
+				<div class="text-center" style="width: 200px;">
+					<img src="{{ asset(image.url) }}" class="rounded mb-2" style="width: 100%; height: 140px; object-fit: cover;" alt="{{ image.altText|default('Image supplémentaire') }}">
+					<div class="d-flex justify-content-center">
+						<button class="btn btn-secondary btn-sm rounded-0" data-bs-toggle="modal" data-bs-target="#editImageModal-{{ image.id }}">✏️</button>
+						<button class="btn btn-danger btn-sm rounded-0" data-bs-toggle="modal" data-bs-target="#deleteImageModal-{{ image.id }}">🗑️</button>
 					</div>
-				{% endfor %}
+				</div>
+			{% endfor %}
 
-				{% for video in figure.videos %}
-					<div class="text-center" style="width: 250px;">
-						<div class="ratio ratio-16x9 mb-2">
-							{{ video.embedCode|raw }}
-						</div>
-						<div class="d-flex justify-content-center">
-							<button class="btn btn-secondary btn-sm rounded-0" data-bs-toggle="modal" data-bs-target="#editVideoModal-{{ video.id }}">✏️</button>
-							<button class="btn btn-danger btn-sm rounded-0" data-bs-toggle="modal" data-bs-target="#deleteVideoModal-{{ video.id }}">🗑️</button>
-						</div>
+			{% for video in figure.videos %}
+				<div class="text-center" style="width: 250px;">
+					<div class="ratio ratio-16x9 mb-2">
+						{{ video.embedCode|raw }}
 					</div>
-				{% endfor %}
+					<div class="d-flex justify-content-center">
+						<button class="btn btn-secondary btn-sm rounded-0" data-bs-toggle="modal" data-bs-target="#editVideoModal-{{ video.id }}">✏️</button>
+						<button class="btn btn-danger btn-sm rounded-0" data-bs-toggle="modal" data-bs-target="#deleteVideoModal-{{ video.id }}">🗑️</button>
+					</div>
+				</div>
+			{% endfor %}
+		</div>
+	</div>
+
+	<!-- Formulaire de modification centré et réduit -->
+	<div class="mt-5">
+		{{ form_start(form, { 'attr': { 'class': 'form w-50 mx-auto' } }) }}
+		<div class="mb-3">
+			{{ form_label(form.name, 'Nom de la figure', { 'label_attr': { 'class': 'form-label' } }) }}
+			{{ form_widget(form.name, { 'attr': { 'class': 'form-control' } }) }}
+		</div>
+		<div class="mb-3">
+			{{ form_label(form.description, 'Description', { 'label_attr': { 'class': 'form-label' } }) }}
+			{{ form_widget(form.description, { 'attr': { 'class': 'form-control', 'rows': 5 } }) }}
+		</div>
+		<div class="mb-3 d-flex align-items-center justify-content-between gap-3">
+			<div class="flex-grow-1">
+				{{ form_widget(form.figureGroup, { 'attr': { 'class': 'form-select w-auto text-muted' } }) }}
+			</div>
+			<div>
+				<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteFigureModal">Supprimer</button>
+				<button type="submit" class="btn btn-primary">Enregistrer</button>
 			</div>
 		</div>
+		{{ form_end(form) }}
+	</div>
+</section>
 
-		<!-- Formulaire de modification centré et réduit -->
-		<div class="mt-5">
-			{{ form_start(form, { 'attr': { 'class': 'form w-50 mx-auto' } }) }}
-			<div class="mb-3">
-				{{ form_label(form.name, 'Nom de la figure', { 'label_attr': { 'class': 'form-label' } }) }}
-				{{ form_widget(form.name, { 'attr': { 'class': 'form-control' } }) }}
+<!-- Modal de confirmation de suppression de la figure -->
+<div class="modal fade" id="deleteFigureModal" tabindex="-1" aria-labelledby="deleteFigureModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<h5 class="modal-title" id="deleteFigureModalLabel">Confirmer la suppression</h5>
+				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
-			<div class="mb-3">
-				{{ form_label(form.description, 'Description', { 'label_attr': { 'class': 'form-label' } }) }}
-				{{ form_widget(form.description, { 'attr': { 'class': 'form-control', 'rows': 5 } }) }}
+			<div class="modal-body">
+				Êtes-vous sûr de vouloir supprimer cette figure ?
 			</div>
-			<div class="mb-3 d-flex align-items-center justify-content-between gap-3">
-				<div class="flex-grow-1">
-					{{ form_widget(form.figureGroup, { 'attr': { 'class': 'form-select w-auto text-muted' } }) }}
-				</div>
-				<div>
-					<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteFigureModal">Supprimer</button>
-					<button type="submit" class="btn btn-primary">Enregistrer</button>
-				</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+				<form method="post" action="{{ path('app_figure_delete', { id: figure.id }) }}">
+					<input type="hidden" name="_token" value="{{ csrf_token('delete_figure_' ~ figure.id) }}">
+					<button type="submit" class="btn btn-danger">Supprimer</button>
+				</form>
 			</div>
-			{{ form_end(form) }}
 		</div>
-	</section>
+	</div>
+</div>
 
-	<!-- Modal de confirmation de suppression de la figure -->
-	<div class="modal fade" id="deleteFigureModal" tabindex="-1" aria-labelledby="deleteFigureModalLabel" aria-hidden="true">
+<!-- Modales pour l'édition et la suppression des images -->
+{% for image in figure.images %}
+	<div class="modal fade" id="editImageModal-{{ image.id }}" tabindex="-1" aria-labelledby="editImageModalLabel-{{ image.id }}" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title" id="deleteFigureModalLabel">Confirmer la suppression</h5>
+					<h5 class="modal-title" id="editImageModalLabel-{{ image.id }}">Modifier l’image</h5>
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 				<div class="modal-body">
-					Êtes-vous sûr de vouloir supprimer cette figure ?
+					{{ form_start(imageForms[image.id], {
+                        'action': path('app_figure_edit_image', { id: image.id }),
+                        'method': 'POST',
+                        'attr': { 'enctype': 'multipart/form-data' }
+                    }) }}
+					{{ form_row(imageForms[image.id].file) }}
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+						<button type="submit" class="btn btn-primary">Enregistrer</button>
+					</div>
+					{{ form_end(imageForms[image.id]) }}
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="modal fade" id="deleteImageModal-{{ image.id }}" tabindex="-1" aria-labelledby="deleteImageModalLabel-{{ image.id }}" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="deleteImageModalLabel-{{ image.id }}">Confirmer la suppression</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					Êtes-vous sûr de vouloir supprimer cette image ?
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-					<form method="post" action="{{ path('app_figure_delete', { id: figure.id }) }}">
-						<input type="hidden" name="_token" value="{{ csrf_token('delete_figure_' ~ figure.id) }}">
+					<form method="post" action="{{ path('app_figure_delete_image', { id: image.id }) }}">
+						<input type="hidden" name="_token" value="{{ csrf_token('delete_image_' ~ image.id) }}">
 						<button type="submit" class="btn btn-danger">Supprimer</button>
 					</form>
 				</div>
 			</div>
 		</div>
 	</div>
+{% endfor %}
 
-	<!-- Modales pour l'édition et la suppression des images -->
-	{% for image in figure.images %}
-		<div class="modal fade" id="editImageModal-{{ image.id }}" tabindex="-1" aria-labelledby="editImageModalLabel-{{ image.id }}" aria-hidden="true">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title" id="editImageModalLabel-{{ image.id }}">Modifier l’image</h5>
-						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-					</div>
-					<div class="modal-body">
-						{{ form_start(imageForms[image.id], {
-                        'action': path('app_figure_edit_image', { id: image.id }),
-                        'method': 'POST',
-                        'attr': { 'enctype': 'multipart/form-data' }
-                    }) }}
-						{{ form_row(imageForms[image.id].file) }}
-						<div class="modal-footer">
-							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-							<button type="submit" class="btn btn-primary">Enregistrer</button>
-						</div>
-						{{ form_end(imageForms[image.id]) }}
-					</div>
+<!-- Modales pour l'édition et la suppression des vidéos -->
+{% for video in figure.videos %}
+	<div class="modal fade" id="editVideoModal-{{ video.id }}" tabindex="-1" aria-labelledby="editVideoModalLabel-{{ video.id }}" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="editVideoModalLabel-{{ video.id }}">Modifier la vidéo</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
-			</div>
-		</div>
-
-		<div class="modal fade" id="deleteImageModal-{{ image.id }}" tabindex="-1" aria-labelledby="deleteImageModalLabel-{{ image.id }}" aria-hidden="true">
-			<div class="modal-dialog">
-				<div class="modal-content">
-					<div class="modal-header">
-						<h5 class="modal-title" id="deleteImageModalLabel-{{ image.id }}">Confirmer la suppression</h5>
-						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-					</div>
-					<div class="modal-body">
-						Êtes-vous sûr de vouloir supprimer cette image ?
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-						<form method="post" action="{{ path('app_figure_delete_image', { id: image.id }) }}">
-							<input type="hidden" name="_token" value="{{ csrf_token('delete_image_' ~ image.id) }}">
-							<button type="submit" class="btn btn-danger">Supprimer</button>
-						</form>
-					</div>
-				</div>
-			</div>
-		</div>
-	{% endfor %}
-
-    <!-- Modales pour l'édition et la suppression des vidéos -->
-    {% for video in figure.videos %}
-        <div class="modal fade" id="editVideoModal-{{ video.id }}" tabindex="-1" aria-labelledby="editVideoModalLabel-{{ video.id }}" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title" id="editVideoModalLabel-{{ video.id }}">Modifier la vidéo</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        {{ form_start(videoForms[video.id], {
+				<div class="modal-body">
+					{{ form_start(videoForms[video.id], {
                             'action': path('app_figure_edit_video', { id: video.id }),
                             'method': 'POST'
                         }) }}
-                        <div class="mb-3">
-                            {{ form_label(videoForms[video.id].embedCode, 'Code d\'intégration de la vidéo', { 'label_attr': { 'class': 'form-label' } }) }}
+					<div class="mb-3">
+						{{ form_label(videoForms[video.id].embedCode, 'Code d\'intégration de la vidéo', { 'label_attr': { 'class': 'form-label' } }) }}
                             {{ form_widget(videoForms[video.id].embedCode, { 'attr': { 'class': 'form-control' } }) }}
                         </div>
                         <div class="modal-footer">
@@ -206,4 +197,5 @@
             </div>
         </div>
     {% endfor %}
+    
 {% endblock %}

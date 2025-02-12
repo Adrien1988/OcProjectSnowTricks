@@ -6,36 +6,26 @@
 {% endblock %}
 
 {% block body %}
-	{% for message in app.flashes('success') %}
-		<div class="alert alert-success">{{ message }}</div>
-	{% endfor %}
-	{% for message in app.flashes('error') %}
-		<div class="alert alert-danger">{{ message }}</div>
-	{% endfor %}
+	{% include "partials/_flashes.html.twig" %}
+
 	<section
 		class="container my-5">
 		<!-- Image principale avec superposition du nom et les boutons Modifier/Supprimer -->
-		<div class="position-relative">
-			{% set mainImage = figure.images|first %}
-			{% if mainImage and mainImage.url %}
-				<img src="{{ asset(mainImage.url) }}" class="img-fluid w-100" alt="{{ mainImage.altText|default('Image de la figure') }}">
-			{% else %}
-				<img src="{{ asset('build/images/default-image.jpg') }}" class="img-fluid w-100" alt="Image par défaut">
-			{% endif %}
+		<div class="position-relative text-center">
+			{% include "partials/_main_image.html.twig" %}
 
 			<!-- Superposition du nom de la figure -->
-			<div class="position-absolute bottom-0 start-0 p-3 bg-dark text-white bg-opacity-75 w-100">
-				<h1 class="text-uppercase">{{ figure.name }}</h1>
-			</div>
+			<h1 class="position-absolute top-50 start-50 translate-middle text-white bg-dark bg-opacity-75 px-3 py-2 rounded">{{ figure.name }}</h1>
 
 			<!-- Boutons Modifier et Supprimer pour l'image principale -->
-			{% if is_granted('ROLE_USER') %}
-				<div class="btn-group position-absolute top-0 end-0 p-3">
-					<button type="button" class="btn btn-secondary btn-sm">✏️</button>
-					<button type="button" class="btn btn-danger btn-sm">🗑️</button>
-				</div>
-			{% endif %}
+			{% include "partials/_main_image_buttons.html.twig" %}
 		</div>
+
+		<!-- Modale de modification de l'image principale -->
+		{% include "partials/_edit_main_image_modal.html.twig" %}
+
+		<!-- Modale de suppression de l'image principale -->
+		{% include "partials/_delete_main_image_modal.html.twig" %}
 
 		<!-- Section Description -->
 		<div class="mt-4">
@@ -70,6 +60,26 @@
 			</div>
 		</div>
 
+		<!-- Modale pour ajouter une image -->
+		<div class="modal fade" id="addImageModal" tabindex="-1" aria-labelledby="addImageModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="addImageModalLabel">Ajouter une image</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						{{ form_start(imageForm, { 'action': path('app_figure_add_image', { id: figure.id }), 'method': 'POST', 'attr': { 'enctype': 'multipart/form-data' } }) }}
+						{{ form_widget(imageForm) }}
+						<div class="d-grid mt-3">
+							<button type="submit" class="btn btn-primary">Ajouter</button>
+						</div>
+						{{ form_end(imageForm) }}
+					</div>
+				</div>
+			</div>
+		</div>
+
 		<!-- Vidéos -->
 		<div class="mt-5">
 			<h5 class="text-uppercase">Vidéos</h5>
@@ -95,6 +105,26 @@
 			</div>
 		</div>
 
+		<!-- Modale pour ajouter une vidéo -->
+		<div class="modal fade" id="addVideoModal" tabindex="-1" aria-labelledby="addVideoModalLabel" aria-hidden="true">
+			<div class="modal-dialog modal-dialog-centered">
+				<div class="modal-content">
+					<div class="modal-header">
+						<h5 class="modal-title" id="addVideoModalLabel">Ajouter une vidéo</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+					</div>
+					<div class="modal-body">
+						{{ form_start(videoForm, { 'action': path('app_figure_add_video', { id: figure.id }), 'method': 'POST' }) }}
+						{{ form_widget(videoForm) }}
+						<div class="d-grid mt-3">
+							<button type="submit" class="btn btn-primary">Ajouter</button>
+						</div>
+						{{ form_end(videoForm) }}
+					</div>
+				</div>
+			</div>
+		</div>
+
 		<!-- Section des commentaires -->
 		<div class="mt-5">
 			<h5 class="text-uppercase">Commentaires</h5>
@@ -103,7 +133,6 @@
 					{% for comment in comments %}
 						<div class="border p-3 mb-3 rounded">
 							<div class="d-flex align-items-center mb-2">
-								<img src="{{ asset(comment.author.getAvatarUrlOrDefault()) }}" class="rounded-circle me-2" alt="{{ comment.author.username }}" style="width: 40px; height: 40px; object-fit: cover;">
 								<strong>{{ comment.author.username }}</strong>
 								<small class="text-muted ms-3">{{ comment.createdAt|date('d/m/Y H:i') }}</small>
 							</div>
@@ -156,43 +185,4 @@
 		</div>
 	</section>
 
-	<!-- Modal pour ajouter une image -->
-	<div class="modal fade" id="addImageModal" tabindex="-1" aria-labelledby="addImageModalLabel" aria-hidden="true">
-		<div class="modal-dialog modal-dialog-centered">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="addImageModalLabel">Ajouter une image</h5>
-					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-				</div>
-				<div class="modal-body">
-					{{ form_start(imageForm, { 'action': path('app_figure_add_image', { id: figure.id }), 'method': 'POST', 'attr': { 'enctype': 'multipart/form-data' } }) }}
-					{{ form_widget(imageForm) }}
-					<div class="d-grid mt-3">
-						<button type="submit" class="btn btn-primary">Ajouter</button>
-					</div>
-					{{ form_end(imageForm) }}
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<!-- Modal pour ajouter une vidéo -->
-	<div class="modal fade" id="addVideoModal" tabindex="-1" aria-labelledby="addVideoModalLabel" aria-hidden="true">
-		<div class="modal-dialog modal-dialog-centered">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="addVideoModalLabel">Ajouter une vidéo</h5>
-					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-				</div>
-				<div class="modal-body">
-					{{ form_start(videoForm, { 'action': path('app_figure_add_video', { id: figure.id }), 'method': 'POST' }) }}
-					{{ form_widget(videoForm) }}
-					<div class="d-grid mt-3">
-						<button type="submit" class="btn btn-primary">Ajouter</button>
-					</div>
-					{{ form_end(videoForm) }}
-				</div>
-			</div>
-		</div>
-	</div>
-</section>{% endblock %}
+{% endblock %}

@@ -78,6 +78,10 @@ class Figure
     #[ORM\OrderBy(['id' => 'ASC'])]
     private Collection $images;
 
+    #[ORM\OneToOne(targetEntity: Image::class, cascade: ['persist', 'remove'])]
+    #[ORM\JoinColumn(nullable: true)]
+    private ?Image $mainImage = null;
+
     /**
      * Vidéos associées à la figure.
      *
@@ -320,6 +324,32 @@ class Figure
 
         return $this;
     } // end removeImage()
+
+
+    /**
+     * Retourne l'image principale de la figure.
+     *
+     * @return Image|null L'entité Image de la figure, ou null si aucune image n'est définie
+     */
+    public function getMainImage(): ?Image
+    {
+        return $this->mainImage;
+    }
+
+
+    /**
+     * Définit l'image principale de la figure.
+     *
+     * @param Image|null $mainImage L'entité Image à associer comme image principale
+     *
+     * @return self
+     */
+    public function setMainImage(?Image $mainImage): self
+    {
+        $this->mainImage = $mainImage;
+
+        return $this;
+    }
 
 
     /**

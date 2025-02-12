@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Figure;
 use App\Entity\Image;
 use App\Form\ImageType;
+use App\Form\MainImageType;
 use App\Service\FigureService;
 use App\Service\FileUploader;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -158,6 +159,102 @@ class FigureImageController extends AbstractController
         $this->addFlash('error', 'Erreur lors de la suppression de l\'image.');
 
         return $this->redirectToRoute('app_figure_edit', ['id' => $figure->getId()]);
+    }
+
+
+    /**
+     * Change l'image principale d'une figure.
+     *
+     * @param int           $id            L'identifiant de la figure
+     * @param Request       $request       La requête HTTP contenant le formulaire
+     * @param FigureService $figureService Service pour gérer les figures
+     *
+     * @return RedirectResponse Redirige vers la page d'édition de la figure
+     */
+    #[Route('/figure/{id}/set-main-image', name: 'app_figure_set_main_image', methods: ['POST'])]
+    public function setMainImage(int $id, Request $request, FigureService $figureService): RedirectResponse
+    {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
+        $figure = $figureService->findFigureById($id);
+        if (!$figure) {
+            $this->addFlash('error', 'Figure introuvable.');
+
+            return $this->redirectToRoute('app_home');
+        }
+
+        $form = $this->createForm(MainImageType::class, null, ['figure' => $figure]);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $imageId = $form->get('mainImage')->getData();
+
+            // On récupère l'URL de provenance (soit page d'édition, soit page détail)
+            $referer = $request->headers->get('referer', $this->generateUrl('app_figure_detail', ['id' => $id]));
+
+            // Récupération de l'image sélectionnée
+            foreach ($figure->getImages() as $image) {
+                if ($image->getId() == $imageId) {
+                    $figure->setMainImage($image);
+                    break;
+                }
+            }
+
+            if (!$figureService->saveEntity($figure)) {
+                $this->addFlash('error', 'Erreur lors de la modification de l\'image principale.');
+
+                return $this->redirect($referer);
+            }
+
+            $this->addFlash('success', 'Image principale modifiée avec succès.');
+
+            return $this->redirect($referer);
+        }
+
+        return $this->redirectToRoute('app_figure_detail', ['id' => $id]);
+    }
+
+
+    /**
+     * Supprime l'image principale d'une figure.
+     *
+     * @param int           $id            L'identifiant de la figure
+     * @param FigureService $figureService Service pour gérer les figures
+     * @param Request       $request       La requête HTTP contenant le token CSRF
+     *
+     * @return RedirectResponse Redirection vers la page d'édition ou de détail de la figure
+     */
+    #[Route('/figure/{id}/remove-main-image', name: 'app_figure_remove_main_image', methods: ['POST'])]
+    public function removeMainImage(int $id, FigureService $figureService, Request $request): RedirectResponse
+    {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
+        $figure = $figureService->findFigureById($id);
+        if (!$figure) {
+            throw $this->createNotFoundException('Figure introuvable.');
+        }
+
+        // Vérifier le token CSRF
+        if (!$this->isCsrfTokenValid('remove_main_image_'.$figure->getId(), $request->request->get('_token'))) {
+            $this->addFlash('error', 'Token CSRF invalide.');
+
+            return $this->redirectToRoute('app_figure_detail', ['id' => $figure->getId()]);
+        }
+
+        // Supprimer l'image principale
+        $figure->setMainImage(null);
+
+        if ($figureService->saveEntity($figure)) {
+            $this->addFlash('success', "L'image principale a été supprimée avec succès.");
+        }
+
+        // Redirection sur la page actuelle (édition ou détail)
+        $referer = $request->headers->get('referer');
+        if ($referer && str_contains($referer, 'edit')) {
+            return $this->redirectToRoute('app_figure_edit', ['id' => $figure->getId()]);
+        }
+
+        return $this->redirectToRoute('app_figure_detail', ['id' => $figure->getId()]);
     }
 
 
