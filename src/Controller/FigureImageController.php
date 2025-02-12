@@ -200,13 +200,14 @@ class FigureImageController extends AbstractController
                 }
             }
 
-            if ($figureService->saveEntity($figure)) {
-                $this->addFlash('success', 'Image principale modifiée avec succès.');
-            } else {
+            if (!$figureService->saveEntity($figure)) {
                 $this->addFlash('error', 'Erreur lors de la modification de l\'image principale.');
+
+                return $this->redirect($referer);
             }
 
-            // Redirection vers la page d'origine
+            $this->addFlash('success', 'Image principale modifiée avec succès.');
+
             return $this->redirect($referer);
         }
 
