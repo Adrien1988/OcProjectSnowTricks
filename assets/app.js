@@ -17,6 +17,7 @@ import './styles/app.css';
 
 // Importation de votre script
 import './js/load-comments';
+import './js/main_image';
 
 // Exemple de message dans la console pour vérifier que le fichier est bien chargé
 console.log('Bienvenue dans votre fichier assets/app.js - Bootstrap est chargé avec succès ! 🎉');

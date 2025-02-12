@@ -212,4 +212,47 @@ class FigureImageController extends AbstractController
     }
 
 
+    /**
+     * Supprime l'image principale d'une figure.
+     *
+     * @param int           $id            L'identifiant de la figure
+     * @param FigureService $figureService Service pour gérer les figures
+     * @param Request       $request       La requête HTTP contenant le token CSRF
+     *
+     * @return RedirectResponse Redirection vers la page d'édition ou de détail de la figure
+     */
+    #[Route('/figure/{id}/remove-main-image', name: 'app_figure_remove_main_image', methods: ['POST'])]
+    public function removeMainImage(int $id, FigureService $figureService, Request $request): RedirectResponse
+    {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
+        $figure = $figureService->findFigureById($id);
+        if (!$figure) {
+            throw $this->createNotFoundException('Figure introuvable.');
+        }
+
+        // Vérifier le token CSRF
+        if (!$this->isCsrfTokenValid('remove_main_image_'.$figure->getId(), $request->request->get('_token'))) {
+            $this->addFlash('error', 'Token CSRF invalide.');
+
+            return $this->redirectToRoute('app_figure_detail', ['id' => $figure->getId()]);
+        }
+
+        // Supprimer l'image principale
+        $figure->setMainImage(null);
+
+        if ($figureService->saveEntity($figure)) {
+            $this->addFlash('success', "L'image principale a été supprimée avec succès.");
+        }
+
+        // Redirection sur la page actuelle (édition ou détail)
+        $referer = $request->headers->get('referer');
+        if ($referer && str_contains($referer, 'edit')) {
+            return $this->redirectToRoute('app_figure_edit', ['id' => $figure->getId()]);
+        }
+
+        return $this->redirectToRoute('app_figure_detail', ['id' => $figure->getId()]);
+    }
+
+
 }

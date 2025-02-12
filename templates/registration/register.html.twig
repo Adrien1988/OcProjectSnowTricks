@@ -7,12 +7,7 @@
     <div class="row justify-content-center">
         <div class="col-lg-6">
             <!-- Messages flash -->
-            {% for message in app.flashes('success') %}
-                <div class="alert alert-success">{{ message }}</div>
-            {% endfor %}
-            {% for message in app.flashes('error') %}
-                <div class="alert alert-danger">{{ message }}</div>
-            {% endfor %}
+            {% include "partials/_flashes.html.twig" %}
 
             <!-- Formulaire -->
             <form method="post" enctype="multipart/form-data" class="card shadow-sm">

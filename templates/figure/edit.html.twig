@@ -5,79 +5,26 @@
 {% endblock %}
 
 {% block body %}
-{% for message in app.flashes('success') %}
-	<div class="alert alert-success">{{ message }}</div>
-{% endfor %}
-{% for message in app.flashes('error') %}
-	<div class="alert alert-danger">{{ message }}</div>
-{% endfor %}
+{% include "partials/_flashes.html.twig" %}
+
 <section
 	class="container my-5">
 	<!-- Image principale avec superposition du titre -->
 	<div class="position-relative text-center">
-		{% if figure.mainImage and figure.mainImage.url %}
-			<img src="{{ asset(figure.mainImage.url) }}" class="img-fluid w-100" alt="{{ figure.mainImage.altText|default('Image de la figure') }}">
-		{% else %}
-			<img src="{{ asset('build/images/default-image.jpg') }}" class="img-fluid w-100" alt="Image par défaut">
-		{% endif %}
+		{% include "partials/_main_image.html.twig" %}
 
 		<h1 class="position-absolute top-50 start-50 translate-middle text-white bg-dark bg-opacity-75 px-3 py-2 rounded">
 			{{ figure.name }}
 		</h1>
 
 		<!-- Boutons Modifier et Supprimer pour l'image principale -->
-		{% if is_granted('ROLE_USER') %}
-			<div class="position-absolute top-0 end-0 p-2 d-flex">
-				<button class="btn btn-secondary btn-sm rounded-0" data-bs-toggle="modal" data-bs-target="#editMainImageModal">✏️</button>
-				<button class="btn btn-danger btn-sm rounded-0" data-bs-toggle="modal" data-bs-target="#deleteMainImageModal">🗑️</button>
-			</div>
-		{% endif %}
+		{% include "partials/_main_image_buttons.html.twig" %}
 	</div>
 
-	<div class="modal fade" id="editMainImageModal" tabindex="-1" aria-labelledby="editMainImageModalLabel" aria-hidden="true">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 class="modal-title" id="editMainImageModalLabel">Modifier l'image principale</h5>
-					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-				</div>
-				<div class="modal-body">
-					{{ form_start(mainImageForm, {
-                    'action': path('app_figure_set_main_image', { id: figure.id }),
-                    'method': 'POST'
-                }) }}
+	{% include "partials/_edit_main_image_modal.html.twig" %}
 
-					<div class="mb-3 text-center">
-						<label class="form-label">Sélectionnez l'image principale</label>
-						<div class="d-flex flex-wrap justify-content-center gap-3">
-							{% for radio in mainImageForm.mainImage %}
-								{% set imageUrl = radio.vars.attr['data-image-url']|default('build/images/default-image.jpg') %}
-								<label class="d-block text-center" style="cursor: pointer;">
-									{{ form_widget(radio, { 'attr': { 'style': 'display: none;' } }) }}
-									<img src="{{ asset(imageUrl) }}" class="img-thumbnail border {% if radio.vars.checked %}border-primary{% endif %}" alt="Image principale" style="width: 120px; height: 120px; object-fit: cover;" onclick="this.previousElementSibling.checked = true; highlightSelected(this);">
-								</label>
-							{% endfor %}
-						</div>
-					</div>
-
-					<div class="modal-footer">
-						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-						{{ form_widget(mainImageForm.save) }}
-					</div>
-
-					{{ form_end(mainImageForm) }}
-				</div>
-			</div>
-		</div>
-	</div>
-
-	<script>
-		function highlightSelected(img) {
-document.querySelectorAll('.img-thumbnail').forEach(el => el.classList.remove('border-primary'));
-img.classList.add('border-primary');
-}
-	</script>
-
+	<!-- Modale de suppression de l'image principale -->
+	{% include "partials/_delete_main_image_modal.html.twig" %}
 
 	<!-- Galerie multimédia (images + vidéos alignées) -->
 	<div class="mt-4 text-center">
@@ -129,7 +76,10 @@ img.classList.add('border-primary');
 		</div>
 		{{ form_end(form) }}
 	</div>
-</section><!-- Modal de confirmation de suppression de la figure --><div class="modal fade" id="deleteFigureModal" tabindex="-1" aria-labelledby="deleteFigureModalLabel" aria-hidden="true">
+</section>
+
+<!-- Modal de confirmation de suppression de la figure -->
+<div class="modal fade" id="deleteFigureModal" tabindex="-1" aria-labelledby="deleteFigureModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -148,7 +98,10 @@ img.classList.add('border-primary');
 			</div>
 		</div>
 	</div>
-</div><!-- Modales pour l'édition et la suppression des images -->{% for image in figure.images %}
+</div>
+
+<!-- Modales pour l'édition et la suppression des images -->
+{% for image in figure.images %}
 	<div class="modal fade" id="editImageModal-{{ image.id }}" tabindex="-1" aria-labelledby="editImageModalLabel-{{ image.id }}" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -193,7 +146,10 @@ img.classList.add('border-primary');
 			</div>
 		</div>
 	</div>
-{% endfor %}<!-- Modales pour l'édition et la suppression des vidéos -->{% for video in figure.videos %}
+{% endfor %}
+
+<!-- Modales pour l'édition et la suppression des vidéos -->
+{% for video in figure.videos %}
 	<div class="modal fade" id="editVideoModal-{{ video.id }}" tabindex="-1" aria-labelledby="editVideoModalLabel-{{ video.id }}" aria-hidden="true">
 		<div class="modal-dialog">
 			<div class="modal-content">
@@ -241,6 +197,5 @@ img.classList.add('border-primary');
             </div>
         </div>
     {% endfor %}
-
     
 {% endblock %}

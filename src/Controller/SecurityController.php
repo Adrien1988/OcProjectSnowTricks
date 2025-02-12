@@ -96,7 +96,7 @@ class SecurityController extends AbstractController
                     ->subject('Réinitialisation de votre mot de passe')
                     ->html(
                         '<p>Cliquez sur le bouton ci-dessous pour réinitialiser votre mot de passe :</p>
-                    <p><a href="' . $resetUrl . '" style="display: inline-block; padding: 10px 15px; background-color: #007bff; 
+                    <p><a href="'.$resetUrl.'" style="display: inline-block; padding: 10px 15px; background-color: #007bff; 
                         color: white; text-decoration: none; border-radius: 5px;">Réinitialiser mon mot de passe</a></p>'
                     );
 
