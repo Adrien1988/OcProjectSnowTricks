@@ -4,7 +4,6 @@ namespace App\Form;
 
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
-use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -43,13 +42,6 @@ class MainImageType extends AbstractType
                     'multiple'    => false,
                     'label'       => false,
                     'choice_attr' => $choicesAttributes, // Ajoute les URLs ici
-                ]
-            )
-            ->add(
-                'referer',
-                HiddenType::class,
-                [
-                    'mapped' => false,
                 ]
             )
             ->add(

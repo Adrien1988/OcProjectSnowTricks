@@ -188,7 +188,9 @@ class FigureImageController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $imageId = $form->get('mainImage')->getData();
-            $referer = $form->get('referer')->getData(); // Récupération de l'URL d'origine
+
+            // On récupère l'URL de provenance (soit page d'édition, soit page détail)
+            $referer = $request->headers->get('referer', $this->generateUrl('app_figure_detail', ['id' => $id]));
 
             // Récupération de l'image sélectionnée
             foreach ($figure->getImages() as $image) {
@@ -205,7 +207,7 @@ class FigureImageController extends AbstractController
             }
 
             // Redirection vers la page d'origine
-            return $this->redirect($referer ?: $this->generateUrl('app_figure_detail', ['id' => $id]));
+            return $this->redirect($referer);
         }
 
         return $this->redirectToRoute('app_figure_detail', ['id' => $id]);

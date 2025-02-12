@@ -7,18 +7,22 @@ document.addEventListener("DOMContentLoaded", function () {
         img.classList.add('border-primary');
     }
 
-    // Sélection des images pour la mise en surbrillance
+    // ✅ Mise à jour de la gestion de la sélection d’image principale
     const imageLabels = document.querySelectorAll(".image-label");
 
     imageLabels.forEach(label => {
         label.addEventListener("click", function () {
+            const radioInput = this.querySelector("input[type='radio']");
             const img = this.querySelector("img");
-            highlightSelected(img);
-            this.querySelector("input[type='radio']").checked = true;
+
+            if (radioInput && img) {
+                radioInput.checked = true; // Sélectionner le radio input
+                highlightSelected(img); // Ajouter la bordure à l’image sélectionnée
+            }
         });
     });
 
-    // Gestion de la suppression de l'image principale
+    // ✅ Gestion de la suppression de l'image principale
     const deleteMainImageForm = document.querySelector("#deleteMainImageForm");
 
     if (deleteMainImageForm) {
@@ -36,15 +40,19 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(data => {
                 if (data.success) {
                     console.log("Image principale supprimée avec succès !");
-                    // Remplace l'image principale par l'image par défaut
+                    
+                    // ✅ Remplace immédiatement l’image principale par l’image par défaut
                     const mainImageElement = document.querySelector("#mainImage");
                     if (mainImageElement) {
                         mainImageElement.src = "/build/images/default-image.jpg";
                     }
 
-                    // Ferme la modale de suppression
-                    let modal = bootstrap.Modal.getInstance(document.querySelector("#deleteMainImageModal"));
-                    modal.hide();
+                    // ✅ Ferme correctement la modale de suppression
+                    let modalElement = document.querySelector("#deleteMainImageModal");
+                    let modalInstance = bootstrap.Modal.getInstance(modalElement);
+                    if (modalInstance) {
+                        modalInstance.hide();
+                    }
                 } else {
                     alert("Erreur : " + data.message);
                 }
