@@ -134,6 +134,17 @@ class Video
 
 
     /**
+     * Retourne l'auteur de la figure associée à l'image.
+     *
+     * @return user L'utilisateur qui a créé la figure
+     */
+    public function getAuthor(): User
+    {
+        return $this->figure->getAuthor();
+    }
+
+
+    /**
      * Convertit l'objet Video en chaîne de caractères.
      * Retourne le code d'intégration ou 'Vidéo' si le code est null.
      *

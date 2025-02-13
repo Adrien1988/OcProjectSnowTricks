@@ -40,6 +40,14 @@ class FigureController extends AbstractController
 
         // Récupérer la figure via la méthode privée
         $figure = $figureService->findFigureById($id);
+        if (!$figure) {
+            $this->addFlash('error', 'Figure introuvable.');
+
+            return $this->redirectToRoute('app_home');
+        }
+
+        // Vérifie si l'utilisateur est bien le créateur
+        $this->denyAccessUnlessGranted('FIGURE_EDIT', $figure);
 
         // Créer le formulaire de modification
         $form = $this->createForm(FigureType::class, $figure);
@@ -108,6 +116,9 @@ class FigureController extends AbstractController
 
             return $this->redirectToRoute('app_home');
         }
+
+        // Vérifie si l'utilisateur est bien le créateur
+        $this->denyAccessUnlessGranted('FIGURE_DELETE', $figure);
 
         // Vérifier le token CSRF
         if (!$this->isCsrfTokenValid('delete_figure_'.$figure->getId(), $request->request->get('_token'))) {

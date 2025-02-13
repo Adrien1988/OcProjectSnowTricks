@@ -47,7 +47,7 @@
 						</div>
 					</div>
 				{% endfor %}
-				{% if is_granted('ROLE_USER') %}
+				{% if is_granted('ROLE_USER') and figure.author == app.user %}
 					<!-- Carte pour ajouter une nouvelle image -->
 					<div class="col-md-3 col-sm-6 mb-3">
 						<div class="card text-center border-secondary" style="cursor: pointer; height: 200px;" data-bs-toggle="modal" data-bs-target="#addImageModal">
@@ -93,7 +93,7 @@
 						</div>
 					</div>
 				{% endfor %}
-				{% if is_granted('ROLE_USER') %}
+				{% if is_granted('ROLE_USER') and figure.author == app.user%}
 					<div class="col-md-4 mb-3">
 						<div class="card text-center border-secondary" style="cursor: pointer; height: 200px;" data-bs-toggle="modal" data-bs-target="#addVideoModal">
 							<div class="card-body d-flex align-items-center justify-content-center">

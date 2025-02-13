@@ -28,7 +28,7 @@
 							<a href="{{ path('app_figure_detail', { id: figure.id }) }}" class="text-decoration-none">
 								<h5 class="card-title text-uppercase mb-0">{{ figure.name }}</h5>
 							</a>
-							{% if is_granted('ROLE_USER') %}
+							{% if is_granted('ROLE_USER') and figure.author == app.user %}
 								<div class="btn-group">
 									<a href="{{ path('app_figure_edit', { id: figure.id }) }}" class="btn btn-secondary btn-sm">
 										✏️

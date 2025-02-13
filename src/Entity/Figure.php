@@ -36,6 +36,10 @@ class Figure
     )]
     private ?string $name = null;
 
+    #[ORM\ManyToOne(targetEntity: User::class)]
+    #[ORM\JoinColumn(nullable: false)]
+    private User $author;
+
     /**
      * Description de la figure.
      */
@@ -161,6 +165,32 @@ class Figure
 
         return $this;
     } // end setName()
+
+
+    /**
+     * Récupère l'auteur de la figure.
+     *
+     * @return user L'utilisateur ayant créé la figure
+     */
+    public function getAuthor(): User
+    {
+        return $this->author;
+    }
+
+
+    /**
+     * Définit l'auteur de la figure.
+     *
+     * @param user $author L'utilisateur qui a créé la figure
+     *
+     * @return self retourne l'instance mise à jour
+     */
+    public function setAuthor(User $author): self
+    {
+        $this->author = $author;
+
+        return $this;
+    }
 
 
     /**

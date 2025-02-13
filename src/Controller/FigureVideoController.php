@@ -29,6 +29,7 @@ class FigureVideoController extends AbstractController
     public function addVideo(Figure $figure, Request $request, FigureService $figureService): RedirectResponse
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
+        $this->denyAccessUnlessGranted('VIDEO_ADD', new Video(['figure' => $figure]));
 
         $form = $this->createForm(VideoType::class, $video = new Video());
         $form->handleRequest($request);
@@ -76,6 +77,7 @@ class FigureVideoController extends AbstractController
         FigureService $figureService,
     ): RedirectResponse {
         $this->denyAccessUnlessGranted('ROLE_USER');
+        $this->denyAccessUnlessGranted('VIDEO_EDIT', $video);
 
         $form = $this->createForm(VideoType::class, $video);
         $form->handleRequest($request);
@@ -114,6 +116,7 @@ class FigureVideoController extends AbstractController
     public function deleteVideo(Video $video, Request $request, FigureService $figureService): RedirectResponse
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
+        $this->denyAccessUnlessGranted('VIDEO_DELETE', $video);
 
         $figure = $video->getFigure();
 

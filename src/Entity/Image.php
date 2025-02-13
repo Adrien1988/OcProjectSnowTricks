@@ -171,6 +171,17 @@ class Image
 
 
     /**
+     * Retourne l'auteur de la figure associée à l'image.
+     *
+     * @return user L'utilisateur qui a créé la figure
+     */
+    public function getAuthor(): User
+    {
+        return $this->figure->getAuthor();
+    }
+
+
+    /**
      * Convertit l'objet Image en chaîne de caractères.
      * Retourne l'URL de l'image ou 'Image' si l'URL est null.
      *
