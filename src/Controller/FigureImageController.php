@@ -33,6 +33,7 @@ class FigureImageController extends AbstractController
     public function addImage(Figure $figure, Request $request, FileUploader $fileUploader, FigureService $figureService): RedirectResponse
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
+        $this->denyAccessUnlessGranted('IMAGE_ADD', new Image(['figure' => $figure]));
 
         $form = $this->createForm(ImageType::class, $image = new Image());
         $form->handleRequest($request);
@@ -91,6 +92,7 @@ class FigureImageController extends AbstractController
         FigureService $figureService,
     ): Response {
         $this->denyAccessUnlessGranted('ROLE_USER');
+        $this->denyAccessUnlessGranted('IMAGE_EDIT', $image);
 
         $form = $this->createForm(ImageType::class, $image);
         $form->handleRequest($request);
@@ -136,6 +138,9 @@ class FigureImageController extends AbstractController
         $this->denyAccessUnlessGranted('ROLE_USER');
 
         $figure = $image->getFigure();
+
+        // Vérifie si l'utilisateur est bien le créateur de la figure
+        $this->denyAccessUnlessGranted('IMAGE_DELETE', $image);
 
         if (!$this->isCsrfTokenValid('delete_image_'.$image->getId(), $request->request->get('_token'))) {
             $this->addFlash('error', 'Token CSRF invalide.');
