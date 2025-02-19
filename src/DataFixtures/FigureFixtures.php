@@ -107,7 +107,8 @@ class FigureFixtures extends Fixture
             $figure->setName($data['name'])
                 ->setDescription($data['description'])
                 ->setFigureGroup($data['group'])
-                ->setSlug(strtolower(str_replace(' ', '-', $data['name'])));
+                ->setSlug(strtolower(str_replace(' ', '-', $data['name'])))
+                ->setAuthor($user);
             $manager->persist($figure);
 
             // Ajouter 3 images par figure

@@ -6,11 +6,16 @@
     {% include "partials/_flashes.html.twig" %}
 
     <!-- En-tête avec image de fond -->
-    <header class="bg-dark text-white text-center py-5 d-flex flex-column justify-content-center align-items-center" style="background: url('{{ asset('build/images/header-bg.jpg') }}') center/cover no-repeat; height: 60vh;">
+    <header class="bg-dark text-white text-center py-5 d-flex flex-column justify-content-center align-items-center position-relative" style="background: url('{{ asset('build/images/header-bg.jpg') }}') center/cover no-repeat; height: 60vh;">
         <div class="position-absolute top-50 start-50 translate-middle">
             <h1 class="fw-bold">Bienvenue sur SnowTricks</h1>
             <p class="lead">Découvrez les plus belles figures de snowboard</p>
         </div>
+
+        <!-- Bouton pour descendre vers la page -->
+        <button id="scrollDownButton" class="btn btn-neutral position-absolute bottom-0 end-0 m-3" title="Aller vers le bas">
+            ⬇️
+        </button>
     </header>
 
     <!-- Section des figures -->
@@ -91,4 +96,10 @@
             </div>
         </div>
     </div>
+
+    <!-- Bouton retour en haut -->
+    <button id="scrollUpButton" class="btn btn-neutral position-fixed bottom-20 end-0 m-3" title="Retour en haut">
+        ⬆️
+    </button>
+
 {% endblock %}
