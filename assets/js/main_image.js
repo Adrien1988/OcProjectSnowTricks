@@ -1,8 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
-    console.log("main_image.js chargé !"); // Debugging pour vérifier si le fichier est bien inclus
 
     function highlightSelected(img) {
-        console.log("highlightSelected appelé !"); // Vérification si la fonction est bien déclenchée
         document.querySelectorAll('.img-thumbnail').forEach(el => el.classList.remove('border-primary'));
         img.classList.add('border-primary');
     }
@@ -39,7 +37,6 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    console.log("Image principale supprimée avec succès !");
                     
                     // ✅ Remplace immédiatement l’image principale par l’image par défaut
                     const mainImageElement = document.querySelector("#mainImage");
