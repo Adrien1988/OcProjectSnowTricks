@@ -29,7 +29,6 @@ class FigureVideoController extends AbstractController
     public function addVideo(Figure $figure, Request $request, FigureService $figureService): RedirectResponse
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
-        $this->denyAccessUnlessGranted('VIDEO_ADD', new Video(['figure' => $figure]));
 
         $form = $this->createForm(VideoType::class, $video = new Video());
         $form->handleRequest($request);

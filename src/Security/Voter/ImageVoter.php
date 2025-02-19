@@ -9,7 +9,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class ImageVoter extends Voter
 {
-    public const ADD = 'IMAGE_ADD';
     public const EDIT = 'IMAGE_EDIT';
     public const DELETE = 'IMAGE_DELETE';
 
@@ -24,7 +23,7 @@ class ImageVoter extends Voter
      */
     protected function supports(string $attribute, mixed $subject): bool
     {
-        return in_array($attribute, [self::ADD, self::EDIT, self::DELETE]) && $subject instanceof Image;
+        return in_array($attribute, [self::EDIT, self::DELETE]) && $subject instanceof Image;
     }
 
 

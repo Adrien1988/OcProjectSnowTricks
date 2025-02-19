@@ -42,6 +42,8 @@ class HomeController extends AbstractController
             // Générer le slug avant la persistance
             $figure->generateSlug($slugger);
 
+            $figure->setAuthor($this->getUser());
+
             $entityManager->persist($figure);
             $entityManager->flush();
 

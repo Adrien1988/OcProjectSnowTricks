@@ -13,8 +13,7 @@
 			<link rel="stylesheet" href="{{ asset('build/app.css') }}">
 		{% endblock %}
 	</head>
-	<body
-		class="d-flex flex-column min-vh-100">
+	<body class="d-flex flex-column min-vh-100 pt-5">
 
 		<!-- Navbar -->
 		{% include 'partials/_navbar.html.twig' %}
@@ -27,10 +26,13 @@
 		<!-- Footer -->
 		{% include 'partials/_footer.html.twig' %}
 
-			{% block javascripts %}
-				<script src="{{ asset('build/runtime.js') }}"></script>
-				<script src="{{ asset('build/vendors.js') }}"></script>
-				<script src="{{ asset('build/app.js') }}"></script>
-			{% endblock %}
-		</body>
-	</html>
+        <button id="scrollButton" title="Retour en haut">⬇️</button>
+
+		{% block javascripts %}
+			<script src="{{ asset('build/runtime.js') }}"></script>
+			<script src="{{ asset('build/vendors.js') }}"></script>
+			<script src="{{ asset('build/app.js') }}"></script>
+		{% endblock %}
+
+	</body>
+</html>

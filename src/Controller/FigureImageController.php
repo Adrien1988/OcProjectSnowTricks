@@ -33,7 +33,6 @@ class FigureImageController extends AbstractController
     public function addImage(Figure $figure, Request $request, FileUploader $fileUploader, FigureService $figureService): RedirectResponse
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
-        $this->denyAccessUnlessGranted('IMAGE_ADD', new Image(['figure' => $figure]));
 
         $form = $this->createForm(ImageType::class, $image = new Image());
         $form->handleRequest($request);
