@@ -92,7 +92,7 @@
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
 				<div class="modal-body">
-					{{ form_start(createFigureForm, { 'action': path('app_home'), 'attr': { 'id': 'createFigureForm' } }) }}
+					{{ form_start(createFigureForm, { 'action': path('app_figure_add'), 'method': 'POST' }) }}
 					{{ form_widget(createFigureForm) }}
 					<div class="d-grid mt-4">
 						<button type="submit" class="btn btn-primary">Créer</button>

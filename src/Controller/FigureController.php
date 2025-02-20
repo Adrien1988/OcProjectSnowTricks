@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\Comment;
+use App\Entity\Figure;
 use App\Form\CommentType;
 use App\Form\FigureType;
 use App\Form\ImageType;
@@ -10,14 +10,72 @@ use App\Form\MainImageType;
 use App\Form\VideoType;
 use App\Repository\CommentRepository;
 use App\Service\FigureService;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 class FigureController extends AbstractController
 {
+
+
+    /**
+     * Gère la création d'une nouvelle figure via la modale.
+     *
+     * @param Request                $request       La requête HTTP
+     * @param EntityManagerInterface $entityManager Gestionnaire d'entités
+     * @param SluggerInterface       $slugger       Service pour générer le slug
+     *
+     * @return Response
+     */
+    #[Route('/figure/add', name: 'app_figure_add', methods: ['GET', 'POST'])]
+    public function addFigure(Request $request, EntityManagerInterface $entityManager, SluggerInterface $slugger): Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
+        // Création du formulaire pour ajouter une figure
+        $figure = new Figure();
+        $form = $this->createForm(FigureType::class, $figure);
+        $form->handleRequest($request);
+
+        // Gestion de la soumission du formulaire
+        if ($form->isSubmitted() && $form->isValid()) {
+            // Générer le slug avant la persistance
+            $figure->generateSlug($slugger);
+
+            $figure->setAuthor($this->getUser());
+
+            $entityManager->persist($figure);
+
+            try {
+                $entityManager->flush();
+                $this->addFlash('success', 'La figure a été créée avec succès.');
+
+                return $this->redirectToRoute('app_home');
+            } catch (\Exception $e) {
+                $this->addFlash('error', 'Erreur lors de la création de la figure.');
+            }
+
+            return $this->redirectToRoute('app_home');
+        }
+
+        // Si le formulaire est soumis mais non valide, afficher les erreurs
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $errors = [];
+            foreach ($form->getErrors(true) as $error) {
+                $errors[] = $error->getMessage();
+            }
+
+            if (!empty($errors)) {
+                $this->addFlash('error', 'Veuillez corriger les erreurs dans le formulaire de création de figure : '.implode(' - ', $errors));
+            }
+        }
+
+        return $this->redirectToRoute('app_home'); // 🚀 Redirection après échec
+    }
 
 
     /**
@@ -224,107 +282,6 @@ class FigureController extends AbstractController
                 'videoForm'     => $this->createForm(VideoType::class)->createView(),
                 'commentForm'   => $this->createForm(CommentType::class)->createView(),
                 'mainImageForm' => $mainImageForm->createView(),
-            ]
-        );
-    }
-
-
-    /**
-     * Ajoute un commentaire à une figure.
-     *
-     * Cette méthode permet aux utilisateurs connectés d'ajouter un commentaire
-     * à une figure spécifique. Le commentaire est sauvegardé dans la base de données
-     * et l'utilisateur est redirigé vers la page de la figure.
-     *
-     * @param int           $id            L'identifiant de la figure à modifier
-     * @param Request       $request       La requête HTTP contenant les données
-     *                                     du formulaire
-     * @param FigureService $figureService Service pour gérer
-     *                                     les figures
-     *
-     * @return RedirectResponse La redirection vers la page de détail de la figure
-     */
-    #[Route('/figure/{id}/add-comment', name: 'app_figure_add_comment', methods: ['POST'])]
-    public function addComment(int $id, Request $request, FigureService $figureService): RedirectResponse
-    {
-        $this->denyAccessUnlessGranted('ROLE_USER');
-
-        $figure = $figureService->findFigureById($id);
-        if (!$figure) {
-            throw $this->createNotFoundException('Figure introuvable.');
-        }
-
-        $comment = new Comment();
-        $form = $this->createForm(CommentType::class, $comment);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $comment->setAuthor($this->getUser());
-            $comment->setFigure($figure);
-
-            if ($figureService->saveEntity($comment)) {
-                $this->addFlash('success', 'Commentaire ajouté avec succès.');
-
-                return $figureService->redirectToFigureDetail($figure);
-            }
-
-            $this->addFlash('error', 'Une erreur est survenue lors de l’ajout du commentaire.');
-        }
-
-        // Si le formulaire de commentaire est soumis mais non valide, afficher les erreurs
-        if ($form->isSubmitted() && !$form->isValid()) {
-            $errors = [];
-            foreach ($form->getErrors(true) as $error) {
-                $errors[] = $error->getMessage();
-            }
-
-            if (!empty($errors)) {
-                $this->addFlash('error', 'Veuillez corriger les erreurs dans le formulaire de commentaire : '.implode(' - ', $errors));
-            }
-        }
-
-        return $figureService->redirectToFigureDetail($figure);
-
-    }
-
-
-    /**
-     * Récupère et affiche les commentaires d'une figure avec pagination.
-     *
-     * Cette méthode permet de charger les commentaires associés à une figure,
-     * triés du plus récent au plus ancien, avec une pagination (10 par page).
-     *
-     * @param int               $id                L'identifiant de la figure
-     *                                             à modifier
-     * @param Request           $request           La requête HTTP contenant les paramètres de pagination
-     * @param FigureService     $figureService     Service pour gérer
-     *                                             les figures
-     * @param CommentRepository $commentRepository Le repository pour accéder aux commentaires
-     *
-     * @return Response La réponse HTTP contenant le rendu des commentaires
-     */
-    #[Route('/figure/{id}/comments', name: 'app_figure_comments', methods: ['GET'])]
-    public function comments(
-        int $id,
-        Request $request,
-        FigureService $figureService,
-        CommentRepository $commentRepository,
-    ): Response {
-        $figure = $figureService->findFigureById($id);
-
-        if (!$figure) {
-            throw $this->createNotFoundException('Figure introuvable.');
-        }
-
-        $page = $request->query->getInt('page', 1);
-        $comments = $commentRepository->findByFigureWithPagination($figure->getId(), $page, 10);
-
-        return $this->render(
-            'figure/comments.html.twig',
-            [
-                'figure'   => $figure,
-                'comments' => $comments,
-                'page'     => $page,
             ]
         );
     }
