@@ -9,7 +9,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class VideoVoter extends Voter
 {
-    public const ADD = 'VIDEO_ADD';
     public const EDIT = 'VIDEO_EDIT';
     public const DELETE = 'VIDEO_DELETE';
 
@@ -24,7 +23,7 @@ class VideoVoter extends Voter
      */
     protected function supports(string $attribute, mixed $subject): bool
     {
-        return in_array($attribute, [self::ADD, self::EDIT, self::DELETE]) && $subject instanceof Video;
+        return in_array($attribute, [self::EDIT, self::DELETE]) && $subject instanceof Video;
     }
 
 
