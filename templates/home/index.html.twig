@@ -1,105 +1,112 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Liste des figures{% endblock %}
+{% block title %}Liste des figures
+{% endblock %}
 
 {% block body %}
-    {% include "partials/_flashes.html.twig" %}
+	{% include "partials/_flashes.html.twig" %}
 
-    <!-- En-tête avec image de fond -->
-    <header class="bg-dark text-white text-center py-5 d-flex flex-column justify-content-center align-items-center position-relative" style="background: url('{{ asset('build/images/header-bg.jpg') }}') center/cover no-repeat; height: 60vh;">
-        <div class="position-absolute top-50 start-50 translate-middle">
-            <h1 class="fw-bold">Bienvenue sur SnowTricks</h1>
-            <p class="lead">Découvrez les plus belles figures de snowboard</p>
-        </div>
+	<!-- En-tête avec image de fond -->
+	<header class="bg-dark text-white text-center py-5 d-flex flex-column justify-content-center align-items-center position-relative" style="background: url('{{ asset('build/images/header-bg.jpg') }}') center/cover no-repeat; height: 60vh;">
+		<div class="position-absolute top-50 start-50 translate-middle">
+			<h1 class="fw-bold">Bienvenue sur SnowTricks</h1>
+			<p class="lead">Découvrez les plus belles figures de snowboard</p>
+		</div>
 
-        <!-- Bouton pour descendre vers la page -->
-        <button id="scrollDownButton" class="btn btn-neutral position-absolute bottom-0 end-0 m-3" title="Aller vers le bas">
-            ⬇️
-        </button>
-    </header>
+		<!-- Bouton pour descendre vers la page -->
+		<button id="scrollDownButton" class="btn btn-neutral position-absolute bottom-0 end-0 m-3" title="Aller vers le bas">
+			<i class="fa-solid fa-arrow-down"></i>
+		</button>
+	</header>
 
-    <!-- Section des figures -->
-    <section class="container my-5 pt-5 mb-5">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h1 class="mb-4 text-center flex-grow-1">Figures de Snowboard</h1>
-            {% if is_granted('ROLE_USER') %}
-                <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#createFigureModal">
-                    + Créer une figure
-                </button>
-            {% endif %}
-        </div>
+	<!-- Section des figures -->
+	<section class="container my-5 pt-5 mb-5">
+		<div class="d-flex justify-content-between align-items-center mb-4">
+			<h1 class="mb-4 text-center flex-grow-1">Figures de Snowboard</h1>
+		</div>
 
-        <div class="row">
-            {% for figure in figures %}
-                <div class="col-lg-4 col-md-6 col-sm-12 mb-4">
-                    <div class="card shadow">
-                        {% include "partials/_main_image.html.twig" %}
-                        <div class="card-body d-flex justify-content-between align-items-center">
-                            <a href="{{ path('app_figure_detail', { id: figure.id }) }}" class="text-decoration-none">
-                                <h5 class="card-title text-uppercase mb-0">{{ figure.name }}</h5>
-                            </a>
-                            {% if is_granted('ROLE_USER') and figure.author == app.user %}
-                                <div class="btn-group">
-                                    <a href="{{ path('app_figure_edit', { id: figure.id }) }}" class="btn btn-secondary btn-sm">✏️</a>
-                                    <button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modal-delete-{{ figure.id }}">🗑️</button>
-                                </div>
-                            {% endif %}
-                        </div>
-                    </div>
-                </div>
+		<div class="row">
+			{% for figure in figures %}
+				<div class="col-lg-4 col-md-6 col-sm-12 mb-4 d-flex">
+					<div class="card shadow">
+						{% include "partials/_main_image.html.twig" %}
+						<div class="card-body d-flex justify-content-between align-items-center">
+							<a href="{{ path('app_figure_detail', { id: figure.id }) }}" class="text-decoration-none">
+								<h5 class="card-title text-uppercase mb-0">{{ figure.name }}</h5>
+							</a>
+							{% if is_granted('ROLE_USER') and figure.author == app.user %}
+								<div class="btn-group">
+									<a href="{{ path('app_figure_edit', { id: figure.id }) }}" class="btn btn-secondary btn-sm">✏️</a>
+									<button type="button" class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#modal-delete-{{ figure.id }}">🗑️</button>
+								</div>
+							{% endif %}
+						</div>
+					</div>
+				</div>
 
-                <!-- Fenêtre modale pour la suppression -->
-                <div class="modal fade" id="modal-delete-{{ figure.id }}" tabindex="-1" aria-labelledby="modal-delete-label-{{ figure.id }}" aria-hidden="true">
-                    <div class="modal-dialog modal-dialog-centered">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h5 class="modal-title" id="modal-delete-label-{{ figure.id }}">Confirmer la suppression</h5>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                Êtes-vous sûr de vouloir supprimer la figure <strong>{{ figure.name }}</strong> ?
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                                <form method="post" action="{{ path('app_figure_delete', { id: figure.id }) }}">
-                                    <input type="hidden" name="_token" value="{{ csrf_token('delete_figure_' ~ figure.id) }}">
-                                    <button type="submit" class="btn btn-danger">Confirmer</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            {% else %}
-                <div class="col-12 text-center">
-                    <p class="text-muted">Aucune figure n'est disponible pour le moment. Revenez plus tard !</p>
-                </div>
-            {% endfor %}
-        </div>
-    </section>
+				<!-- Fenêtre modale pour la suppression -->
+				<div class="modal fade" id="modal-delete-{{ figure.id }}" tabindex="-1" aria-labelledby="modal-delete-label-{{ figure.id }}" aria-hidden="true">
+					<div class="modal-dialog modal-dialog-centered">
+						<div class="modal-content">
+							<div class="modal-header">
+								<h5 class="modal-title" id="modal-delete-label-{{ figure.id }}">Confirmer la suppression</h5>
+								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+							</div>
+							<div class="modal-body">
+								Êtes-vous sûr de vouloir supprimer la figure
+								<strong>{{ figure.name }}</strong>
+								?
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+								<form method="post" action="{{ path('app_figure_delete', { id: figure.id }) }}">
+									<input type="hidden" name="_token" value="{{ csrf_token('delete_figure_' ~ figure.id) }}">
+									<button type="submit" class="btn btn-danger">Confirmer</button>
+								</form>
+							</div>
+						</div>
+					</div>
+				</div>
+			{% else %}
+				<div class="col-12 text-center">
+					<p class="text-muted">Aucune figure n'est disponible pour le moment. Revenez plus tard !</p>
+				</div>
+			{% endfor %}
+			{% if is_granted('ROLE_USER') %}
+				<div class="col-lg-4 col-md-6 col-sm-12 mb-4 d-flex">
+					<div class="card shadow w-100 text-center card-bg-blur" style="cursor: pointer;" data-bs-toggle="modal" data-bs-target="#createFigureModal">
+						<div class="card-body d-flex align-items-center justify-content-center">
+							<i class="fa-regular fa-square-plus fa-3x" style="color: #ffffff;"></i>
+						</div>
+					</div>
+				</div>
+			{% endif %}
+		</div>
+	</section>
 
-    <!-- Modale pour la création d'une figure -->
-    <div class="modal fade" id="createFigureModal" tabindex="-1" aria-labelledby="createFigureModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="createFigureModalLabel">Créer une nouvelle figure</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    {{ form_start(createFigureForm, { 'action': path('app_home'), 'attr': { 'id': 'createFigureForm' } }) }}
-                    {{ form_widget(createFigureForm) }}
-                    <div class="d-grid mt-4">
-                        <button type="submit" class="btn btn-primary">Créer</button>
-                    </div>
-                    {{ form_end(createFigureForm) }}
-                </div>
-            </div>
-        </div>
-    </div>
+	<!-- Modale pour la création d'une figure -->
+	<div class="modal fade" id="createFigureModal" tabindex="-1" aria-labelledby="createFigureModalLabel" aria-hidden="true">
+		<div class="modal-dialog modal-lg">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="createFigureModalLabel">Créer une nouvelle figure</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					{{ form_start(createFigureForm, { 'action': path('app_home'), 'attr': { 'id': 'createFigureForm' } }) }}
+					{{ form_widget(createFigureForm) }}
+					<div class="d-grid mt-4">
+						<button type="submit" class="btn btn-primary">Créer</button>
+					</div>
+					{{ form_end(createFigureForm) }}
+				</div>
+			</div>
+		</div>
+	</div>
 
-    <!-- Bouton retour en haut -->
-    <button id="scrollUpButton" class="btn btn-neutral position-fixed bottom-20 end-0 m-3" title="Retour en haut">
-        ⬆️
-    </button>
+	<!-- Bouton retour en haut -->
+	<button id="scrollUpButton" class="btn btn-neutral position-fixed bottom-20 end-0 m-3" title="Retour en haut">
+		<i class="fa-solid fa-arrow-up"></i>
+	</button>
 
 {% endblock %}

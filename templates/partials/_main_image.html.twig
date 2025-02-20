@@ -1,5 +1,5 @@
 {% if figure.mainImage and figure.mainImage.url %}
-	<img src="{{ asset(figure.mainImage.url) }}" class="img-fluid w-100" id="mainImage" alt="{{ figure.mainImage.altText|default('Image de la figure') }}">
+	<img src="{{ asset(figure.mainImage.url) }}" class="img-fluid w-100 rounded" id="mainImage" alt="{{ figure.mainImage.altText|default('Image de la figure') }}">
 {% else %}
-	<img src="{{ asset('build/images/default-image.jpg') }}" class="img-fluid w-100" id="mainImage" alt="Image par défaut">
+	<img src="{{ asset('build/images/default-image.jpg') }}" class="img-fluid w-100 rounded" id="mainImage" alt="Image par défaut">
 {% endif %}
