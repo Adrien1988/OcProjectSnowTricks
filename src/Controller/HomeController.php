@@ -45,11 +45,27 @@ class HomeController extends AbstractController
             $figure->setAuthor($this->getUser());
 
             $entityManager->persist($figure);
-            $entityManager->flush();
 
-            $this->addFlash('success', 'La figure a été créée avec succès.');
+            try {
+                $entityManager->flush();
+                $this->addFlash('success', 'La figure a été créée avec succès.');
+            } catch (\Exception $e) {
+                $this->addFlash('error', 'Erreur lors de la création de la figure.');
+            }
 
             return $this->redirectToRoute('app_home');
+        }
+
+        // Si le formulaire est soumis mais non valide, afficher les erreurs
+        if ($createFigureForm->isSubmitted() && !$createFigureForm->isValid()) {
+            $errors = [];
+            foreach ($createFigureForm->getErrors(true) as $error) {
+                $errors[] = $error->getMessage();
+            }
+
+            if (!empty($errors)) {
+                $this->addFlash('error', 'Veuillez corriger les erreurs dans le formulaire de création de figure : '.implode(' - ', $errors));
+            }
         }
 
         return $this->render(

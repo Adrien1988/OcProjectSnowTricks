@@ -55,7 +55,7 @@ class FigureImageController extends AbstractController
                 return $figureService->redirectToFigureDetail($figure);
             }
 
-            // Tout est OK, on paramètre l’entité et on enregistre
+            // On paramètre l’entité et on enregistre
             $image->setUrl('/uploads/'.$newFilename);
             $image->setFigure($figure);
 
@@ -67,6 +67,18 @@ class FigureImageController extends AbstractController
 
             // En cas d’échec de la sauvegarde (ex. exception en BDD), on informe l’utilisateur
             $this->addFlash('error', 'Erreur lors de la sauvegarde de l\'image.');
+        }
+
+        // Affichage des erreurs du formulaire, si soumis mais non valide
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $errors = [];
+            foreach ($form->getErrors(true) as $error) {
+                $errors[] = $error->getMessage();
+            }
+
+            if (!empty($errors)) {
+                $this->addFlash('error', 'Veuillez corriger les erreurs dans le formulaire d\'image : '.implode(' - ', $errors));
+            }
         }
 
         return $figureService->redirectToFigureDetail($figure);
@@ -112,8 +124,21 @@ class FigureImageController extends AbstractController
             if ($figureService->saveEntity($image)) {
                 $this->addFlash('success', 'Image modifiée avec succès.');
 
-                // ✅ Vérification avant redirection pour éviter une boucle infinie
                 return $this->redirectToRoute('app_figure_edit', ['id' => $image->getFigure()->getId()]);
+            }
+
+            $this->addFlash('error', 'Erreur lors de la modification de l\'image.');
+        }
+
+        // Affichage des erreurs du formulaire, si soumis mais non valide
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $errors = [];
+            foreach ($form->getErrors(true) as $error) {
+                $errors[] = $error->getMessage();
+            }
+
+            if (!empty($errors)) {
+                $this->addFlash('error', 'Veuillez corriger les erreurs dans le formulaire d\'image : '.implode(' - ', $errors));
             }
         }
 
@@ -147,7 +172,7 @@ class FigureImageController extends AbstractController
             return $this->redirectToRoute('app_figure_edit', ['id' => $figure->getId()]);
         }
 
-        // ✅ Suppression du fichier image physique
+        // Suppression du fichier image physique
         if (!$fileUploader->remove($image->getUrl())) {
             $this->addFlash('error', 'Erreur lors de la suppression du fichier image.');
 
@@ -192,11 +217,8 @@ class FigureImageController extends AbstractController
 
         if ($form->isSubmitted() && $form->isValid()) {
             $imageId = $form->get('mainImage')->getData();
-
-            // On récupère l'URL de provenance (soit page d'édition, soit page détail)
             $referer = $request->headers->get('referer', $this->generateUrl('app_figure_detail', ['id' => $id]));
 
-            // Récupération de l'image sélectionnée
             foreach ($figure->getImages() as $image) {
                 if ($image->getId() == $imageId) {
                     $figure->setMainImage($image);
@@ -213,6 +235,18 @@ class FigureImageController extends AbstractController
             $this->addFlash('success', 'Image principale modifiée avec succès.');
 
             return $this->redirect($referer);
+        }
+
+        // Affichage des erreurs du formulaire, si soumis mais non valide
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $errors = [];
+            foreach ($form->getErrors(true) as $error) {
+                $errors[] = $error->getMessage();
+            }
+
+            if (!empty($errors)) {
+                $this->addFlash('error', 'Veuillez corriger les erreurs dans le formulaire de l\'image principale : '.implode(' - ', $errors));
+            }
         }
 
         return $this->redirectToRoute('app_figure_detail', ['id' => $id]);
@@ -248,8 +282,17 @@ class FigureImageController extends AbstractController
         // Supprimer l'image principale
         $figure->setMainImage(null);
 
-        if ($figureService->saveEntity($figure)) {
+        // On stocke le résultat de la sauvegarde
+        $saveResult = $figureService->saveEntity($figure);
+
+        // Message de succès si true
+        if ($saveResult) {
             $this->addFlash('success', "L'image principale a été supprimée avec succès.");
+        }
+
+        // Message d’erreur si false
+        if (!$saveResult) {
+            $this->addFlash('error', "Erreur lors de la suppression de l'image principale.");
         }
 
         // Redirection sur la page actuelle (édition ou détail)

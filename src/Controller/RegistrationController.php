@@ -46,20 +46,36 @@ class RegistrationController extends AbstractController
             // Encode le mot de passe en clair
             $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
 
-            // Ajoute les autres étapes (avatar, token, etc.)
+            // Ajoute les autres étapes (token, etc.)
             $user->setIsActive(false);
             $token = bin2hex(random_bytes(32));
             $user->setActivationToken($token);
 
             $entityManager->persist($user);
-            $entityManager->flush();
+            try {
+                $entityManager->flush();
 
-            // Envoie l'email d'activation
-            $mailerService->sendActivationEmail($user->getEmail(), $token);
+                // Envoie l'email d'activation
+                $mailerService->sendActivationEmail($user->getEmail(), $token);
 
-            $this->addFlash('success', 'Votre compte a été créé avec succès ! Veuillez vérifier votre email pour l’activer.');
+                $this->addFlash('success', 'Votre compte a été créé avec succès ! Veuillez vérifier votre email pour l’activer.');
 
-            return $this->redirectToRoute('app_login');
+                return $this->redirectToRoute('app_login');
+            } catch (\Exception $e) {
+                $this->addFlash('error', 'Erreur lors de la création du compte.');
+            }
+        }
+
+        // Si le formulaire est soumis mais non valide, on affiche les détails des erreurs
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $errors = [];
+            foreach ($form->getErrors(true) as $error) {
+                $errors[] = $error->getMessage();
+            }
+
+            if (!empty($errors)) {
+                $this->addFlash('error', 'Veuillez corriger les erreurs suivantes : '.implode(' - ', $errors));
+            }
         }
 
         return $this->render(
@@ -123,6 +139,18 @@ class RegistrationController extends AbstractController
             $this->addFlash('success', 'Votre compte est maintenant actif !');
 
             return $this->redirectToRoute('app_login');
+        }
+
+        // Si le formulaire est soumis mais non valide, on affiche les détails des erreurs
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $errors = [];
+            foreach ($form->getErrors(true) as $error) {
+                $errors[] = $error->getMessage();
+            }
+
+            if (!empty($errors)) {
+                $this->addFlash('error', 'Veuillez corriger les erreurs suivantes : '.implode(' - ', $errors));
+            }
         }
 
         return $this->render(

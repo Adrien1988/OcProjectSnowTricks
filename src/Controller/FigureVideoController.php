@@ -36,7 +36,6 @@ class FigureVideoController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             // Vérification de la validité du code d'intégration
             if (!$this->isEmbedCodeValid($video->getEmbedCode())) {
-                // On ajoute un message d'erreur et on redirige si le code n'est pas valide
                 $this->addFlash('error', 'Le code d\'intégration n\'est pas valide.');
 
                 return $figureService->redirectToFigureDetail($figure);
@@ -51,6 +50,18 @@ class FigureVideoController extends AbstractController
             }
 
             $this->addFlash('error', 'Erreur lors de la sauvegarde de la vidéo.');
+        }
+
+        // Si le formulaire est soumis mais non valide, afficher les erreurs
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $errors = [];
+            foreach ($form->getErrors(true) as $error) {
+                $errors[] = $error->getMessage();
+            }
+
+            if (!empty($errors)) {
+                $this->addFlash('error', 'Veuillez corriger les erreurs dans le formulaire vidéo : '.implode(' - ', $errors));
+            }
         }
 
         return $figureService->redirectToFigureDetail($figure);
@@ -96,6 +107,18 @@ class FigureVideoController extends AbstractController
             }
 
             $this->addFlash('error', 'Erreur lors de la mise à jour de la vidéo.');
+        }
+
+        // Si le formulaire est soumis mais non valide, afficher les erreurs
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $errors = [];
+            foreach ($form->getErrors(true) as $error) {
+                $errors[] = $error->getMessage();
+            }
+
+            if (!empty($errors)) {
+                $this->addFlash('error', 'Veuillez corriger les erreurs dans le formulaire vidéo : '.implode(' - ', $errors));
+            }
         }
 
         return $this->redirectToRoute('app_figure_edit', ['id' => $video->getFigure()->getId()]);

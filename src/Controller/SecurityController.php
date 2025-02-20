@@ -58,7 +58,7 @@ class SecurityController extends AbstractController
     #[Route(path: '/logout', name: 'app_logout')]
     public function logout(): void
     {
-        throw new \LogicException('This method can be blank - it will be intercepted by the logout key on your firewall.');
+        throw new \LogicException('Cette méthode peut être vide : elle sera interceptée par la clé de déconnexion de votre pare-feu.');
     } // end logout()
 
 
@@ -86,26 +86,42 @@ class SecurityController extends AbstractController
                 $user->setResetToken($token);
                 $user->setResetTokenExpiresAt(new \DateTimeImmutable('+1 hour'));
 
-                $entityManager->flush();
+                try {
+                    $entityManager->flush();
 
-                $resetUrl = $this->generateUrl('app_reset_password', ['token' => $token], UrlGeneratorInterface::ABSOLUTE_URL);
+                    $resetUrl = $this->generateUrl('app_reset_password', ['token' => $token], UrlGeneratorInterface::ABSOLUTE_URL);
 
-                $emailMessage = (new Email())
-                    ->from('no-reply@example.com')
-                    ->to($user->getEmail())
-                    ->subject('Réinitialisation de votre mot de passe')
-                    ->html(
-                        '<p>Cliquez sur le bouton ci-dessous pour réinitialiser votre mot de passe :</p>
+                    $emailMessage = (new Email())
+                        ->from('no-reply@example.com')
+                        ->to($user->getEmail())
+                        ->subject('Réinitialisation de votre mot de passe')
+                        ->html(
+                            '<p>Cliquez sur le bouton ci-dessous pour réinitialiser votre mot de passe :</p>
                     <p><a href="'.$resetUrl.'" style="display: inline-block; padding: 10px 15px; background-color: #007bff; 
                         color: white; text-decoration: none; border-radius: 5px;">Réinitialiser mon mot de passe</a></p>'
-                    );
+                        );
 
-                $mailer->send($emailMessage);
+                    $mailer->send($emailMessage);
 
-                $this->addFlash('success', 'Si un compte existe pour cet email, un lien de réinitialisation a été envoyé.');
+                    $this->addFlash('success', 'Si un compte existe pour cet email, un lien de réinitialisation a été envoyé.');
+                } catch (\Exception $e) {
+                    $this->addFlash('error', 'Erreur lors de la demande de réinitialisation du mot de passe.');
+                }
             }
 
             return $this->redirectToRoute('app_login');
+        }
+
+        // Affichage des erreurs du formulaire en cas de validation invalide
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $errors = [];
+            foreach ($form->getErrors(true) as $error) {
+                $errors[] = $error->getMessage();
+            }
+
+            if (!empty($errors)) {
+                $this->addFlash('error', 'Veuillez corriger les erreurs du formulaire de réinitialisation : '.implode(' - ', $errors));
+            }
         }
 
         return $this->render(
@@ -147,11 +163,27 @@ class SecurityController extends AbstractController
             $user->setResetToken(null);
             $user->setResetTokenExpiresAt(null);
 
-            $entityManager->flush();
+            try {
+                $entityManager->flush();
 
-            $this->addFlash('success', 'Votre mot de passe a été réinitialisé avec succès.');
+                $this->addFlash('success', 'Votre mot de passe a été réinitialisé avec succès.');
 
-            return $this->redirectToRoute('app_login');
+                return $this->redirectToRoute('app_login');
+            } catch (\Exception $e) {
+                $this->addFlash('error', 'Erreur lors de la réinitialisation du mot de passe.');
+            }
+        }
+
+        // Affichage des erreurs du formulaire de réinitialisation
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $errors = [];
+            foreach ($form->getErrors(true) as $error) {
+                $errors[] = $error->getMessage();
+            }
+
+            if (!empty($errors)) {
+                $this->addFlash('error', 'Veuillez corriger les erreurs du formulaire de réinitialisation : '.implode(' - ', $errors));
+            }
         }
 
         return $this->render('security/reset_password.html.twig', ['form' => $form->createView()]);
