@@ -19,7 +19,8 @@
 		{% include 'partials/_navbar.html.twig' %}
 
 		<!-- Contenu principal -->
-		<main class="flex-grow-1"> 
+		<main class="flex-grow-1">
+        {% include 'partials/_flashes.html.twig' %} 
             {% block body %}{% endblock %}
 		</main>
 

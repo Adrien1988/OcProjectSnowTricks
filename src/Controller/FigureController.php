@@ -74,6 +74,20 @@ class FigureController extends AbstractController
 
                 return $figureService->redirectToFigureDetail($figure);
             }
+
+            $this->addFlash('error', 'Une erreur est survenue lors de l’édition de la figure.');
+        }
+
+        // Si le formulaire de modification est soumis mais non valide, afficher les erreurs
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $errors = [];
+            foreach ($form->getErrors(true) as $error) {
+                $errors[] = $error->getMessage();
+            }
+
+            if (!empty($errors)) {
+                $this->addFlash('error', 'Veuillez corriger les erreurs dans le formulaire de modification : '.implode(' - ', $errors));
+            }
         }
 
         return $this->render(
@@ -133,6 +147,8 @@ class FigureController extends AbstractController
             return $this->redirectToRoute('app_home');
         }
 
+        $this->addFlash('error', 'La figure n’a pas pu être supprimée.');
+
         return $figureService->redirectToFigureDetail($figure);
     }
 
@@ -171,12 +187,25 @@ class FigureController extends AbstractController
                 }
             }
 
-            if ($selectedImage) {
-                $figure->setMainImage($selectedImage);
-                $figureService->saveEntity($figure);
+            if ($selectedImage && $figureService->saveEntity($figure->setMainImage($selectedImage))) {
                 $this->addFlash('success', 'Image principale mise à jour.');
 
                 return $this->redirectToRoute('app_figure_detail', ['id' => $figure->getId()]);
+            }
+
+            // Sans else explicite
+            $this->addFlash('error', 'Une erreur est survenue lors de la mise à jour de l’image principale.');
+        }
+
+        // Si le formulaire de l'image principale est soumis mais non valide, afficher les erreurs
+        if ($mainImageForm->isSubmitted() && !$mainImageForm->isValid()) {
+            $errors = [];
+            foreach ($mainImageForm->getErrors(true) as $error) {
+                $errors[] = $error->getMessage();
+            }
+
+            if (!empty($errors)) {
+                $this->addFlash('error', 'Veuillez corriger les erreurs dans le formulaire de l\'image principale : '.implode(' - ', $errors));
             }
         }
 
@@ -237,6 +266,20 @@ class FigureController extends AbstractController
                 $this->addFlash('success', 'Commentaire ajouté avec succès.');
 
                 return $figureService->redirectToFigureDetail($figure);
+            }
+
+            $this->addFlash('error', 'Une erreur est survenue lors de l’ajout du commentaire.');
+        }
+
+        // Si le formulaire de commentaire est soumis mais non valide, afficher les erreurs
+        if ($form->isSubmitted() && !$form->isValid()) {
+            $errors = [];
+            foreach ($form->getErrors(true) as $error) {
+                $errors[] = $error->getMessage();
+            }
+
+            if (!empty($errors)) {
+                $this->addFlash('error', 'Veuillez corriger les erreurs dans le formulaire de commentaire : '.implode(' - ', $errors));
             }
         }
 
