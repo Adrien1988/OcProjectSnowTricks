@@ -3,107 +3,153 @@
 namespace App\Controller;
 
 use App\Entity\Comment;
+use App\Entity\Figure;
 use App\Form\CommentType;
-use App\Service\FigureService;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Request;
+use App\Service\EntityService;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class CommentController extends AbstractController
+class CommentController extends AbstractCrudController
 {
+
+
     /**
-     * Ajoute un commentaire à une figure.
+     * Constructeur du CommentController.
      *
-     * @param int           $id            L'identifiant de la figure à modifier
-     * @param Request       $request       La requête HTTP contenant les données
-     * @param FigureService $figureService Service pour gérer les figures
+     * @param EntityService $entityService Service pour gérer les entités
      *
-     * @return RedirectResponse La redirection vers la page de détail de la figure
+     * @return void
      */
-    #[Route('/figure/{id}/add-comment', name: 'app_figure_add_comment', methods: ['POST'])]
-    public function addComment(int $id, Request $request, FigureService $figureService): RedirectResponse
-    {
-        $this->denyAccessUnlessGranted('ROLE_USER');
-
-        $figure = $figureService->findFigureById($id);
-        if (!$figure) {
-            throw $this->createNotFoundException('Figure introuvable.');
-        }
-
-        $comment = new Comment();
-        $form = $this->createForm(CommentType::class, $comment);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $comment->setAuthor($this->getUser());
-            $comment->setFigure($figure);
-
-            try {
-                $figureService->saveEntity($comment);
-                $this->addFlash('success', 'Commentaire ajouté avec succès.');
-            } catch (\Exception $e) {
-                $this->addFlash('error', 'Une erreur est survenue lors de l’ajout du commentaire.');
-            }
-        }
-
-        // Gestion des erreurs du formulaire de commentaire
-        if ($form->isSubmitted() && !$form->isValid()) {
-            $errors = [];
-            foreach ($form->getErrors(true) as $error) {
-                $errors[] = $error->getMessage();
-            }
-
-            if (!empty($errors)) {
-                $this->addFlash('error', 'Veuillez corriger les erreurs dans le formulaire de commentaire : '.implode(' - ', $errors));
-            }
-        }
-
-        return $figureService->redirectToFigureDetail($figure);
+    public function __construct(
+        protected EntityService $entityService,
+    ) {
+        parent::__construct($entityService);
     }
 
-    /**
-     * Supprime un commentaire existant.
-     *
-     * @param int           $id            L'identifiant du commentaire à supprimer
-     * @param FigureService $figureService Service pour gérer les figures
-     * @param Request       $request       La requête HTTP contenant le token CSRF
-     *
-     * @return RedirectResponse La redirection vers la page de détail de la figure
-     */
-    #[Route('/figure/{figureId}/delete-comment/{id}', name: 'app_figure_delete_comment', methods: ['POST'])]
-    public function deleteComment(int $id, int $figureId, FigureService $figureService, Request $request): RedirectResponse
-    {
-        $this->denyAccessUnlessGranted('ROLE_USER');
 
-        $figure = $figureService->findFigureById($figureId);
+    /**
+     * Renvoie le Fully Qualified Class Name (FQCN)
+     * de l'entité Comment.
+     *
+     * @return string Le FQCN de Comment (par exemple "App\Entity\Comment")
+     */
+    protected function getEntityClass(): string
+    {
+        return Comment::class;
+    }
+
+
+    /**
+     * Renvoie le Fully Qualified Class Name (FQCN)
+     * du formulaire CommentType.
+     *
+     * @return string Le FQCN du formulaire, par exemple "App\Form\CommentType"
+     */
+    protected function getFormType(): string
+    {
+        return CommentType::class;
+    }
+
+
+    /**
+     * Hook pour ajouter la logique métier après validation du form,
+     * avant la sauvegarde en base (association Figure, auteur, etc.).
+     *
+     * @param object        $entity  L'entité (ici, Comment)
+     * @param Request       $request La requête HTTP
+     * @param FormInterface $form    Le formulaire validé
+     *
+     * @return void
+     */
+    protected function onFormSuccess(object $entity, Request $request, FormInterface $form): void
+    {
+        /*
+         * @var Comment $comment
+         */
+
+        $comment = $entity;
+
+        $figureId = $request->attributes->get('figureId');
+        if ($figureId) {
+            $figure = $this->entityService->findEntityById(Figure::class, $figureId);
+            if ($figure) {
+                $comment->setFigure($figure);
+            }
+        }
+
+        $comment->setAuthor($this->getUser());
+    }
+
+
+    /**
+     * Surcharge de redirectAfterCreate() pour rediriger vers la page détail
+     * de la figure associée après la création d'un commentaire.
+     *
+     * @param object $entity L'entité Comment nouvellement créée
+     *
+     * @return RedirectResponse
+     */
+    protected function redirectAfterCreate(object $entity): RedirectResponse
+    {
+        /** @var Comment $comment */
+        $comment = $entity;
+        $figure = $comment->getFigure();
+
         if (!$figure) {
-            $this->addFlash('error', 'Figure introuvable.');
             return $this->redirectToRoute('app_home');
         }
 
-        $comment = $figure->getComments()->filter(function ($comment) use ($id) {
-            return $comment->getId() === $id;
-        })->first();
-
-        if (!$comment) {
-            $this->addFlash('error', 'Commentaire introuvable.');
-            return $this->redirectToRoute('app_figure_detail', ['id' => $figureId]);
-        }
-
-        // Vérification des droits de l'utilisateur (ex : seul l'auteur peut supprimer son commentaire)
-        if ($comment->getAuthor() !== $this->getUser()) {
-            $this->addFlash('error', 'Vous ne pouvez pas supprimer ce commentaire.');
-            return $this->redirectToRoute('app_figure_detail', ['id' => $figureId]);
-        }
-
-        try {
-            $figureService->saveEntity($comment, true); // Suppression via la méthode saveEntity avec un vrai "delete"
-            $this->addFlash('success', 'Commentaire supprimé avec succès.');
-        } catch (\Exception $e) {
-            $this->addFlash('error', 'Une erreur est survenue lors de la suppression du commentaire.');
-        }
-
-        return $this->redirectToRoute('app_figure_detail', ['id' => $figureId]);
+        return $this->redirectToRoute('app_figure_detail', ['id' => $figure->getId()]);
     }
+
+    /**
+     * Surcharge si besoin d'une vue de création GET.
+     * Ici, on ne l'a pas dans l'exemple => on lève une exception.
+     *
+     * @param object $entity L'entité Comment
+     * @param mixed  $form   Le formulaire
+     *
+     * @throws \LogicException
+     *
+     * @return never
+     */
+    protected function renderCreateForm($entity, $form)
+    {
+        throw new \LogicException('Aucune vue GET pour la création de commentaire dans '.__CLASS__);
+    }
+
+
+    // --------------------------------------------------------------------
+    //                          ROUTES
+    // --------------------------------------------------------------------
+
+
+    /**
+     * Ajoute un commentaire à une figure (POST).
+     * Utilise la logique de createAction() de l'abstract.
+     *
+     * @param int     $id      L'identifiant de la figure
+     * @param Request $request La requête HTTP contenant le formulaire
+     *
+     * @return RedirectResponse|Response
+     */
+    #[Route('/figure/{id}/add-comment', name: 'app_figure_add_comment', methods: ['POST'])]
+    public function addComment(int $id, Request $request): RedirectResponse|Response
+    {
+        $this->denyAccessUnlessGranted('ROLE_USER');
+
+        $request->attributes->set('figureId', $id);
+
+        return $this->createAction(
+            $request,
+            'Commentaire ajouté avec succès.',
+            'app_figure_detail',
+            ['id' => $id]
+        );
+    }
+
+
 }

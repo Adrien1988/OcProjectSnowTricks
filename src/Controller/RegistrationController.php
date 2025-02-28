@@ -5,16 +5,15 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Form\ActivationFormType;
 use App\Form\RegistrationFormType;
+use App\Service\EntityService;
 use App\Service\MailerService;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Bundle\SecurityBundle\Security;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Attribute\Route;
 
-class RegistrationController extends AbstractController
+class RegistrationController extends BaseController
 {
 
 
@@ -23,67 +22,52 @@ class RegistrationController extends AbstractController
      *
      * @param Request                     $request            La requête HTTP courante
      * @param UserPasswordHasherInterface $userPasswordHasher Le service de hachage des mots de passe
-     * @param Security                    $security           Le service de gestion de la connexion utilisateur
-     * @param EntityManagerInterface      $entityManager      Le gestionnaire d'entités pour persister les données utilisateur
+     * @param EntityService               $entityService      Service pour la gestion des entités
      * @param MailerService               $mailerService      Le service d'envoi d'emails pour l'activation
      *
      * @return Response La réponse HTTP pour le formulaire d'enregistrement
      */
     #[Route('/register', name: 'app_register')]
-    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, Security $security, EntityManagerInterface $entityManager, MailerService $mailerService): Response
+    public function register(Request $request, UserPasswordHasherInterface $userPasswordHasher, EntityService $entityService, MailerService $mailerService): Response
     {
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            /*
-             * @var string $plainPassword
-             */
-
-            $plainPassword = $form->get('plainPassword')->getData();
-
-            // Encode le mot de passe en clair
-            $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
-
-            // Ajoute les autres étapes (token, etc.)
-            $user->setIsActive(false);
-            $token = bin2hex(random_bytes(32));
-            $user->setActivationToken($token);
-
-            $entityManager->persist($user);
-            try {
-                $entityManager->flush();
-
-                // Envoie l'email d'activation
-                $mailerService->sendActivationEmail($user->getEmail(), $token);
-
-                $this->addFlash('success', 'Votre compte a été créé avec succès ! Veuillez vérifier votre email pour l’activer.');
-
-                return $this->redirectToRoute('app_login');
-            } catch (\Exception $e) {
-                $this->addFlash('error', 'Erreur lors de la création du compte.');
-            }
+        $response = $this->handleFormSubmission($request, $form, 'Votre compte a été créé avec succès ! Veuillez vérifier votre email pour l’activer.', 'app_register', [], true, true);
+        if ($response) {
+            return $response;
         }
 
-        // Si le formulaire est soumis mais non valide, on affiche les détails des erreurs
-        if ($form->isSubmitted() && !$form->isValid()) {
-            $errors = [];
-            foreach ($form->getErrors(true) as $error) {
-                $errors[] = $error->getMessage();
-            }
-
-            if (!empty($errors)) {
-                $this->addFlash('error', 'Veuillez corriger les erreurs suivantes : '.implode(' - ', $errors));
-            }
+        if (!$form->isSubmitted() || !$form->isValid()) {
+            return $this->render(
+                'registration/register.html.twig',
+                [
+                    'registrationForm' => $form->createView(),
+                ]
+            );
         }
 
-        return $this->render(
-            'registration/register.html.twig',
-            [
-                'registrationForm' => $form->createView(),
-            ]
-        );
+        /*
+         * @var string $plainPassword
+         */
+
+        $plainPassword = $form->get('plainPassword')->getData();
+
+        // Encode le mot de passe en clair
+        $user->setPassword($userPasswordHasher->hashPassword($user, $plainPassword));
+
+        // Ajoute les autres étapes (token, etc.)
+        $user->setIsActive(false);
+        $token = bin2hex(random_bytes(32));
+        $user->setActivationToken($token);
+
+        // Sauvegarde en base de données
+        $entityService->saveEntity($user);
+
+        // Envoie l'email d'activation
+        $mailerService->sendActivationEmail($user->getEmail(), $token);
+
+        return $this->redirectToRoute('app_login');
+
     }// end register()
 
 
@@ -92,7 +76,7 @@ class RegistrationController extends AbstractController
      *
      * @param string                      $token          Le token d'activation
      * @param Request                     $request        La requête HTTP
-     * @param EntityManagerInterface      $entityManager  Le gestionnaire d'entités
+     * @param EntityManagerInterface      $entityManager  Le gestionnaire d'entités permettant d'interagir avec la base de données
      * @param UserPasswordHasherInterface $passwordHasher Le service de hachage des mots de passe
      *
      * @return Response La réponse HTTP
@@ -113,20 +97,26 @@ class RegistrationController extends AbstractController
         }
 
         $form = $this->createForm(ActivationFormType::class);
-        $form->handleRequest($request);
+        $response = $this->handleFormSubmission($request, $form, 'Votre compte est maintenant actif !', 'app_activate_account', ['token' => $token], true, true);
+        if ($response) {
+            return $response;
+        }
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $data = $form->getData();
-            $email = $data['email'];
-            $enteredPassword = $data['password'];
+        if ($form->isSubmitted()) {
+            $data = $form->getData() ?? [];
+            if (!isset($data['email']) || !isset($data['password'])) {
+                $this->addFlash('error', 'Veuillez remplir tous les champs du formulaire.');
 
-            if ($email !== $user->getEmail()) {
+                return $this->redirectToRoute('app_activate_account', ['token' => $token]);
+            }
+
+            if ($data['email'] !== $user->getEmail()) {
                 $this->addFlash('error', 'L’email ne correspond pas à celui associé au compte.');
 
                 return $this->redirectToRoute('app_activate_account', ['token' => $token]);
             }
 
-            if (false === $passwordHasher->isPasswordValid($user, $enteredPassword)) {
+            if (!$passwordHasher->isPasswordValid($user, $data['password'])) {
                 $this->addFlash('error', 'Le mot de passe est incorrect.');
 
                 return $this->redirectToRoute('app_activate_account', ['token' => $token]);
@@ -136,22 +126,8 @@ class RegistrationController extends AbstractController
             $user->setActivationToken(null);
             $entityManager->flush();
 
-            $this->addFlash('success', 'Votre compte est maintenant actif !');
-
             return $this->redirectToRoute('app_login');
-        }
-
-        // Si le formulaire est soumis mais non valide, on affiche les détails des erreurs
-        if ($form->isSubmitted() && !$form->isValid()) {
-            $errors = [];
-            foreach ($form->getErrors(true) as $error) {
-                $errors[] = $error->getMessage();
-            }
-
-            if (!empty($errors)) {
-                $this->addFlash('error', 'Veuillez corriger les erreurs suivantes : '.implode(' - ', $errors));
-            }
-        }
+        }// end showActivationForm()
 
         return $this->render(
             'registration/activate.html.twig',
@@ -160,7 +136,7 @@ class RegistrationController extends AbstractController
                 'token'          => $token,
             ]
         );
-    }// end showActivationForm()
+    }
 
 
 }

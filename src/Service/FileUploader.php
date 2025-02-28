@@ -36,7 +36,7 @@ class FileUploader
             $file->move($this->targetDirectory, $newFilename);
 
             return $newFilename;
-        } catch (\Exception $e) {
+        } catch (\Exception) {
             return null;
         }
     }
@@ -51,7 +51,8 @@ class FileUploader
      */
     public function remove(string $filePath): bool
     {
-        $absolutePath = $this->targetDirectory.'/'.basename($filePath);
+        $basename = basename($filePath);
+        $absolutePath = rtrim($this->targetDirectory, '/').'/'.$basename;
 
         if (file_exists($absolutePath) && is_writable($absolutePath)) {
             return unlink($absolutePath);

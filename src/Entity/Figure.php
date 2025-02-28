@@ -78,11 +78,11 @@ class Figure
      *
      * @var Collection<int, Image>
      */
-    #[ORM\OneToMany(targetEntity: Image::class, mappedBy: 'figure', orphanRemoval: true, cascade: ['persist'])]
+    #[ORM\OneToMany(targetEntity: Image::class, mappedBy: 'figure', orphanRemoval: true, cascade: ['persist', 'remove'])]
     #[ORM\OrderBy(['id' => 'ASC'])]
     private Collection $images;
 
-    #[ORM\OneToOne(targetEntity: Image::class, cascade: ['persist', 'remove'])]
+    #[ORM\OneToOne(targetEntity: Image::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
     #[ORM\JoinColumn(nullable: true)]
     private ?Image $mainImage = null;
 

@@ -5,167 +5,246 @@ namespace App\Controller;
 use App\Entity\Figure;
 use App\Entity\Video;
 use App\Form\VideoType;
-use App\Service\FigureService;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Service\EntityService;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/figure/video')]
-class FigureVideoController extends AbstractController
+class FigureVideoController extends AbstractCrudController
 {
+
+
+    /**
+     * Constructeur du contrôleur FigureVideoController.
+     *
+     * @param EntityService $entityService Service pour la gestion des entités
+     */
+    public function __construct(
+        protected EntityService $entityService,
+    ) {
+        parent::__construct($entityService);
+    }
+
+
+    /**
+     * Retourne le nom de la classe entièrement qualifiée (FQCN) de l'entité manipulée.
+     *
+     * @return string Le nom de la classe complète de l'entité (ex. : Video::class).
+     */
+    protected function getEntityClass(): string
+    {
+        return Video::class;
+    }
+
+
+    /**
+     * Retourne le nom de la classe entièrement qualifiée (FQCN) du formulaire associé à l'entité.
+     *
+     * @return string Le nom de la classe complète du formulaire (ex. : VideoType::class).
+     */
+    protected function getFormType(): string
+    {
+        return VideoType::class;
+    }
+
+
+    /**
+     * Hook invoqué après validation du formulaire mais avant l'enregistrement en base.
+     *
+     * Cette méthode permet d'ajouter une logique spécifique, comme l'association d'une figure
+     * ou la validation du code d'intégration de la vidéo.
+     *
+     * @param object        $entity  L'entité Video en cours de traitement
+     * @param Request       $request la requête HTTP
+     * @param FormInterface $form    le formulaire validé
+     *
+     * @throws \RuntimeException si le code d'intégration de la vidéo est invalide
+     *
+     * @return void
+     */
+    protected function onFormSuccess(object $entity, Request $request, FormInterface $form): void
+    {
+        /*
+         * @var Video $video
+         */
+
+        $video = $entity;
+
+        $figureId = $request->attributes->get('figureId');
+        if ($figureId) {
+            $figure = $this->entityService->findEntityById(Figure::class, $figureId);
+            if ($figure) {
+                $video->setFigure($figure);
+            }
+        }
+
+        if (!$this->isEmbedCodeValid($video->getEmbedCode())) {
+            throw new \RuntimeException("Le code d'intégration de la vidéo n'est pas valide.");
+        }
+    }
+
+    /**
+     * Surcharge : après la création réussie, on redirige vers la page de détail
+     * de la figure, plutôt que vers la page d'accueil.
+     *
+     * @param object $entity L'entité (ici, Video) nouvellement créée
+     */
+    protected function redirectAfterCreate(object $entity): RedirectResponse
+    {
+        /** @var Video $video */
+        $video = $entity;
+        $figure = $video->getFigure();
+
+        // Si jamais la figure est introuvable, on redirige vers l'accueil
+        if (!$figure) {
+            return $this->redirectToRoute('app_home');
+        }
+
+        // Sinon, on retourne sur la page de détail de la figure
+        return $this->redirectToRoute('app_figure_detail', [
+            'id' => $figure->getId(),
+        ]);
+    }
+
+    /**
+     * Affiche le formulaire de création d'une vidéo.
+     *
+     * @param object        $entity la vidéo à créer
+     * @param FormInterface $form   le formulaire associé
+     *
+     * @return Response la réponse contenant le rendu du formulaire
+     */
+    protected function renderCreateForm($entity, $form)
+    {
+        throw new \LogicException("Pas de vue GET pour la création d'une vidéo dans ".__CLASS__);
+    }
+
+
+    /**
+     * Affiche le formulaire d'édition d'une vidéo.
+     *
+     * @param object        $entity la vidéo à éditer
+     * @param FormInterface $form   le formulaire associé
+     *
+     * @return Response la réponse contenant le rendu du formulaire
+     */
+    protected function renderEditForm($entity, $form): Response
+    {
+
+        return $this->render(
+            'video/edit.html.twig',
+            [
+                'form'  => $form->createView(),
+                'video' => $entity,
+            ]
+        );
+    }
+
+
+    // ------------------------------------------------------------------
+    //               ROUTES UTILISANT L'ABSTRACT
+    // ------------------------------------------------------------------
 
 
     /**
      * Ajoute une vidéo à une figure.
      *
-     * @param Figure        $figure        L'entité de la figure
-     * @param Request       $request       La requête HTTP
-     * @param FigureService $figureService Service pour gérer les figures
+     * @param int     $id      L'identifiant de la figure associée
+     * @param Request $request la requête HTTP
      *
-     * @return RedirectResponse La redirection vers la page de détails
+     * @return Response|RedirectResponse la réponse après ajout (affichage du formulaire ou redirection)
      */
-    #[Route('/add/{id}', name: 'app_figure_add_video', methods: ['POST'])]
-    public function addVideo(Figure $figure, Request $request, FigureService $figureService): RedirectResponse
+    #[Route('/add/{id}', name: 'app_figure_add_video', methods: ['GET', 'POST'])]
+    public function addVideo(int $id, Request $request): Response|RedirectResponse
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
 
-        $form = $this->createForm(VideoType::class, $video = new Video());
-        $form->handleRequest($request);
+        $request->attributes->set('figureId', $id);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            // Vérification de la validité du code d'intégration
-            if (!$this->isEmbedCodeValid($video->getEmbedCode())) {
-                $this->addFlash('error', 'Le code d\'intégration n\'est pas valide.');
-
-                return $figureService->redirectToFigureDetail($figure);
-            }
-
-            // Si le code est valide, on associe la vidéo à la figure et on enregistre
-            $video->setFigure($figure);
-            if ($figureService->saveEntity($video)) {
-                $this->addFlash('success', 'La vidéo a été ajoutée avec succès.');
-
-                return $figureService->redirectToFigureDetail($figure);
-            }
-
-            $this->addFlash('error', 'Erreur lors de la sauvegarde de la vidéo.');
-        }
-
-        // Si le formulaire est soumis mais non valide, afficher les erreurs
-        if ($form->isSubmitted() && !$form->isValid()) {
-            $errors = [];
-            foreach ($form->getErrors(true) as $error) {
-                $errors[] = $error->getMessage();
-            }
-
-            if (!empty($errors)) {
-                $this->addFlash('error', 'Veuillez corriger les erreurs dans le formulaire vidéo : '.implode(' - ', $errors));
-            }
-        }
-
-        return $figureService->redirectToFigureDetail($figure);
+        return $this->createAction(
+            $request,
+            'Vidéo ajoutée avec succès.',
+            'app_figure_detail',
+            ['id' => $id]
+        );
     }
 
 
     /**
      * Modifie une vidéo existante.
      *
-     * @param Video         $video         La vidéo à
-     *                                     modifier
-     * @param Request       $request       La requête HTTP contenant les données du
-     *                                     formulaire
-     * @param FigureService $figureService Service pour gérer les
-     *                                     figures
+     * @param int     $id      L'identifiant de la vidéo à modifier
+     * @param Request $request la requête HTTP
      *
-     * @return RedirectResponse La redirection vers la page d'édition de la figure
+     * @return Response|RedirectResponse la réponse après modification (affichage du formulaire ou redirection)
      */
     #[Route('/edit/{id}', name: 'app_figure_edit_video', methods: ['GET', 'POST'])]
-    public function editVideo(
-        Video $video,
-        Request $request,
-        FigureService $figureService,
-    ): RedirectResponse {
+    public function editVideo(int $id, Request $request): Response|RedirectResponse
+    {
         $this->denyAccessUnlessGranted('ROLE_USER');
+
+        $video = $this->entityService->findEntityById(Video::class, $id);
+        if (!$video) {
+            $this->addFlash('error', 'Vidéo introuvable.');
+
+            return $this->redirectToRoute('app_home');
+        }
+
         $this->denyAccessUnlessGranted('VIDEO_EDIT', $video);
 
-        $form = $this->createForm(VideoType::class, $video);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            if (!$this->isEmbedCodeValid($video->getEmbedCode())) {
-                $this->addFlash('error', 'Le code d\'intégration n\'est pas valide.');
-
-                return $this->redirectToRoute('app_figure_edit', ['id' => $video->getFigure()->getId()]);
-            }
-
-            // Sauvegarde via le service
-            if ($figureService->saveEntity($video)) {
-                $this->addFlash('success', 'La vidéo a été mise à jour avec succès.');
-
-                return $this->redirectToRoute('app_figure_edit', ['id' => $video->getFigure()->getId()]);
-            }
-
-            $this->addFlash('error', 'Erreur lors de la mise à jour de la vidéo.');
-        }
-
-        // Si le formulaire est soumis mais non valide, afficher les erreurs
-        if ($form->isSubmitted() && !$form->isValid()) {
-            $errors = [];
-            foreach ($form->getErrors(true) as $error) {
-                $errors[] = $error->getMessage();
-            }
-
-            if (!empty($errors)) {
-                $this->addFlash('error', 'Veuillez corriger les erreurs dans le formulaire vidéo : '.implode(' - ', $errors));
-            }
-        }
-
-        return $this->redirectToRoute('app_figure_edit', ['id' => $video->getFigure()->getId()]);
+        return $this->editAction(
+            $id,
+            $request,
+            'Vidéo mise à jour avec succès.',
+            'app_figure_edit',
+            ['id' => $video->getFigure()->getId()]
+        );
     }
 
 
     /**
      * Supprime une vidéo existante.
      *
-     * @param Video         $video         La vidéo à supprimer
-     * @param Request       $request       La requête HTTP contenant le token CSRF
-     * @param FigureService $figureService Service pour gérer les figures
+     * @param int     $id      L'identifiant de la vidéo à supprimer
+     * @param Request $request la requête HTTP
      *
-     * @return RedirectResponse La redirection vers la page d'édition de la figure
+     * @return Response|RedirectResponse la réponse après suppression (redirection ou message d'erreur)
      */
     #[Route('/delete/{id}', name: 'app_figure_delete_video', methods: ['POST'])]
-    public function deleteVideo(Video $video, Request $request, FigureService $figureService): RedirectResponse
+    public function deleteVideo(int $id, Request $request): Response|RedirectResponse
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
+
+        $video = $this->entityService->findEntityById(Video::class, $id);
+        if (!$video) {
+            $this->addFlash('error', 'Vidéo introuvable.');
+
+            return $this->redirectToRoute('app_home');
+        }
+
         $this->denyAccessUnlessGranted('VIDEO_DELETE', $video);
 
-        $figure = $video->getFigure();
-
-        if (!$this->isCsrfTokenValid('delete_video_'.$video->getId(), $request->request->get('_token'))) {
-            $this->addFlash('error', 'Token CSRF invalide.');
-
-            return $this->redirectToRoute('app_figure_edit', ['id' => $figure->getId()]);
-        }
-
-        if ($figureService->saveEntity($video, true)) {
-            $this->addFlash('success', 'Vidéo supprimée avec succès.');
-
-            return $this->redirectToRoute('app_figure_edit', ['id' => $figure->getId()]);
-        }
-
-        $this->addFlash('error', 'Erreur lors de la suppression de la vidéo.');
-
-        return $this->redirectToRoute('app_figure_edit', ['id' => $figure->getId()]);
+        return $this->deleteAction(
+            $id,
+            $request,
+            'delete_video_',
+            'Vidéo supprimée avec succès',
+            'app_figure_edit',
+            ['id' => $video->getFigure()->getId()]
+        );
     }
 
 
     /**
      * Vérifie si le code d'intégration de la vidéo est valide.
+     * (Méthode interne, utilisée par onFormSuccess()).
      *
-     * @param string|null $embedCode Le code d'intégration à vérifier
+     * @param string|null $embedCode Code HTML d'iframe
      *
-     * @return bool Renvoie true si le code est valide
+     * @return bool
      */
     private function isEmbedCodeValid(?string $embedCode): bool
     {
