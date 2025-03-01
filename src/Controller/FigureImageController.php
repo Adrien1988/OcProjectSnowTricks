@@ -2,21 +2,23 @@
 
 namespace App\Controller;
 
-use App\Entity\Image;
 use App\Entity\Figure;
+use App\Entity\Image;
 use App\Form\ImageType;
 use App\Form\MainImageType;
-use App\Service\FileUploader;
 use App\Service\EntityService;
+use App\Service\FileUploader;
 use Symfony\Component\Form\FormInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\RedirectResponse;
 
 #[Route('/figure/image')]
 class FigureImageController extends AbstractCrudController
 {
+
+
     /**
      * Constructeur du contrôleur FigureImageController.
      *
@@ -27,10 +29,11 @@ class FigureImageController extends AbstractCrudController
      */
     public function __construct(
         protected EntityService $entityService,
-        private FileUploader $fileUploader
+        private FileUploader $fileUploader,
     ) {
         parent::__construct($entityService);
     }
+
 
     /**
      * Renvoie le FQCN de l’entité manipulée par ce contrôleur (Image::class).
@@ -42,6 +45,7 @@ class FigureImageController extends AbstractCrudController
         return Image::class;
     }
 
+
     /**
      * Renvoie le FQCN du formulaire associé à l’entité Image (ImageType::class).
      *
@@ -51,6 +55,7 @@ class FigureImageController extends AbstractCrudController
     {
         return ImageType::class;
     }
+
 
     /**
      * Surcharge de createNewEntity si nécessaire.
@@ -63,13 +68,24 @@ class FigureImageController extends AbstractCrudController
         return new Image();
     }
 
+
     /**
-     * On peut également, si on veut, associer la Figure
-     * et gérer l'upload dans un hook onFormSuccess().
+     * Hook exécuté après la validation du formulaire mais avant l'enregistrement en base.
+     *
+     * Permet d'associer l'image à une figure et de gérer l'upload du fichier.
+     *
+     * @param object        $entity  L'entité Image en cours de traitement
+     * @param Request       $request la requête HTTP
+     * @param FormInterface $form    le formulaire validé
+     *
+     * @return void
      */
     protected function onFormSuccess(object $entity, Request $request, FormInterface $form): void
     {
-        /** @var Image $image */
+        /*
+         * @var Image $image
+         */
+
         $image = $entity;
 
         // Récupérer l'ID de la figure passé dans l'URL
@@ -86,22 +102,30 @@ class FigureImageController extends AbstractCrudController
         if ($uploadedFile) {
             $newFilename = $this->fileUploader->upload($uploadedFile);
             if ($newFilename) {
-                $image->setUrl('/uploads/' . $newFilename);
+                $image->setUrl('/uploads/'.$newFilename);
             } else {
                 // Vous pouvez lever une exception ou ajouter un flash si besoin
             }
         }
     }
 
+
     /**
-     * Surcharge : après la création réussie, on redirige vers
-     * la page de détail de la figure au lieu de la page d'accueil.
+     * Redirige après la création réussie d'une image.
      *
-     * @param object $entity L'entité nouvellement créée (ici, un Image)
+     * Après l'ajout d'une image, cette méthode redirige vers la page de détail de la figure associée
+     * au lieu de la page d'accueil.
+     *
+     * @param object $entity L'entité nouvellement créée (ici, une Image)
+     *
+     * @return RedirectResponse la réponse de redirection après la création
      */
     protected function redirectAfterCreate(object $entity): RedirectResponse
     {
-        /** @var Image $image */
+        /*
+         * @var Image $image
+         */
+
         $image = $entity;
         $figure = $image->getFigure();
 
@@ -110,10 +134,14 @@ class FigureImageController extends AbstractCrudController
             return $this->redirectToRoute('app_home');
         }
 
-        return $this->redirectToRoute('app_figure_detail', [
-            'id' => $figure->getId()
-        ]);
+        return $this->redirectToRoute(
+            'app_figure_detail',
+            [
+                'id' => $figure->getId(),
+            ]
+        );
     }
+
 
     /**
      * Surcharge de redirectAfterUpdate() pour rediriger vers la page d'édition de la figure
@@ -125,14 +153,19 @@ class FigureImageController extends AbstractCrudController
      */
     protected function redirectAfterUpdate(object $entity): RedirectResponse
     {
-        /** @var Image $image */
+        /*
+         * @var Image $image
+         */
+
         $image = $entity;
         $figure = $image->getFigure();
         if ($figure) {
             return $this->redirectToRoute('app_figure_edit', ['id' => $figure->getId()]);
         }
+
         return $this->redirectToRoute('app_home');
     }
+
 
     /**
      * Surcharge de redirectAfterDelete() pour rediriger vers la page d'édition de la figure
@@ -144,39 +177,66 @@ class FigureImageController extends AbstractCrudController
      */
     protected function redirectAfterDelete(object $entity): RedirectResponse
     {
-        /** @var Image $image */
+        /*
+         * @var Image $image
+         */
+
         $image = $entity;
         $figure = $image->getFigure();
         if ($figure) {
             return $this->redirectToRoute('app_figure_edit', ['id' => $figure->getId()]);
         }
+
         return $this->redirectToRoute('app_home');
     }
 
+
     /**
-     * Méthode d'affichage du formulaire de création si on en a besoin en GET.
-     * Ici, on lève une exception si on n'a pas de vue associée.
+     * Affiche le formulaire de création d'une image si nécessaire.
+     *
+     * Cette méthode doit être surchargée dans une classe dérivée si une vue GET est requise.
+     * Par défaut, elle lève une exception car aucune page GET n'est prévue pour la création d'une image.
+     *
+     * @param object        $entity L'entité Image en cours de création
+     * @param FormInterface $form   le formulaire associé à l'entité
+     *
+     * @throws \LogicException si la méthode n'est pas surchargée
+     *
+     * @return mixed cette méthode doit être surchargée pour retourner une réponse valide
      */
     protected function renderCreateForm($entity, $form)
     {
         throw new \LogicException("Pas de page GET pour la création d'une Image dans ".__CLASS__);
     }
 
+
     /**
-     * Méthode d'affichage du formulaire d'édition si on veut une vue GET.
+     * Affiche le formulaire d'édition d'une image via une requête GET.
+     *
+     * Cette méthode peut être surchargée pour personnaliser l'affichage du formulaire d'édition.
+     *
+     * @param object        $entity L'entité Image à modifier
+     * @param FormInterface $form   le formulaire associé à l'entité
+     *
+     * @return Response la réponse contenant le rendu du formulaire
      */
     protected function renderEditForm($entity, $form)
     {
         // Exemple minimal : renvoyer un template twig (facultatif)
-        return $this->render('figure_image/edit.html.twig', [
-            'form'  => $form->createView(),
-            'image' => $entity,
-        ]);
+        return $this->render(
+            'figure_image/edit.html.twig',
+            [
+                'form'  => $form->createView(),
+                'image' => $entity,
+            ]
+        );
     }
+
 
     // ------------------------------------------------------------------
     //                        ROUTES CRUD (IMAGES)
     // ------------------------------------------------------------------
+
 
     /**
      * Ajoute une image à une figure (utilise l'abstract createAction()).
@@ -205,6 +265,7 @@ class FigureImageController extends AbstractCrudController
         );
     }
 
+
     /**
      * Édite une image existante (utilise l'abstract editAction()).
      *
@@ -222,8 +283,10 @@ class FigureImageController extends AbstractCrudController
         $image = $this->entityService->findEntityById(Image::class, $id);
         if (!$image) {
             $this->addFlash('error', 'Image introuvable.');
+
             return $this->redirectToRoute('app_home');
         }
+
         $this->denyAccessUnlessGranted('IMAGE_EDIT', $image);
 
         // On appelle l'abstract => editAction()
@@ -235,6 +298,7 @@ class FigureImageController extends AbstractCrudController
             ['id' => $id]
         );
     }
+
 
     /**
      * Supprime une image existante (utilise l'abstract deleteAction()).
@@ -253,13 +317,16 @@ class FigureImageController extends AbstractCrudController
         $image = $this->entityService->findEntityById(Image::class, $id);
         if (!$image) {
             $this->addFlash('error', 'Image introuvable.');
+
             return $this->redirectToRoute('app_home');
         }
+
         $this->denyAccessUnlessGranted('IMAGE_DELETE', $image);
 
         // Optionnel : on supprime le fichier physique avant la suppression DB
         if (!$this->fileUploader->remove($image->getUrl())) {
             $this->addFlash('error', 'Erreur lors de la suppression du fichier image.');
+
             return $this->redirectToRoute('app_figure_edit', ['id' => $image->getFigure()?->getId()]);
         }
 
@@ -274,9 +341,11 @@ class FigureImageController extends AbstractCrudController
         );
     }
 
+
     // ------------------------------------------------------------------
     //                  MÉTHODES SPÉCIFIQUES "FIGURE"
     // ------------------------------------------------------------------
+
 
     /**
      * Change l'image principale d'une figure.
@@ -294,6 +363,7 @@ class FigureImageController extends AbstractCrudController
         $figure = $this->entityService->findEntityById(Figure::class, $id);
         if (!$figure) {
             $this->addFlash('error', 'Figure introuvable.');
+
             return $this->redirectToRoute('app_home');
         }
 
@@ -328,8 +398,10 @@ class FigureImageController extends AbstractCrudController
 
         // On redirige vers la page précédente (ou figure_detail)
         $referer = $request->headers->get('referer', $this->generateUrl('app_figure_detail', ['id' => $id]));
+
         return $this->redirect($referer);
     }
+
 
     /**
      * Supprime l'image principale d'une figure.
@@ -347,11 +419,13 @@ class FigureImageController extends AbstractCrudController
         $figure = $this->entityService->findEntityById(Figure::class, $id);
         if (!$figure) {
             $this->addFlash('error', 'Figure introuvable.');
+
             return $this->redirectToRoute('app_home');
         }
 
         if (!$this->isCsrfTokenValid('remove_main_image_'.$figure->getId(), $request->request->get('_token'))) {
             $this->addFlash('error', 'Token CSRF invalide.');
+
             return $this->redirectToRoute('app_figure_detail', ['id' => $figure->getId()]);
         }
 
@@ -366,6 +440,9 @@ class FigureImageController extends AbstractCrudController
         );
 
         $referer = $request->headers->get('referer', $this->generateUrl('app_figure_detail', ['id' => $id]));
+
         return $this->redirect($referer);
     }
+
+
 }

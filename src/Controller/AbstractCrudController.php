@@ -304,6 +304,13 @@ abstract class AbstractCrudController extends BaseController
             return $this->redirectToRoute($failRoute, $failParams);
         }
 
+        // Vérifier si l'entité possède une méthode getMainImage (cas de Figure)
+        if (method_exists($entity, 'getMainImage') && $entity->getMainImage() !== null) {
+            $entity->setMainImage(null);
+            // On sauvegarde cette modification (flush de la dissociation)
+            $this->entityService->saveEntity($entity);
+        }
+
         $ok = $this->entityService->saveEntity($entity, true);
         if ($ok) {
             $this->addFlash('success', $successMsg);
@@ -312,6 +319,10 @@ abstract class AbstractCrudController extends BaseController
         }
 
         $this->addFlash('error', 'Echec de la suppression.');
+        $referer = $request->headers->get('referer');
+        if ($referer) {
+            return $this->redirect($referer);
+        }
 
         return $this->redirectToRoute($failRoute, $failParams);
     }

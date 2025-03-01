@@ -86,15 +86,23 @@ class FigureVideoController extends AbstractCrudController
         }
     }
 
+
     /**
-     * Surcharge : après la création réussie, on redirige vers la page de détail
-     * de la figure, plutôt que vers la page d'accueil.
+     * Redirige après la création réussie d'une vidéo.
      *
-     * @param object $entity L'entité (ici, Video) nouvellement créée
+     * Après l'ajout d'une vidéo, cette méthode redirige vers la page de détail de la figure associée
+     * au lieu de la page d'accueil.
+     *
+     * @param object $entity L'entité nouvellement créée (ici, une Video)
+     *
+     * @return RedirectResponse la réponse de redirection après la création
      */
     protected function redirectAfterCreate(object $entity): RedirectResponse
     {
-        /** @var Video $video */
+        /*
+         * @var Video $video
+         */
+
         $video = $entity;
         $figure = $video->getFigure();
 
@@ -104,10 +112,14 @@ class FigureVideoController extends AbstractCrudController
         }
 
         // Sinon, on retourne sur la page de détail de la figure
-        return $this->redirectToRoute('app_figure_detail', [
-            'id' => $figure->getId(),
-        ]);
+        return $this->redirectToRoute(
+            'app_figure_detail',
+            [
+                'id' => $figure->getId(),
+            ]
+        );
     }
+
 
     /**
      * Affiche le formulaire de création d'une vidéo.

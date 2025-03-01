@@ -94,7 +94,10 @@ class CommentController extends AbstractCrudController
      */
     protected function redirectAfterCreate(object $entity): RedirectResponse
     {
-        /** @var Comment $comment */
+        /*
+         * @var Comment $comment
+         */
+
         $comment = $entity;
         $figure = $comment->getFigure();
 
@@ -104,6 +107,7 @@ class CommentController extends AbstractCrudController
 
         return $this->redirectToRoute('app_figure_detail', ['id' => $figure->getId()]);
     }
+
 
     /**
      * Surcharge si besoin d'une vue de création GET.

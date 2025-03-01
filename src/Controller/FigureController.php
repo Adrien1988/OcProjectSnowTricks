@@ -272,7 +272,7 @@ class FigureController extends AbstractCrudController
         $this->denyAccessUnlessGranted('FIGURE_DELETE', $figure);
 
         // Appel à la logique générique de suppression
-        return $this->deleteAction($id, $request, 'delete_figure_', 'Figure supprimée avec succès', 'app_figure_detail', ['id' => $id]);
+        return $this->deleteAction($id, $request, 'delete_figure_', 'Figure supprimée avec succès', 'app_home');
     }
 
 
