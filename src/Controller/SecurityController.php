@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Form\ForgotPasswordType;
 use App\Form\ResetPasswordType;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\MailerInterface;
@@ -72,7 +73,17 @@ class SecurityController extends BaseController
     {
         $form = $this->createForm(ForgotPasswordType::class);
         $response = $this->handleFormSubmission($request, $form, 'Si un compte existe pour cet email, un lien de réinitialisation a été envoyé.', 'app_forgot_password', [], true, true);
-        if ($response) {
+        if ($response === 'render') {
+            return $this->render(
+                'security/forgot_password.html.twig',
+                [
+                    'form' => $form->createView(),
+                ]
+            );
+        }
+
+        // 🔹 Si la réponse est une redirection, on la suit
+        if ($response instanceof RedirectResponse) {
             return $response;
         }
 
@@ -139,7 +150,18 @@ class SecurityController extends BaseController
 
         $form = $this->createForm(ResetPasswordType::class);
         $response = $this->handleFormSubmission($request, $form, 'Votre mot de passe a été réinitialisé avec succès.', 'app_reset_password', ['token' => $token], true, true);
-        if ($response) {
+        // 🔹 Si handleFormSubmission retourne "render", on affiche le formulaire
+        if ($response === 'render') {
+            return $this->render(
+                'security/reset_password.html.twig',
+                [
+                    'form' => $form->createView(),
+                ]
+            );
+        }
+
+        // 🔹 Si handleFormSubmission retourne une redirection, on la suit
+        if ($response instanceof RedirectResponse) {
             return $response;
         }
 

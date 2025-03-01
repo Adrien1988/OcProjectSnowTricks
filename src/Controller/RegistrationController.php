@@ -8,6 +8,7 @@ use App\Form\RegistrationFormType;
 use App\Service\EntityService;
 use App\Service\MailerService;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
@@ -33,7 +34,18 @@ class RegistrationController extends BaseController
         $user = new User();
         $form = $this->createForm(RegistrationFormType::class, $user);
         $response = $this->handleFormSubmission($request, $form, 'Votre compte a été créé avec succès ! Veuillez vérifier votre email pour l’activer.', 'app_register', [], true, true);
-        if ($response) {
+        // 🔹 Si handleFormSubmission retourne "render", on affiche le formulaire
+        if ($response === 'render') {
+            return $this->render(
+                'registration/register.html.twig',
+                [
+                    'registrationForm' => $form->createView(),
+                ]
+            );
+        }
+
+        // 🔹 Si handleFormSubmission retourne une redirection, on la suit
+        if ($response instanceof RedirectResponse) {
             return $response;
         }
 
@@ -98,7 +110,19 @@ class RegistrationController extends BaseController
 
         $form = $this->createForm(ActivationFormType::class);
         $response = $this->handleFormSubmission($request, $form, 'Votre compte est maintenant actif !', 'app_activate_account', ['token' => $token], true, true);
-        if ($response) {
+        // 🔹 Si handleFormSubmission retourne "render", on affiche le formulaire
+        if ($response === 'render') {
+            return $this->render(
+                'registration/activate.html.twig',
+                [
+                    'activationForm' => $form->createView(),
+                    'token'          => $token,
+                ]
+            );
+        }
+
+        // 🔹 Si handleFormSubmission retourne une redirection, on la suit
+        if ($response instanceof RedirectResponse) {
             return $response;
         }
 

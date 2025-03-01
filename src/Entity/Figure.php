@@ -82,8 +82,8 @@ class Figure
     #[ORM\OrderBy(['id' => 'ASC'])]
     private Collection $images;
 
-    #[ORM\OneToOne(targetEntity: Image::class, cascade: ['persist', 'remove'], orphanRemoval: true)]
-    #[ORM\JoinColumn(nullable: true)]
+    #[ORM\OneToOne(targetEntity: Image::class, cascade: ['persist'], orphanRemoval: false)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?Image $mainImage = null;
 
     /**
