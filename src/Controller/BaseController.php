@@ -28,47 +28,43 @@ class BaseController extends AbstractController
      *                                      - une RedirectResponse si on doit rediriger (erreurs ou succès),
      *                                      - null si on n'a pas redirection (ex: succès, mais skipRedirectOnSuccess = true)
      */
-    protected function handleFormSubmission(
+    public function handleFormSubmission(
         Request $request,
         $form,
-        string $successMessage,
-        string $redirectRoute,
-        array $routeParams = [],
-        bool $skipRedirectOnSuccess = false,
-        bool $returnRenderIfNotSubmitted = false,
+        string $successMsg,
+        string $redirRoute,
+        array $params = [],
+        bool $skipRedir = false,
+        bool $retRender = false
     ): RedirectResponse|string|null {
         $form->handleRequest($request);
-
-        // 🔹 Si le formulaire n'est pas soumis, on ne redirige PAS (évite la boucle infinie)
+    
+        // Si le formulaire n'est pas soumis, on retourne 'render' ou null
         if (!$form->isSubmitted()) {
-            return $returnRenderIfNotSubmitted ? 'render' : null;
+            return $retRender ? 'render' : null;
         }
-
-        // Si le formulaire est soumis et valide
+    
+        // Si le formulaire est soumis et valide, on affiche le message et on redirige si nécessaire
         if ($form->isValid()) {
-            $this->addFlash('success', $successMessage);
-
-            // Si on veut éviter la redirection immédiate, on retourne null
-            if ($skipRedirectOnSuccess) {
+            $this->addFlash('success', $successMsg);
+            if ($skipRedir) {
                 return null;
             }
-
-            return $this->redirectToRoute($redirectRoute, $routeParams);
+            return $this->redirectToRoute($redirRoute, $params);
         }
-
-        // Gestion des erreurs si le formulaire est soumis mais non valide
+    
+        // Si le formulaire est soumis mais non valide, on collecte et affiche les erreurs
         $errors = [];
         foreach ($form->getErrors(true) as $error) {
             $errors[] = $error->getMessage();
         }
-
         if (!empty($errors)) {
-            $this->addFlash('error', 'Veuillez corriger les erreurs dans le formulaire : '.implode(' - ', $errors));
+            $this->addFlash('error', 'Veuillez corriger les erreurs : ' . implode(' - ', $errors));
         }
-
-        return $this->redirectToRoute($redirectRoute, $routeParams);
-
+    
+        return $this->redirectToRoute($redirRoute, $params);
     }
+    
 
 
     /**

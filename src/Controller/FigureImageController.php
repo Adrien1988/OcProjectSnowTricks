@@ -103,8 +103,6 @@ class FigureImageController extends AbstractCrudController
             $newFilename = $this->fileUploader->upload($uploadedFile);
             if ($newFilename) {
                 $image->setUrl('/uploads/'.$newFilename);
-            } else {
-                // Vous pouvez lever une exception ou ajouter un flash si besoin
             }
         }
     }
