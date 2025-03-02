@@ -6,7 +6,6 @@ use App\Entity\User;
 use App\Form\ForgotPasswordType;
 use App\Form\ResetPasswordType;
 use Doctrine\ORM\EntityManagerInterface;
-use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Mailer\MailerInterface;
@@ -19,7 +18,7 @@ use Symfony\Component\Security\Http\Authentication\AuthenticationUtils;
 /**
  * Contrôleur de sécurité pour gérer la connexion et la déconnexion des utilisateurs.
  */
-class SecurityController extends AbstractController
+class SecurityController extends BaseController
 {
 
 
@@ -33,9 +32,6 @@ class SecurityController extends AbstractController
     #[Route(path: '/login', name: 'app_login')]
     public function login(AuthenticationUtils $authenticationUtils): Response
     {
-        // if ($this->getUser()) {
-        //     return $this->redirectToRoute('target_path');
-        // }
 
         // get the login error if there is one
         $error = $authenticationUtils->getLastAuthenticationError();
@@ -75,10 +71,14 @@ class SecurityController extends AbstractController
     public function forgotPassword(Request $request, EntityManagerInterface $entityManager, MailerInterface $mailer): Response
     {
         $form = $this->createForm(ForgotPasswordType::class);
-        $form->handleRequest($request);
+        $response = $this->handleFormSubmission($request, $form, 'Si un compte existe pour cet email, un lien de réinitialisation a été envoyé.', 'app_forgot_password', [], true, true);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $email = $form->get('email')->getData();
+        if ($handledResponse = $this->handleFormResponse($response, 'security/forgot_password.html.twig', ['form' => $form->createView()])) {
+            return $handledResponse;
+        }
+
+        $email = $form->get('email')->getData();
+        if ($email) {
             $user = $entityManager->getRepository(User::class)->findOneBy(['email' => $email]);
 
             if ($user) {
@@ -86,50 +86,34 @@ class SecurityController extends AbstractController
                 $user->setResetToken($token);
                 $user->setResetTokenExpiresAt(new \DateTimeImmutable('+1 hour'));
 
-                try {
-                    $entityManager->flush();
+                $entityManager->flush();
 
-                    $resetUrl = $this->generateUrl('app_reset_password', ['token' => $token], UrlGeneratorInterface::ABSOLUTE_URL);
+                $resetUrl = $this->generateUrl('app_reset_password', ['token' => $token], UrlGeneratorInterface::ABSOLUTE_URL);
 
-                    $emailMessage = (new Email())
-                        ->from('no-reply@example.com')
-                        ->to($user->getEmail())
-                        ->subject('Réinitialisation de votre mot de passe')
-                        ->html(
-                            '<p>Cliquez sur le bouton ci-dessous pour réinitialiser votre mot de passe :</p>
+                $emailMessage = (new Email())
+                    ->from('no-reply@example.com')
+                    ->to($user->getEmail())
+                    ->subject('Réinitialisation de votre mot de passe')
+                    ->html(
+                        '<p>Cliquez sur le bouton ci-dessous pour réinitialiser votre mot de passe :</p>
                     <p><a href="'.$resetUrl.'" style="display: inline-block; padding: 10px 15px; background-color: #007bff; 
                         color: white; text-decoration: none; border-radius: 5px;">Réinitialiser mon mot de passe</a></p>'
-                        );
+                    );
 
-                    $mailer->send($emailMessage);
+                $mailer->send($emailMessage);
 
-                    $this->addFlash('success', 'Si un compte existe pour cet email, un lien de réinitialisation a été envoyé.');
-                } catch (\Exception $e) {
-                    $this->addFlash('error', 'Erreur lors de la demande de réinitialisation du mot de passe.');
-                }
-            }
-
-            return $this->redirectToRoute('app_login');
-        }
-
-        // Affichage des erreurs du formulaire en cas de validation invalide
-        if ($form->isSubmitted() && !$form->isValid()) {
-            $errors = [];
-            foreach ($form->getErrors(true) as $error) {
-                $errors[] = $error->getMessage();
-            }
-
-            if (!empty($errors)) {
-                $this->addFlash('error', 'Veuillez corriger les erreurs du formulaire de réinitialisation : '.implode(' - ', $errors));
+                return $this->redirectToRoute('app_login');
             }
         }
 
+        // 🔹 Affichage du formulaire si aucune redirection n'a été effectuée
         return $this->render(
             'security/forgot_password.html.twig',
             [
                 'form' => $form->createView(),
             ]
         );
+
     }
 
 
@@ -155,38 +139,32 @@ class SecurityController extends AbstractController
         }
 
         $form = $this->createForm(ResetPasswordType::class);
-        $form->handleRequest($request);
+        $response = $this->handleFormSubmission($request, $form, 'Votre mot de passe a été réinitialisé avec succès.', 'app_reset_password', ['token' => $token], true, true);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $newPassword = $form->get('plainPassword')->getData();
-            $user->setPassword($passwordHasher->hashPassword($user, $newPassword));
-            $user->setResetToken(null);
-            $user->setResetTokenExpiresAt(null);
-
-            try {
-                $entityManager->flush();
-
-                $this->addFlash('success', 'Votre mot de passe a été réinitialisé avec succès.');
-
-                return $this->redirectToRoute('app_login');
-            } catch (\Exception $e) {
-                $this->addFlash('error', 'Erreur lors de la réinitialisation du mot de passe.');
-            }
+        // 🔹 Si handleFormSubmission retourne "render", on affiche le formulaire
+        if ($handledResponse = $this->handleFormResponse($response, 'security/reset_password.html.twig', ['form' => $form->createView()])) {
+            return $handledResponse;
         }
 
-        // Affichage des erreurs du formulaire de réinitialisation
-        if ($form->isSubmitted() && !$form->isValid()) {
-            $errors = [];
-            foreach ($form->getErrors(true) as $error) {
-                $errors[] = $error->getMessage();
-            }
-
-            if (!empty($errors)) {
-                $this->addFlash('error', 'Veuillez corriger les erreurs du formulaire de réinitialisation : '.implode(' - ', $errors));
-            }
+        // 🔹 Vérification avant d’accéder aux données du formulaire
+        if (!$form->isSubmitted() || !$form->isValid()) {
+            return $this->render(
+                'security/reset_password.html.twig',
+                [
+                    'form' => $form->createView(),
+                ]
+            );
         }
 
-        return $this->render('security/reset_password.html.twig', ['form' => $form->createView()]);
+        $newPassword = $form->get('plainPassword')->getData();
+        $user->setPassword($passwordHasher->hashPassword($user, $newPassword));
+        $user->setResetToken(null);
+        $user->setResetTokenExpiresAt(null);
+
+        $entityManager->flush();
+
+        return $this->redirectToRoute('app_login');
+
     }
 
 

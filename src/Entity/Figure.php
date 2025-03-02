@@ -78,12 +78,12 @@ class Figure
      *
      * @var Collection<int, Image>
      */
-    #[ORM\OneToMany(targetEntity: Image::class, mappedBy: 'figure', orphanRemoval: true, cascade: ['persist'])]
+    #[ORM\OneToMany(targetEntity: Image::class, mappedBy: 'figure', orphanRemoval: true, cascade: ['persist', 'remove'])]
     #[ORM\OrderBy(['id' => 'ASC'])]
     private Collection $images;
 
-    #[ORM\OneToOne(targetEntity: Image::class, cascade: ['persist', 'remove'])]
-    #[ORM\JoinColumn(nullable: true)]
+    #[ORM\OneToOne(targetEntity: Image::class, cascade: ['persist'], orphanRemoval: false)]
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')]
     private ?Image $mainImage = null;
 
     /**
@@ -91,7 +91,7 @@ class Figure
      *
      * @var Collection<int, Video>
      */
-    #[ORM\OneToMany(targetEntity: Video::class, mappedBy: 'figure', orphanRemoval: true, cascade: ['persist'])]
+    #[ORM\OneToMany(targetEntity: Video::class, mappedBy: 'figure', orphanRemoval: true, cascade: ['persist', 'remove'])]
     private Collection $videos;
 
     /**
@@ -338,25 +338,6 @@ class Figure
 
 
     /**
-     * Supprime une image associée à la figure.
-     *
-     * @param Image $image image à supprimer
-     *
-     * @return $this
-     */
-    public function removeImage(Image $image): static
-    {
-        if (true === $this->images->removeElement($image)) {
-            if ($image->getFigure() === $this) {
-                $image->setFigure(null);
-            }
-        }
-
-        return $this;
-    } // end removeImage()
-
-
-    /**
      * Retourne l'image principale de la figure.
      *
      * @return Image|null L'entité Image de la figure, ou null si aucune image n'est définie
@@ -412,25 +393,6 @@ class Figure
 
 
     /**
-     * Supprime une vidéo associée à la figure.
-     *
-     * @param Video $video vidéo à supprimer
-     *
-     * @return $this
-     */
-    public function removeVideo(Video $video): static
-    {
-        if (true === $this->videos->removeElement($video)) {
-            if ($video->getFigure() === $this) {
-                $video->setFigure(null);
-            }
-        }
-
-        return $this;
-    } // end removeVideo()
-
-
-    /**
      * Convertit la figure en chaîne de caractères (nom de la figure).
      *
      * @return string
@@ -464,26 +426,6 @@ class Figure
         if (!$this->comments->contains($comment)) {
             $this->comments[] = $comment;
             $comment->setFigure($this);
-        }
-
-        return $this;
-    }
-
-
-    /**
-     * Supprime un commentaire de la figure.
-     *
-     * @param Comment $comment commentaire à supprimer
-     *
-     * @return $this
-     */
-    public function removeComment(Comment $comment): self
-    {
-        if ($this->comments->removeElement($comment)) {
-            // Déconnecte le commentaire de la figure
-            if ($comment->getFigure() === $this) {
-                $comment->setFigure(null);
-            }
         }
 
         return $this;

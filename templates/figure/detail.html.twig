@@ -76,7 +76,7 @@
                     </div>
                     <div class="modal-body">
                         {{ form_start(imageForm, {
-                            'action': path('app_figure_add_image', { id: figure.id }),
+                            'action': path('app_figure_add_image', { figureId: figure.id }),
                             'method': 'POST',
                             'attr': { 'enctype': 'multipart/form-data' }
                         }) }}
