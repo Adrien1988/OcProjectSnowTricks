@@ -14,19 +14,18 @@ class BaseController extends AbstractController
     /**
      * Gère la soumission et la validation des formulaires avec gestion des messages flash.
      *
-     * @param Request $request                    La requête HTTP contenant les données du formulaire
-     * @param mixed   $form                       L'instance du formulaire à traiter
-     * @param string  $successMessage             Message en cas de succès
-     * @param string  $redirectRoute              Route de redirection en cas d'erreur ou après succès
-     * @param array   $routeParams                Paramètres de la route de redirection
-     * @param bool    $skipRedirectOnSuccess      Si true, ne redirige pas après un succès (renvoie null)
-     * @param bool    $returnRenderIfNotSubmitted Si true, renvoie la chaîne 'render' si le form n'est pas soumis
+     * @param Request $request    la requête HTTP contenant les données du formulaire
+     * @param mixed   $form       L'instance du formulaire à traiter
+     * @param string  $successMsg message affiché en cas de succès
+     * @param string  $redirRoute route de redirection en cas d'erreur ou après succès
+     * @param array   $params     paramètres supplémentaires pour la route de redirection
+     * @param bool    $skipRedir  si true, ne redirige pas après un succès (renvoie null)
+     * @param bool    $retRender  si true, renvoie la chaîne 'render' si le formulaire n'est pas soumis
      *
-     * @return RedirectResponse|string|null retourne:
-     *                                      - 'render' si le formulaire n'est pas soumis et qu'on veut
-     *                                      quand même afficher la vue courante,
-     *                                      - une RedirectResponse si on doit rediriger (erreurs ou succès),
-     *                                      - null si on n'a pas redirection (ex: succès, mais skipRedirectOnSuccess = true)
+     * @return RedirectResponse|string|null retourne :
+     *                                      - 'render' si le formulaire n'est pas soumis et que l'on souhaite afficher la vue courante,
+     *                                      - une RedirectResponse si une redirection est requise (erreurs ou succès),
+     *                                      - null si aucune redirection n'est nécessaire (ex : succès, mais $skipRedir = true)
      */
     public function handleFormSubmission(
         Request $request,
@@ -35,36 +34,37 @@ class BaseController extends AbstractController
         string $redirRoute,
         array $params = [],
         bool $skipRedir = false,
-        bool $retRender = false
+        bool $retRender = false,
     ): RedirectResponse|string|null {
         $form->handleRequest($request);
-    
+
         // Si le formulaire n'est pas soumis, on retourne 'render' ou null
         if (!$form->isSubmitted()) {
             return $retRender ? 'render' : null;
         }
-    
+
         // Si le formulaire est soumis et valide, on affiche le message et on redirige si nécessaire
         if ($form->isValid()) {
             $this->addFlash('success', $successMsg);
             if ($skipRedir) {
                 return null;
             }
+
             return $this->redirectToRoute($redirRoute, $params);
         }
-    
+
         // Si le formulaire est soumis mais non valide, on collecte et affiche les erreurs
         $errors = [];
         foreach ($form->getErrors(true) as $error) {
             $errors[] = $error->getMessage();
         }
+
         if (!empty($errors)) {
-            $this->addFlash('error', 'Veuillez corriger les erreurs : ' . implode(' - ', $errors));
+            $this->addFlash('error', 'Veuillez corriger les erreurs : '.implode(' - ', $errors));
         }
-    
+
         return $this->redirectToRoute($redirRoute, $params);
     }
-    
 
 
     /**
