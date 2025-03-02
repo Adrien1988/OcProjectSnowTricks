@@ -5,6 +5,7 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class BaseController extends AbstractController
 {
@@ -67,6 +68,40 @@ class BaseController extends AbstractController
 
         return $this->redirectToRoute($redirectRoute, $routeParams);
 
+    }
+
+
+    /**
+     * Gère la réponse après la soumission du formulaire.
+     *
+     * Cette méthode traite les retours de `handleFormSubmission()` :
+     * - Si la réponse est "render", elle affiche le formulaire.
+     * - Si la réponse est une `RedirectResponse`, elle effectue la redirection.
+     * - Si aucun traitement n'est nécessaire, elle retourne `null`.
+     *
+     * @param mixed  $response   La réponse retournée par `handleFormSubmission()`
+     * @param string $template   Le template Twig à afficher si nécessaire
+     * @param array  $parameters Les paramètres à passer à la vue
+     *
+     * @return Response|null Retourne une `Response` pour affichage ou redirection, ou `null` si aucune action n'est requise
+     */
+    protected function handleFormResponse(
+        mixed $response,
+        string $template,
+        array $parameters = [],
+    ): ?Response {
+        // 🔹 Si handleFormSubmission retourne "render", on affiche le formulaire
+        if ($response === 'render') {
+            return $this->render($template, $parameters);
+        }
+
+        // 🔹 Si handleFormSubmission retourne une redirection, on la suit
+        if ($response instanceof RedirectResponse) {
+            return $response;
+        }
+
+        // 🔹 Si aucun traitement n'a été effectué, on retourne null (permet de continuer le processus dans le contrôleur)
+        return null;
     }
 
 
