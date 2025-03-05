@@ -1,0 +1,20 @@
+<nav class="navbar navbar-light bg-light fixed-bottom d-md-none"
+     style="z-index: 999;">
+  <div class="container-fluid d-flex justify-content-around">
+    <a class="nav-link text-dark" href="{{ path('app_home') }}">
+      <i class="fa-solid fa-house fa-2x"></i>
+    </a>
+    <a class="nav-link text-dark" href="#">
+      <i class="fa-solid fa-magnifying-glass fa-2x"></i>
+    </a>
+    {% if app.user %}
+      <a class="nav-link text-dark" href="{{ path('app_logout') }}">
+        <i class="fa-solid fa-right-from-bracket fa-2x"></i>
+      </a>
+    {% else %}
+      <a class="nav-link text-dark" href="{{ path('app_login') }}">
+        <i class="fa-solid fa-user fa-2x"></i>
+      </a>
+    {% endif %}
+  </div>
+</nav>
