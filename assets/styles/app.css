@@ -1,5 +1,5 @@
 body {
-  background-color: skyblue;
+  background-color: #fffaf0;
 }
 
 .btn-neutral {
@@ -58,6 +58,62 @@ body {
   justify-content: center;
 }
 
+.hero-header {
+  height: 60vh;
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+    url("../images/header-bg.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  color: #fff;
+}
+
+.btn-neutral {
+  background-color: #f5f5f5;
+  color: #333;
+  border: 1px solid #ccc;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.btn-neutral:hover {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+html {
+  scrollbar-gutter: stable;
+}
+
+.btn-neutral:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.intro-section {
+  /* Ajuste l’espacement vertical si nécessaire */
+  margin: 2rem auto;
+  max-width: 800px; /* Limite la largeur pour un meilleur confort de lecture */
+}
+
+/* Facultatif : changer la couleur du titre */
+.intro-section h2 {
+  color: #333;
+  letter-spacing: 1px;
+}
+
+/* Facultatif : peaufiner le texte du paragraphe */
+.intro-section p {
+  line-height: 1.6;
+}
+
+.hr-deco {
+    width: 60px;
+    border-top: 3px solid #bbb;
+    margin-top: 1rem;
+    margin-bottom: 1rem; /* Ajuste selon tes besoins */
+  }
+  
+
 /* Hauteur approximative de la navbar fixe en haut : 56px */
 @media (min-width: 768px) {
   #main-content {
@@ -67,18 +123,21 @@ body {
 
 /* Hauteur approximative de la navbar fixe en bas sur mobile */
 @media (max-width: 767.98px) {
-  /* Pas de marge sur le footer */
-  footer {
-    margin: 0 !important;
-    padding-bottom: 0 !important;
-    /* si tu utilises la stratégie du "scroll-spacer", pas de margin-bottom négative */
+  .custom-mobile-navbar {
+    border-top: 3px solid #33b5e5; /* Couleur fun, à adapter */
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
   }
 
-  /* La navbar fixe en bas */
-  .navbar.fixed-bottom {
-    border: none !important;        /* retire la bordure */
-    box-shadow: none !important;    /* retire l'ombre */
-    margin: 0 !important;           /* retire toute marge éventuelle */
+  .custom-mobile-navbar .nav-link {
+    /* Centre bien le contenu + transition pour l'effet au survol */
+    text-align: center;
+    transition: color 0.2s ease, transform 0.2s ease;
+  }
+
+  /* Couleur & rebond léger au survol */
+  .custom-mobile-navbar .nav-link:hover {
+    color: #ff5722;
+    transform: translateY(-2px); /* petit déplacement vers le haut */
   }
 
   /* Le spacer doit avoir exactement la même hauteur que la navbar */

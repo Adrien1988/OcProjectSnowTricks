@@ -1,19 +1,27 @@
-<nav class="navbar navbar-light bg-light fixed-bottom d-md-none"
-     style="z-index: 999;">
+<nav class="navbar navbar-light bg-light fixed-bottom d-md-none custom-mobile-navbar">
   <div class="container-fluid d-flex justify-content-around">
-    <a class="nav-link text-dark" href="{{ path('app_home') }}">
+    <!-- Accueil -->
+    <a class="nav-link" href="{{ path('app_home') }}">
       <i class="fa-solid fa-house fa-2x"></i>
     </a>
-    <a class="nav-link text-dark" href="#">
-      <i class="fa-solid fa-magnifying-glass fa-2x"></i>
+
+    <!-- Liste des figures (remplace l’icône de la loupe) -->
+    <a class="nav-link" href="{{ path('app_home') }}#figures-list">
+      <i class="fa-solid fa-list-ul fa-2x"></i>
     </a>
+
     {% if app.user %}
-      <a class="nav-link text-dark" href="{{ path('app_logout') }}">
+      <!-- Lien si l'utilisateur est connecté -->
+      <a class="nav-link" href="{{ path('app_logout') }}">
         <i class="fa-solid fa-right-from-bracket fa-2x"></i>
       </a>
     {% else %}
-      <a class="nav-link text-dark" href="{{ path('app_login') }}">
+      <!-- Lien si l'utilisateur n'est pas connecté -->
+      <a class="nav-link" href="{{ path('app_login') }}">
         <i class="fa-solid fa-user fa-2x"></i>
+      </a>
+      <a class="nav-link" href="{{ path('app_register') }}">
+        <i class="fa-solid fa-user-plus fa-2x"></i>
       </a>
     {% endif %}
   </div>
