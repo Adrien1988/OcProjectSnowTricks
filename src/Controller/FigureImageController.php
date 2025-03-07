@@ -135,7 +135,8 @@ class FigureImageController extends AbstractCrudController
         return $this->redirectToRoute(
             'app_figure_detail',
             [
-                'id' => $figure->getId(),
+                'id'   => $figure->getId(),
+                'slug' => $figure->getSlug(),
             ]
         );
     }
@@ -424,7 +425,7 @@ class FigureImageController extends AbstractCrudController
         if (!$this->isCsrfTokenValid('remove_main_image_'.$figure->getId(), $request->request->get('_token'))) {
             $this->addFlash('error', 'Token CSRF invalide.');
 
-            return $this->redirectToRoute('app_figure_detail', ['id' => $figure->getId()]);
+            return $this->redirectToRoute('app_figure_detail', ['id' => $figure->getId(), 'slug' => $figure->getSlug()]);
         }
 
         $figure->setMainImage(null);

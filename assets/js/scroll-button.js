@@ -1,42 +1,49 @@
 document.addEventListener("DOMContentLoaded", function () {
     const scrollDownButton = document.getElementById("scrollDownButton");
     const scrollUpButton = document.getElementById("scrollUpButton");
+    const figuresList = document.getElementById("figures-list");
 
-    // Afficher le bouton retour en haut seulement quand l'utilisateur a défilé vers le bas
-    scrollUpButton.style.display = "none";  // Le bouton retour en haut est caché au début
+    // Le bouton "Retour en haut" est caché au début
+    scrollUpButton.style.display = "none";
 
-    // Lors du clic sur le bouton vers le bas
+    // Lors du clic sur le bouton "Aller vers le bas"
     scrollDownButton.addEventListener("click", function () {
-        // Faire défiler la page vers le bas avec une animation fluide
-        window.scrollTo({ top: document.body.scrollHeight, behavior: "smooth" });
+        // Scroller jusqu'au conteneur "figures-list"
+        window.scrollTo({
+            top: figuresList.offsetTop,
+            behavior: "smooth"
+        });
 
-        // Cacher le bouton "Aller vers le bas" une fois cliqué
+        // Cacher le bouton "Aller vers le bas"
         scrollDownButton.style.display = "none";
-
         // Afficher le bouton "Retour en haut"
         scrollUpButton.style.display = "block";
     });
 
-    // Lors du clic sur le bouton retour en haut
+    // Lors du clic sur le bouton "Retour en haut"
     scrollUpButton.addEventListener("click", function () {
-        // Faire défiler la page vers le haut avec une animation fluide
-        window.scrollTo({ top: 0, behavior: "smooth" });
+        // Faire défiler la page vers le haut
+        window.scrollTo({
+            top: 0,
+            behavior: "smooth"
+        });
 
-        // Cacher le bouton "Retour en haut" une fois cliqué
+        // Cacher "Retour en haut"
         scrollUpButton.style.display = "none";
-
-        // Réafficher le bouton "Aller vers le bas"
+        // Réafficher "Aller vers le bas"
         scrollDownButton.style.display = "block";
     });
 
-    // Afficher le bouton retour en haut quand on défile vers le bas
+    // Afficher/Cacher les boutons en fonction du défilement
     window.addEventListener("scroll", function () {
         if (window.scrollY > 200) {
-            scrollDownButton.style.display = "none";  // Cacher "Aller vers le bas"
-            scrollUpButton.style.display = "block";   // Afficher "Retour en haut"
+            // Une fois qu'on a défilé un peu (200px), on cache "Aller vers le bas" et on montre "Retour en haut"
+            scrollDownButton.style.display = "none";
+            scrollUpButton.style.display = "block";
         } else {
-            scrollDownButton.style.display = "block"; // Afficher "Aller vers le bas"
-            scrollUpButton.style.display = "none";    // Cacher "Retour en haut"
+            // Sinon, on affiche "Aller vers le bas" et on cache "Retour en haut"
+            scrollDownButton.style.display = "block";
+            scrollUpButton.style.display = "none";
         }
     });
 });

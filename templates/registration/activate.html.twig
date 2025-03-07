@@ -3,12 +3,43 @@
 {% block title %}Activation du compte{% endblock %}
 
 {% block body %}
-<h1>Activation du compte</h1>
-<p>Veuillez confirmer votre email et votre mot de passe pour activer votre compte.</p>
+<section class="container my-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-6">
+            <!-- Carte du formulaire -->
+            <div class="card shadow-lg">
+                <div class="card-body">
+                    <h1 class="h4 text-center">Activation du compte</h1>
+                    <p class="text-muted text-center">
+                        Veuillez confirmer votre email et votre mot de passe pour activer votre compte.
+                    </p>
 
-{{ form_start(activationForm) }}
-    {{ form_row(activationForm.email) }}
-    {{ form_row(activationForm.password) }}
-    <button type="submit">Activer mon compte</button>
-{{ form_end(activationForm) }}
+                    <!-- Formulaire -->
+                    {{ form_start(activationForm) }}
+
+                    <!-- Champ Email -->
+                    <div class="mb-3">
+                        {{ form_label(activationForm.email, null, {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(activationForm.email, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(activationForm.email) }}
+                    </div>
+
+                    <!-- Champ Mot de passe -->
+                    <div class="mb-3">
+                        {{ form_label(activationForm.password, null, {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(activationForm.password, {'attr': {'class': 'form-control'}}) }}
+                        {{ form_errors(activationForm.password) }}
+                    </div>
+
+                    <!-- Bouton d'activation -->
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-lg btn-register">Activer mon compte</button>
+                    </div>
+
+                    {{ form_end(activationForm) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 {% endblock %}

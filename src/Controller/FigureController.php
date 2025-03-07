@@ -14,26 +14,9 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\String\Slugger\SluggerInterface;
 
 class FigureController extends AbstractCrudController
 {
-
-
-    /**
-     * Constructeur du contrôleur FigureController.
-     *
-     * @param EntityService    $entityService Service pour la gestion générique des entités
-     * @param SluggerInterface $slugger       Service pour générer le slug
-     *
-     * @return void
-     */
-    public function __construct(
-        protected EntityService $entityService,
-        private SluggerInterface $slugger,
-    ) {
-        parent::__construct($entityService);
-    }
 
 
     /**
@@ -91,19 +74,6 @@ class FigureController extends AbstractCrudController
      */
     protected function redirectAfterCreate(object $entity): RedirectResponse
     {
-        /*
-         * @var Figure $figure
-         */
-
-        $figure = $entity;
-
-        // On génère le slug après validation du formulaire
-        // et avant la sauvegarde finale (création).
-        // Si vous préférez, on peut le faire dans createNewEntity(),
-        // mais souvent le slug dépend de champs saisis dans le formulaire.
-        $figure->generateSlug($this->slugger);
-        // On sauvegarde maintenant l'entité modifiée avec son slug.
-        $this->entityService->saveEntity($figure);
 
         // Redirection finale (par défaut, on retourne sur la page d'accueil)
         return $this->redirectToRoute('app_home');
@@ -129,7 +99,7 @@ class FigureController extends AbstractCrudController
         $figure = $entity;
 
         // On redirige vers la page de détail après la mise à jour
-        return $this->redirectToRoute('app_figure_detail', ['id' => $figure->getId()]);
+        return $this->redirectToRoute('app_figure_detail', ['id' => $figure->getId(), 'slug' => $figure->getSlug()]);
     }
 
 
@@ -279,21 +249,42 @@ class FigureController extends AbstractCrudController
     /**
      * Affiche la page de détails d'une figure (non-CRUD).
      *
-     * @param int               $id                Identifiant de la figure
-     * @param EntityService     $entityService     Service pour la gestion des entités
-     * @param CommentRepository $commentRepository Accès aux commentaires
-     * @param Request           $request           Requête HTTP
+     * @param int               $id                identifiant de la figure
+     * @param string            $slug              slug de la figure pour l'URL
+     * @param EntityService     $entityService     service pour la gestion des entités
+     * @param CommentRepository $commentRepository accès aux commentaires
+     * @param Request           $request           requête HTTP
      *
-     * @return Response
+     * @return Response la réponse contenant le rendu de la page de détail
      */
-    #[Route('/figure/{id}', name: 'app_figure_detail', methods: ['GET'])]
+    #[Route('/figure/{id}/{slug}', name: 'app_figure_detail', methods: ['GET'])]
     public function detail(
         int $id,
+        string $slug,
         EntityService $entityService,
         CommentRepository $commentRepository,
         Request $request,
     ): Response {
         $figure = $entityService->findEntityById(Figure::class, $id);
+        if (!$figure) {
+            // On utilise un message flash + redirection, plutôt qu'une exception
+            $this->addFlash('error', "Figure introuvable (id = $id).");
+
+            return $this->redirectToRoute('app_home');
+        }
+
+        // 2) Vérifier si le slug fourni correspond à celui de la figure
+        if ($figure->getSlug() !== $slug) {
+            // Redirection 301 vers l'URL "canonique"
+            return $this->redirectToRoute(
+                'app_figure_detail',
+                [
+                    'id'   => $figure->getId(),
+                    'slug' => $figure->getSlug(),
+                ],
+                301
+            );
+        }
 
         // Formulaire de modification de l'image principale
         $mainImageForm = $this->createForm(MainImageType::class, null, ['figure' => $figure]);
@@ -306,7 +297,7 @@ class FigureController extends AbstractCrudController
             if ($selectedImage && $entityService->saveEntity($figure->setMainImage($selectedImage))) {
                 $this->addFlash('success', 'Image principale mise à jour.');
 
-                return $this->redirectToRoute('app_figure_detail', ['id' => $figure->getId()]);
+                return $this->redirectToRoute('app_figure_detail', ['id' => $figure->getId(), 'slug' => $figure->getSlug()]);
             }
 
             $this->addFlash('error', 'Une erreur est survenue lors de la mise à jour de l’image principale.');

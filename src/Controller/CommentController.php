@@ -105,7 +105,7 @@ class CommentController extends AbstractCrudController
             return $this->redirectToRoute('app_home');
         }
 
-        return $this->redirectToRoute('app_figure_detail', ['id' => $figure->getId()]);
+        return $this->redirectToRoute('app_figure_detail', ['id' => $figure->getId(), 'slug' => $figure->getSlug()]);
     }
 
 

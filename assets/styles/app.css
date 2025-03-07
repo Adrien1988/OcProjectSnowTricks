@@ -2,6 +2,17 @@ body {
   background-color: #fffaf0;
 }
 
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: "Open Sans", Arial, sans-serif;
+  letter-spacing: 1px;
+  /* font-weight: 700;   si tu veux un gras spécifique */
+}
+
 .btn-neutral {
   background-color: #f5f5f5;
   color: #333;
@@ -80,10 +91,6 @@ body {
   color: #333;
 }
 
-html {
-  scrollbar-gutter: stable;
-}
-
 .btn-neutral:focus {
   outline: none !important;
   box-shadow: none !important;
@@ -107,12 +114,183 @@ html {
 }
 
 .hr-deco {
-    width: 60px;
-    border-top: 3px solid #bbb;
-    margin-top: 1rem;
-    margin-bottom: 1rem; /* Ajuste selon tes besoins */
-  }
-  
+  width: 60px;
+  border-top: 3px solid #bbb;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+
+.card-body a.text-decoration-none h5.card-title,
+.card-body a.text-decoration-none h5.card-title:visited {
+  color: #333;
+  text-decoration: none;
+}
+
+/* 2) État survol + focus */
+.card-body a.text-decoration-none h5.card-title:hover,
+.card-body a.text-decoration-none h5.card-title:focus {
+  color: #ff5722;
+}
+
+.no-underline {
+  text-decoration: none;
+}
+.no-underline:hover,
+.no-underline:focus {
+  text-decoration: none;
+}
+
+.btn-login {
+  background-color: #333; /* Même couleur que les titres */
+  border-color: #333;
+  color: #ffffff; /* Texte en blanc pour le contraste */
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.btn-login:hover,
+.btn-login:focus {
+  background-color: #444; /* Un ton plus foncé au survol */
+  border-color: #444;
+  color: #ffffff;
+}
+
+/* Bouton d'inscription - même couleur que les titres */
+.btn-register {
+  background-color: #333; /* Même teinte que les titres */
+  border-color: #333;
+  color: #ffffff;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.btn-register:hover,
+.btn-register:focus {
+  background-color: #444; /* Teinte plus foncée au survol */
+  border-color: #444;
+  color: #ffffff;
+}
+
+/* Suppression du soulignement du lien "Déjà inscrit ?" */
+.no-underline {
+  text-decoration: none;
+}
+
+.no-underline:hover,
+.no-underline:focus {
+  text-decoration: none;
+}
+
+/* Style du label du CAPTCHA */
+.form-label {
+  font-weight: 600;
+}
+
+/* Conteneur du CAPTCHA */
+.captcha-container {
+  border: 1px solid #ccc;
+  padding: 8px;
+  border-radius: 5px;
+  background: #f8f9fa;
+  justify-content: space-between;
+}
+
+.captcha-container > *:first-child {
+  margin-right: 10px;
+}
+
+/* Bouton de renouvellement du CAPTCHA */
+.btn-captcha-renew {
+  background-color: #333; /* Même teinte que les titres */
+  border-color: #333;
+  color: #ffffff; /* Texte blanc */
+  transition: background-color 0.2s ease,
+    border-color 0.2s ease transform 0.2s ease;
+  margin-left: 10px;
+  margin-bottom: 10px;
+}
+
+.btn-captcha-renew:hover,
+.btn-captcha-renew:focus {
+  background-color: #444; /* Un ton plus clair au survol pour éviter le noir total */
+  border-color: #444;
+  color: #ffffff;
+}
+
+.captcha-container a {
+  display: none !important;
+  gap: 10px;
+}
+
+.btn-reset {
+  background-color: #333; /* Même teinte que les titres des figures */
+  border-color: #333;
+  color: #ffffff;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.btn-reset:hover,
+.btn-reset:focus {
+  background-color: #444; /* Teinte plus foncée au survol */
+  border-color: #444;
+  color: #ffffff;
+}
+
+/* En-tête de la figure */
+.figure-header {
+  position: relative;
+}
+
+#mainImage {
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2); /* Ombre douce */
+  object-fit: cover;
+}
+
+.figure-overlay {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.6);
+  padding: 15px 30px;
+  border-radius: 10px;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+.figure-title {
+  color: white;
+  font-weight: bold;
+  font-size: 24px;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+/* Cartes et commentaires */
+.card-bg-blur {
+  background: rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: transform 0.2s ease-in-out;
+}
+
+.card-bg-blur:hover {
+  transform: scale(1.05);
+}
+
+.comment-box {
+  background: #f8f9fa;
+  border-left: 4px solid #333;
+}
+
+/* Boutons */
+.btn-comment {
+  background-color: #333;
+  border-color: #333;
+  color: white;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.btn-comment:hover,
+.btn-comment:focus {
+  background-color: #444;
+  border-color: #444;
+}
 
 /* Hauteur approximative de la navbar fixe en haut : 56px */
 @media (min-width: 768px) {

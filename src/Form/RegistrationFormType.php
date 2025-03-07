@@ -35,7 +35,6 @@ class RegistrationFormType extends AbstractType
                 [
                     'label' => 'Nom d\'utilisateur',
                     'attr'  => [
-                        'class'       => 'form-control',
                         'placeholder' => 'Entrez votre nom d\'utilisateur',
                     ],
                 ]
@@ -46,7 +45,6 @@ class RegistrationFormType extends AbstractType
                 [
                     'label' => 'Adresse mail',
                     'attr'  => [
-                        'class'       => 'form-control',
                         'placeholder' => 'Entrez votre adresse email',
                     ],
                 ]
@@ -64,9 +62,6 @@ class RegistrationFormType extends AbstractType
                         ),
                     ],
                     'label' => 'En m\'inscrivant à ce site j\'accepte les termes.',
-                    'attr'  => [
-                        'class' => 'form-check-input',
-                    ],
                 ]
             )
             ->add(
@@ -77,7 +72,6 @@ class RegistrationFormType extends AbstractType
                     // this is read and encoded in the controller
                     'mapped'      => false,
                     'attr'        => [
-                        'class'        => 'form-control',
                         'placeholder'  => 'Entrez votre mot de passe',
                         'autocomplete' => 'new-password',
                     ],
@@ -106,9 +100,6 @@ class RegistrationFormType extends AbstractType
                     'reload'          => true,
                     'as_url'          => true,
                     'invalid_message' => 'Le code est invalide.',
-                    'attr'            => [
-                        'class' => 'form-control',
-                    ],
                 ]
             );
     }// end buildForm()

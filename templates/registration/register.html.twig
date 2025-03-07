@@ -1,30 +1,83 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Inscription{% endblock %}
+{% block title %}Inscription
+{% endblock %}
 
 {% block body %}
-<section class="container my-3">
-    <div class="row justify-content-center">
-        <div class="col-lg-6">
+	<section class="container my-5">
+		<div class="row justify-content-center">
+			<div
+				class="col-lg-6">
+				<!-- Carte du formulaire -->
+				<div class="card shadow-lg">
+					<div class="card-body">
+						<h1 class="h4 text-center">Créer un compte</h1>
+						<p class="text-muted text-center">Rejoignez SnowTricks et partagez vos figures de snowboard !</p>
 
-            <!-- Formulaire -->
-            <form method="post" enctype="multipart/form-data" class="card shadow-sm">
-                <div class="card-header bg-primary text-white text-center">
-                    <h1 class="h3 mb-0">Créer un compte</h1>
-                </div>
-                <div class="card-body">
-                    {{ form_start(registrationForm) }}
-                        {{ form_widget(registrationForm) }}
-                        <div class="d-grid mt-4">
-                            <button type="submit" class="btn btn-primary btn-lg">S'enregistrer</button>
-                        </div>
-                    {{ form_end(registrationForm) }}
-                </div>
-                <div class="card-footer text-center">
-                    <a href="{{ path('app_login') }}" class="text-muted">Déjà inscrit ? Me connecter</a>
-                </div>
-            </form>
-        </div>
-    </div>
-</section>
+						<!-- Formulaire -->
+						{{ form_start(registrationForm) }}
+
+						<!-- Champ Nom d'utilisateur -->
+						<div class="mb-3">
+							{{ form_label(registrationForm.username, null, {'label_attr': {'class': 'form-label'}}) }}
+							{{ form_widget(registrationForm.username, {'attr': {'class': 'form-control'}}) }}
+							{{ form_errors(registrationForm.username) }}
+						</div>
+
+						<!-- Champ Email -->
+						<div class="mb-3">
+							{{ form_label(registrationForm.email, null, {'label_attr': {'class': 'form-label'}}) }}
+							{{ form_widget(registrationForm.email, {'attr': {'class': 'form-control'}}) }}
+							{{ form_errors(registrationForm.email) }}
+						</div>
+
+						<!-- Champ Mot de passe -->
+						<div class="mb-3">
+							{{ form_label(registrationForm.plainPassword, null, {'label_attr': {'class': 'form-label'}}) }}
+							{{ form_widget(registrationForm.plainPassword, {'attr': {'class': 'form-control'}}) }}
+							{{ form_errors(registrationForm.plainPassword) }}
+						</div>
+
+						<!-- Champ Captcha -->
+						<div class="mb-3">
+							<div class="d-flex align-items-center justify-content-between">
+								{{ form_label(registrationForm.captcha, null, {'label_attr': {'class': 'form-label me-3'}}) }}
+
+								<!-- Bouton de renouvellement du Captcha -->
+								<button type="button" class="btn btn-sm btn-captcha-renew" onclick="reloadCaptcha()">
+									<i class="fa-solid fa-arrows-rotate"></i>
+									Changer l’image
+								</button>
+							</div>
+
+							<!-- Affichage du CAPTCHA -->
+							<div class="captcha-container d-flex align-items-center">
+								{{ form_widget(registrationForm.captcha, {'attr': {'class': 'form-control flex-grow-1'}}) }}
+							</div>
+
+							{{ form_errors(registrationForm.captcha) }}
+						</div>
+
+						<!-- Checkbox CGU -->
+						<div class="form-check mb-3">
+							{{ form_widget(registrationForm.agreeTerms, {'attr': {'class': 'form-check-input'}}) }}
+							{{ form_label(registrationForm.agreeTerms, null, {'label_attr': {'class': 'form-check-label'}}) }}
+							{{ form_errors(registrationForm.agreeTerms) }}
+						</div>
+
+						<!-- Bouton d'inscription -->
+						<div class="d-grid mt-4">
+							<button type="submit" class="btn btn-lg btn-register">S'enregistrer</button>
+						</div>
+
+						{{ form_end(registrationForm) }}
+					</div>
+
+					<div class="card-footer text-center">
+						<a href="{{ path('app_login') }}" class="no-underline">Déjà inscrit ? Me connecter</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
 {% endblock %}
