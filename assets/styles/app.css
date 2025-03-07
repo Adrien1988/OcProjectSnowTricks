@@ -273,23 +273,76 @@ h6 {
   transform: scale(1.05);
 }
 
+/* Conteneur des commentaires */
+.comments-container {
+  max-width: 800px;
+  margin: auto;
+}
+
+/* Boîte de commentaire */
 .comment-box {
-  background: #f8f9fa;
-  border-left: 4px solid #333;
+  background: #f8f9fa; /* Fond gris clair en harmonie avec le reste du site */
+  border-left: 5px solid #ccc; /* Bordure discrète */
+  padding: 15px;
+  border-radius: 10px;
+  transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
 }
 
-/* Boutons */
-.btn-comment {
-  background-color: #333;
-  border-color: #333;
+/* Effet au survol */
+.comment-box:hover {
+  transform: translateY(-3px);
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Nom d’utilisateur */
+.comment-username {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #333; /* Couleur neutre pour éviter le bleu */
+}
+
+/* Date du commentaire */
+.comment-date {
+  font-size: 0.85rem;
+  color: #777;
+}
+
+/* Texte du commentaire */
+.comment-text {
+  font-size: 0.95rem;
+  line-height: 1.4;
+  color: #444; /* Couleur sombre pour une meilleure lisibilité */
+}
+
+/* Bouton de pagination */
+.pagination .page-link {
+  background-color: #f5f5f5;
+  color: #333;
+  border: 1px solid #ccc;
+}
+
+.pagination .page-item.active .page-link {
+  background-color: #ff9800; /* Orange pour respecter le design */
   color: white;
-  transition: background-color 0.2s ease, border-color 0.2s ease;
+  border: none;
 }
 
-.btn-comment:hover,
-.btn-comment:focus {
-  background-color: #444;
-  border-color: #444;
+/* Formulaire de commentaire */
+.comment-form-container {
+  background: #ffffff; /* Fond blanc pour la propreté */
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Bouton publier */
+.comment-form-container button {
+  background-color: #333; /* Couleur principale du site */
+  border: none;
+}
+
+.comment-form-container button:hover {
+  background-color: #444; /* Un ton plus foncé au survol */
 }
 
 /* Hauteur approximative de la navbar fixe en haut : 56px */
