@@ -64,9 +64,6 @@ class FigureType extends AbstractType
                     'placeholder' => 'Sélectionnez un groupe',
                     'empty_data'  => '', // Pour éviter qu'une valeur vide pose problème
                     'required'    => true,
-                    'attr'        => [
-                        'class' => 'form-select w-auto text-center',
-                    ],
                 ]
             );
 

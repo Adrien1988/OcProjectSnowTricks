@@ -1,0 +1,50 @@
+/* CAPTCHA */
+.form-label {
+  font-weight: 600;
+}
+
+.captcha-container {
+  border: 1px solid #ccc;
+  padding: 8px;
+  border-radius: 5px;
+  background: #f8f9fa;
+  justify-content: space-between;
+}
+
+.captcha-container > *:first-child {
+  margin-right: 10px;
+}
+
+.captcha-container a {
+  display: none !important;
+  gap: 10px;
+}
+
+/* Style spécifique à la modale du formulaire de création figure */
+.figure-form .form-control,
+.figure-form .form-select {
+  width: 100%;
+  padding: 8px;
+  margin-top: 4px;
+  border-radius: 5px;
+  box-shadow: none;
+}
+
+.figure-form label {
+  font-weight: 600;
+  color: #333;
+}
+
+.modal-content {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+  border-bottom: none;
+}
+
+.modal-footer {
+  border-top: none;
+}

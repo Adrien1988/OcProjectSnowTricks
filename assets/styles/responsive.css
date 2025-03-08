@@ -1,0 +1,32 @@
+/* Hauteur approximative de la navbar fixe en haut : 56px */
+@media (min-width: 768px) {
+  #main-content {
+    padding-top: 56px;
+  }
+}
+
+/* Hauteur approximative de la navbar fixe en bas sur mobile */
+@media (max-width: 767.98px) {
+  .custom-mobile-navbar {
+    border-top: 3px solid #33b5e5; /* Couleur fun, à adapter */
+    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+  }
+
+  .custom-mobile-navbar .nav-link {
+    /* Centre bien le contenu + transition pour l'effet au survol */
+    text-align: center;
+    transition: color 0.2s ease, transform 0.2s ease;
+  }
+
+  /* Couleur & rebond léger au survol */
+  .custom-mobile-navbar .nav-link:hover {
+    color: #ff5722;
+    transform: translateY(-2px); /* petit déplacement vers le haut */
+  }
+
+  /* Le spacer doit avoir exactement la même hauteur que la navbar */
+  #scroll-spacer {
+    height: 50px; /* la hauteur précise de la navbar, par ex. 56 px */
+    background: transparent;
+  }
+}
