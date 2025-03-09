@@ -32,7 +32,7 @@ class CommentType extends AbstractType
                     'label' => 'Votre commentaire',
                     'attr'  => [
                         'class'       => 'form-control',
-                        'rows'        => 5,
+                        'rows'        => 2,
                         'placeholder' => 'Ecrivez votre commentaire ici...',
                     ],
                     'constraints' => [

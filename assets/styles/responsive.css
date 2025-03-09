@@ -29,4 +29,13 @@
     height: 50px; /* la hauteur précise de la navbar, par ex. 56 px */
     background: transparent;
   }
+
+  .btn-neutral {
+    margin-bottom: 1rem;
+  }
+
+  /* Adapter les icônes plus */
+  .card-bg-blur .fa-square-plus {
+    color: #ffffff;
+  }
 }

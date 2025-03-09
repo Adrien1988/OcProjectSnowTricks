@@ -5,6 +5,7 @@
 
 .comment-box {
   border-left: 5px solid #333;
+  background-color: #e9ecef; /* Blanc pur pour mieux ressortir sur fond clair */
 }
 
 /* Nom d’utilisateur */
