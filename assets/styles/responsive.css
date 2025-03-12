@@ -38,4 +38,40 @@
   .card-bg-blur .fa-square-plus {
     color: #ffffff;
   }
+
+  .d-flex.flex-md-nowrap {
+    flex-direction: column;
+    align-items: flex-end;
+  }
+
+  .form-group-centered {
+    width: 100%;
+    max-width: 100%; /* Prend toute la largeur */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .form-group-centered .form-control,
+  .form-group-centered .form-select {
+    width: 90%; /* Augmente la largeur des champs */
+    max-width: 500px; /* Évite qu'ils soient trop larges */
+  }
+
+  .form-group-centered label {
+    text-align: center;
+    width: 100%;
+  }
+
+  .buttons-container {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    margin-top: 10px;
+  }
+
+  .buttons-container button {
+    width: 70%;
+  }
 }

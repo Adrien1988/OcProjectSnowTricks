@@ -1,6 +1,9 @@
 /* CAPTCHA */
 .form-label {
-  font-weight: 600;
+    font-family: "Open Sans", Arial, sans-serif;
+    letter-spacing: 1px;
+    font-weight: 500;
+    text-transform: uppercase;
 }
 
 .captcha-container {
