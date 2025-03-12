@@ -23,8 +23,8 @@
 			<h2 class="mb-3">Présentation</h2>
 			<p class="fs-5 text-muted">
 				Sur SnowTricks, explorez, apprenez et partagez les figures emblématiques du snowboard.
-								            Que vous soyez débutant ou rider confirmé, notre communauté est là pour vous inspirer
-								            et échanger conseils et astuces. Rejoignez-nous !
+												            Que vous soyez débutant ou rider confirmé, notre communauté est là pour vous inspirer
+												            et échanger conseils et astuces. Rejoignez-nous !
 			</p>
 		</div>
 	</div>
@@ -128,6 +128,7 @@
 						{{ form_widget(createFigureForm.description, {'attr': {'class': 'form-control', 'rows': 4}}) }}
 					</div>
 					<div class="mb-3">
+						{{ form_label(createFigureForm.figureGroup) }}
 						{{ form_widget(createFigureForm.figureGroup, {'attr': {'class': 'form-select'}}) }}
 					</div>
 					<div class="d-grid">

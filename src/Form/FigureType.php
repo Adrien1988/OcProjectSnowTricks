@@ -51,7 +51,7 @@ class FigureType extends AbstractType
                 'figureGroup',
                 ChoiceType::class,
                 [
-                    'label'       => false, // Supprime le label au-dessus du champ
+                    'label'       => 'Groupe de Figures', // Supprime le label au-dessus du champ
                     'choices'     => [
                         'Grabs'              => 'grabs',
                         'Rotations'          => 'rotations',

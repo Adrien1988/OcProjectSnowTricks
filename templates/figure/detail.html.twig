@@ -98,7 +98,7 @@
 
 						<div class="mb-3 text-center">
 							{{ form_label(imageForm.file, null, { 'label_attr': {'class': 'form-label d-block mb-2'} }) }}
-							{{ form_widget(imageForm.file, {'attr': {'class': 'form-control mx-auto', 'style': 'max-width: 300px;'}}) }}
+							{{ form_widget(imageForm.file, {'attr': {'class': 'form-control'}}) }}
 						</div>
 
 						<div class="d-grid">
@@ -124,7 +124,10 @@
                     'action': path('app_figure_add_video', { id: figure.id }),
                     'method': 'POST'
                 }) }}
-						{{ form_widget(videoForm) }}
+						<div class="mb-3 text-center">
+							{{ form_label(videoForm.embedCode, null, { 'label_attr': {'class': 'form-label d-block mb-2'} }) }}
+							{{ form_widget(videoForm.embedCode, {'attr': {'class': 'form-control'}}) }}
+						</div>
 						<div class="d-grid mt-3">
 							<button type="submit" class="btn btn-figure-submit">Ajouter</button>
 						</div>
@@ -172,9 +175,10 @@
 					<h5 class="text-uppercase">Ajouter un commentaire</h5>
 					{{ form_start(commentForm, {
                 'action': path('app_figure_add_comment', { 'id': figure.id }),
-                'method': 'POST'
+                'method': 'POST',
+                'attr' : {'class': 'mx-auto', 'style': 'max-width: 600px;'}
             }) }}
-					{{ form_widget(commentForm.content, {'label': false}) }}
+					{{ form_widget(commentForm.content, {'label': false, 'attr' : { 'class': 'form-control', 'rows': 3, 'placeholder': 'Ecrivez votre commentaire ici...' } }) }}
 					<div class="d-grid mt-3">
 						<button type="submit" class="btn btn-comment-submit">Publier</button>
 					</div>

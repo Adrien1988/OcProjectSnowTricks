@@ -34,7 +34,6 @@ class VideoType extends AbstractType
                     'attr'  => [
                         'placeholder' => 'Exemple : <iframe ...></iframe>',
                         'rows'        => 5,
-                        'class'       => 'form-control',
                     ],
                     'constraints' => [
                         new NotBlank(

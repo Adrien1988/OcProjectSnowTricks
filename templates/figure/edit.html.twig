@@ -63,8 +63,8 @@
 	</div>
 
 	<!-- Formulaire de modification centré et réduit -->
-	<div class="my-5 p-4 bg-light rounded shadow-lg w-100">
-		{{ form_start(form, { 'attr': { 'class': 'form w-50 mx-auto text-center' } }) }}
+	<div class="my-5 p-4 bg-light rounded shadow-lg text-center w-100">
+		{{ form_start(form, { 'attr': { 'class': 'mx-auto', 'style': 'max-width: 600px;' } }) }}
 		<div class="mb-3 form-group-centered">
 			{{ form_label(form.name, 'Nom de la figure', { 'label_attr': { 'class': 'form-label' } }) }}
 			{{ form_widget(form.name, { 'attr': { 'class': 'form-control' } }) }}
@@ -73,13 +73,13 @@
 			{{ form_label(form.description, 'Description', { 'label_attr': { 'class': 'form-label' } }) }}
 			{{ form_widget(form.description, { 'attr': { 'class': 'form-control', 'rows': 5 } }) }}
 		</div>
-		<div class="mb-3 form-group-centered">
-			<label for="{{ form.figureGroup.vars.id }}" class="form-label">Groupe de Figures</label>
+		<div class="mb-3 d-flex flex-column align-items-start figure-group-align" style="width: max-content;">
+			{{ form_label(form.figureGroup, null, { 'label_attr': { 'class': 'form-label text-center w-100' } }) }}
 			{{ form_widget(form.figureGroup, { 'attr': { 'class': 'form-select w-auto' } }) }}
 		</div>
 
 		<!-- Boutons alignés correctement -->
-		<div class="buttons-container">
+		<div class="d-flex justify-content-end gap-2 flex-wrap flex-md-nowrap buttons-container">
 			<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteFigureModal">Supprimer</button>
 			<button type="submit" class="btn btn-figure-submit">Enregistrer</button>
 		</div>

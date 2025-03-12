@@ -23,14 +23,9 @@
   gap: 10px;
 }
 
-/* Style spécifique à la modale du formulaire de création figure */
 .figure-form .form-control,
 .figure-form .form-select {
-  width: 100%;
-  padding: 8px;
   margin-top: 4px;
-  border-radius: 5px;
-  box-shadow: none;
 }
 
 .figure-form label {

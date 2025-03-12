@@ -30,11 +30,6 @@ class CommentType extends AbstractType
                 TextareaType::class,
                 [
                     'label' => 'Votre commentaire',
-                    'attr'  => [
-                        'class'       => 'form-control',
-                        'rows'        => 2,
-                        'placeholder' => 'Ecrivez votre commentaire ici...',
-                    ],
                     'constraints' => [
                         new NotBlank(['message' => 'Le commentaire ne peut pas être vide.']),
                         new Length(['max' => 500, 'maxMessage' => 'Le commentaire ne peut pas dépasser {{ limit }} caractères.']),
