@@ -49,7 +49,7 @@ class MainImageType extends AbstractType
                 SubmitType::class,
                 [
                     'label' => 'Définir comme image principale',
-                    'attr'  => ['class' => 'btn btn-primary'],
+                    'attr'  => ['class' => 'btn btn-main-image-submit'],
                 ]
             );
     }

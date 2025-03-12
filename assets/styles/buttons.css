@@ -18,7 +18,8 @@
 .btn-reset,
 .btn-captcha-renew,
 .btn-comment-submit,
-.btn-figure-submit {
+.btn-figure-submit,
+.btn-main-image-submit{
   background-color: #333;
   color: #ffffff;
   transition: background-color 0.2s ease, border-color 0.2s ease;
@@ -35,7 +36,9 @@
 .btn-comment-submit:hover,
 .btn-comment-submit:focus,
 .btn-figure-submit:hover,
-.btn-figure-submit:focus {
+.btn-figure-submit:focus,
+.btn-main-image-submit:hover,
+.btn-main-image-submit:focus {
   background-color: #444;
   color: #ffffff;
 }

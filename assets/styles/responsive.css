@@ -68,14 +68,12 @@
   }
 
   .buttons-container {
-    display: flex !important;
     justify-content: center !important;
     gap: 10px !important;
-    width: 100% !important;
-    margin-top: 10px !important;
   }
 
   .buttons-container button {
     width: 35%;
+    white-space: nowrap;
   }
 }
