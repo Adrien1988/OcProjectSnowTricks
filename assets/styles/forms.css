@@ -46,3 +46,13 @@
 .modal-footer {
   border-top: none;
 }
+
+.checkbox-container {
+    display: flex;
+    align-items: center; /* Centre verticalement la case à cocher avec le texte */
+    gap: 8px; /* Espace entre la checkbox et le texte */
+}
+
+.checkbox-container .form-check-input {
+    margin-top: 0; /* Supprime l'espacement par défaut qui crée un décalage */
+}

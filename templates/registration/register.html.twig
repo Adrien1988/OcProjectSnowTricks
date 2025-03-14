@@ -10,9 +10,9 @@
 				class="col-lg-6">
 				<!-- Carte du formulaire -->
 				<div class="card shadow-lg">
-					<div class="card-body">
-						<h1 class="h4 text-center">Créer un compte</h1>
-						<p class="text-muted text-center">Rejoignez SnowTricks et partagez vos figures de snowboard !</p>
+					<div class="card-body text-center">
+						<h1 class="h1-small">S'enregistrer</h1>
+						<p class="text-muted">Rejoignez SnowTricks et partagez vos figures de snowboard !</p>
 
 						<!-- Formulaire -->
 						{{ form_start(registrationForm) }}
@@ -59,9 +59,9 @@
 						</div>
 
 						<!-- Checkbox CGU -->
-						<div class="form-check mb-3">
+						<div class="form-check checkbox-container">
 							{{ form_widget(registrationForm.agreeTerms, {'attr': {'class': 'form-check-input'}}) }}
-							{{ form_label(registrationForm.agreeTerms, null, {'label_attr': {'class': 'form-check-label'}}) }}
+							{{ form_label(registrationForm.agreeTerms, null, {'label_attr': {'class': 'form-check-label mb-0'}}) }}
 							{{ form_errors(registrationForm.agreeTerms) }}
 						</div>
 

@@ -1,57 +1,59 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Connexion{% endblock %}
+{% block title %}Connexion
+{% endblock %}
 
 {% block body %}
-<section class="container my-5">
-  <div class="row justify-content-center">
-    <div class="col-md-6">
-      <div class="card shadow-lg">
-        <div class="card-body">
-          {% if error %}
-            <div class="alert alert-danger">
-              {{ error.messageKey|trans(error.messageData, 'security') }}
-            </div>
-          {% endif %}
+	<section class="container my-5">
+		<div class="row justify-content-center">
+			<div class="col-md-6">
+				<div class="card shadow-lg">
+					<div class="card-body text-center">
+						{% if error %}
+							<div class="alert alert-danger">
+								{{ error.messageKey|trans(error.messageData, 'security') }}
+							</div>
+						{% endif %}
 
-          {% if app.user %}
-            <div class="mb-3">
-              Vous êtes connecté(e) comme <strong>{{ app.user.userIdentifier }}</strong>,
-              <a href="{{ path('app_logout') }}">Me déconnecter</a>
-            </div>
-          {% endif %}
+						{% if app.user %}
+							<div class="mb-3">
+								Vous êtes connecté(e) comme
+								<strong>{{ app.user.userIdentifier }}</strong>,
+								<a href="{{ path('app_logout') }}">Me déconnecter</a>
+							</div>
+						{% endif %}
 
-          <h1 class="h4 mb-3 text-center">Me connecter</h1>
-          
-          <form method="post">
-            <div class="mb-3">
-              <label for="inputEmail" class="form-label">Email</label>
-              <input type="email" name="email" id="inputEmail" class="form-control" value="{{ last_username }}" autocomplete="email" required autofocus>
-            </div>
+						<h1 class="h1-small">Me connecter</h1>
 
-            <div class="mb-3">
-              <label for="inputPassword" class="form-label">Mot de passe</label>
-              <input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" required>
-            </div>
+						<form method="post">
+							<div class="mb-3">
+								<label for="inputEmail" class="form-label">Email</label>
+								<input type="email" name="email" id="inputEmail" class="form-control" value="{{ last_username }}" autocomplete="email" required autofocus placeholder="Entrez votre email">
+							</div>
 
-            <input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
+							<div class="mb-3">
+								<label for="inputPassword" class="form-label">Mot de passe</label>
+								<input type="password" name="password" id="inputPassword" class="form-control" autocomplete="current-password" required placeholder="Entrez votre mot de passe">
+							</div>
 
-            <div class="form-check mb-3">
-              <input type="checkbox" name="_remember_me" class="form-check-input" id="rememberMe">
-              <label for="rememberMe" class="form-check-label">Se souvenir de moi</label>
-            </div>
+							<input type="hidden" name="_csrf_token" value="{{ csrf_token('authenticate') }}">
 
-            <button class="btn btn-lg btn-login w-100 mt-3" type="submit">
-              Me connecter
-            </button>
+							<div class="form-check checkbox-container">
+								<input type="checkbox" name="_remember_me" class="form-check-input" id="rememberMe">
+								<label for="rememberMe" class="form-check-label mb-0">Se souvenir de moi</label>
+							</div>
 
-            <div class="mt-3 text-center">
-              <a href="{{ path('app_forgot_password') }}" class="no-underline">Mot de passe oublié ?</a>
-            </div>
-          </form>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+							<button class="btn btn-lg btn-login w-100 mt-3" type="submit">
+								Me connecter
+							</button>
+
+							<div class="mt-3 text-center">
+								<a href="{{ path('app_forgot_password') }}" class="no-underline">Mot de passe oublié ?</a>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</section>
 {% endblock %}
