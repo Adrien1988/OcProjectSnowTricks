@@ -2,30 +2,37 @@
 <html>
 	<head>
 		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<title>
 			{% block title %}Welcome!
 			{% endblock %}
 		</title>
 		<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text><text y=%221.3em%22 x=%220.2em%22 font-size=%2276%22 fill=%22%23fff%22>sf</text></svg>">
-        <script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
+		<script src="https://use.fontawesome.com/releases/v6.3.0/js/all.js" crossorigin="anonymous"></script>
 		{% block stylesheets %}
 			<link rel="stylesheet" href="{{ asset('build/vendors.css') }}">
 			<link rel="stylesheet" href="{{ asset('build/app.css') }}">
 		{% endblock %}
 	</head>
-	<body class="d-flex flex-column min-vh-100 pt-5">
+	<body
+		class="d-flex flex-column min-vh-100">
 
-		<!-- Navbar -->
+		{# Navbar desktop, visible à partir de md (≥768px) #}
 		{% include 'partials/_navbar.html.twig' %}
 
 		<!-- Contenu principal -->
-		<main class="flex-grow-1">
-        {% include 'partials/_flashes.html.twig' %} 
-            {% block body %}{% endblock %}
+		<main class="flex-grow-1" id="main-content">
+			{% include 'partials/_flashes.html.twig' %}
+			{% block body %}{% endblock %}
 		</main>
 
 		<!-- Footer -->
 		{% include 'partials/_footer.html.twig' %}
+
+		<div id="scroll-spacer"></div>
+        
+		<!-- Navbar mobile, visible < md, fixée en bas -->
+		{% include 'partials/_navbar_mobile.html.twig' %}
 
 
 		{% block javascripts %}

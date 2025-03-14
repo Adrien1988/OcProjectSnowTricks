@@ -2,7 +2,6 @@
 
 namespace App\Form;
 
-use App\DataTransformer\SlugTransformer;
 use App\Entity\Figure;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
@@ -13,19 +12,6 @@ use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class FigureType extends AbstractType
 {
-
-    private SlugTransformer $slugTransformer;
-
-
-    /**
-     * Constructeur du formulaire FigureType.
-     *
-     * @param SlugTransformer $slugTransformer Transforme le champ 'name' en un slug valide
-     */
-    public function __construct(SlugTransformer $slugTransformer)
-    {
-        $this->slugTransformer = $slugTransformer;
-    }
 
 
     /**
@@ -65,7 +51,7 @@ class FigureType extends AbstractType
                 'figureGroup',
                 ChoiceType::class,
                 [
-                    'label'       => false, // Supprime le label au-dessus du champ
+                    'label'       => 'Groupe de Figures', // Supprime le label au-dessus du champ
                     'choices'     => [
                         'Grabs'              => 'grabs',
                         'Rotations'          => 'rotations',
@@ -78,14 +64,9 @@ class FigureType extends AbstractType
                     'placeholder' => 'Sélectionnez un groupe',
                     'empty_data'  => '', // Pour éviter qu'une valeur vide pose problème
                     'required'    => true,
-                    'attr'        => [
-                        'class' => 'form-select w-auto text-center',
-                    ],
                 ]
             );
 
-        // Appliquer le transformer au champ "name"
-        $builder->get('name')->addModelTransformer($this->slugTransformer);
     }
 
 

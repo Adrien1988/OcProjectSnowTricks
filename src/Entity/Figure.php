@@ -51,7 +51,6 @@ class Figure
      * Slug de la figure.
      */
     #[ORM\Column(length: 255)]
-    // #[Assert\NotBlank(message: 'Le slug est obligatoire.')]
     private ?string $slug = null;
 
     /**

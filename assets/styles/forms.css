@@ -1,0 +1,58 @@
+/* CAPTCHA */
+.form-label {
+    font-family: "Open Sans", Arial, sans-serif;
+    letter-spacing: 1px;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.captcha-container {
+  border: 1px solid #ccc;
+  padding: 8px;
+  border-radius: 5px;
+  background: #f8f9fa;
+  justify-content: space-between;
+}
+
+.captcha-container > *:first-child {
+  margin-right: 10px;
+}
+
+.captcha-container a {
+  display: none !important;
+  gap: 10px;
+}
+
+.figure-form .form-control,
+.figure-form .form-select {
+  margin-top: 4px;
+}
+
+.figure-form label {
+  font-weight: 600;
+  color: #333;
+}
+
+.modal-content {
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.modal-header {
+  border-bottom: none;
+}
+
+.modal-footer {
+  border-top: none;
+}
+
+.checkbox-container {
+    display: flex;
+    align-items: center; /* Centre verticalement la case à cocher avec le texte */
+    gap: 8px; /* Espace entre la checkbox et le texte */
+}
+
+.checkbox-container .form-check-input {
+    margin-top: 0; /* Supprime l'espacement par défaut qui crée un décalage */
+}

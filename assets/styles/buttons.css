@@ -1,0 +1,56 @@
+/* === 🌟 STYLES DE TOUS LES BOUTONS === */
+
+.btn-neutral {
+  background-color: #f5f5f5;
+  color: #333;
+  border: 1px solid #ccc;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.btn-neutral:hover {
+  background-color: #e0e0e0;
+  color: #333;
+}
+
+/* Boutons principaux du site (login, inscription, reset, captcha, commentaire) */
+.btn-login,
+.btn-register,
+.btn-reset,
+.btn-captcha-renew,
+.btn-comment-submit,
+.btn-figure-submit,
+.btn-main-image-submit{
+  background-color: #333;
+  color: #ffffff;
+  transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.btn-login:hover,
+.btn-login:focus,
+.btn-register:hover,
+.btn-register:focus,
+.btn-reset:hover,
+.btn-reset:focus,
+.btn-captcha-renew:hover,
+.btn-captcha-renew:focus,
+.btn-comment-submit:hover,
+.btn-comment-submit:focus,
+.btn-figure-submit:hover,
+.btn-figure-submit:focus,
+.btn-main-image-submit:hover,
+.btn-main-image-submit:focus {
+  background-color: #444;
+  color: #ffffff;
+}
+
+.btn-neutral:focus {
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* Bouton captcha spécifique */
+.btn-captcha-renew {
+  margin-left: 10px;
+  margin-bottom: 10px;
+  transition: transform 0.2s ease;
+}

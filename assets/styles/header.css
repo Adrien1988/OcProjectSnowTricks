@@ -1,0 +1,25 @@
+.hero-header {
+  height: 60vh;
+  background: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)),
+    url("../images/header-bg.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  color: #fff;
+}
+
+.intro-section {
+  /* Ajuste l’espacement vertical si nécessaire */
+  margin: 2rem auto;
+  max-width: 800px; /* Limite la largeur pour un meilleur confort de lecture */
+}
+
+/* Facultatif : changer la couleur du titre */
+.intro-section h2 {
+  color: #333;
+}
+
+/* Facultatif : peaufiner le texte du paragraphe */
+.intro-section p {
+  line-height: 1.6;
+}

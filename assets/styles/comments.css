@@ -1,0 +1,29 @@
+.comments-container {
+  max-width: 800px;
+  margin: auto;
+}
+
+.comment-box {
+  border-left: 5px solid #333;
+  background-color: #e9ecef; /* Blanc pur pour mieux ressortir sur fond clair */
+}
+
+/* Nom d’utilisateur */
+.comment-username {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #333;
+}
+
+/* Date du commentaire */
+.comment-date {
+  font-size: 0.85rem;
+  color: #777;
+}
+
+/* Texte du commentaire */
+.comment-text {
+  font-size: 0.95rem;
+  line-height: 1.4;
+  color: #444;
+}

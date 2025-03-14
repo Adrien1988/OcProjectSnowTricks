@@ -95,9 +95,17 @@ class SecurityController extends BaseController
                     ->to($user->getEmail())
                     ->subject('Réinitialisation de votre mot de passe')
                     ->html(
-                        '<p>Cliquez sur le bouton ci-dessous pour réinitialiser votre mot de passe :</p>
-                    <p><a href="'.$resetUrl.'" style="display: inline-block; padding: 10px 15px; background-color: #007bff; 
-                        color: white; text-decoration: none; border-radius: 5px;">Réinitialiser mon mot de passe</a></p>'
+                        '<p style="font-family: Arial, sans-serif; color: #333; font-size: 16px;">
+        Cliquez sur le bouton ci-dessous pour réinitialiser votre mot de passe :
+    </p>
+    <p style="text-align: center;">
+        <a href="'.$resetUrl.'" 
+            style="display: inline-block; padding: 12px 20px; background-color: #333; 
+            color: white; text-decoration: none; font-size: 16px; border-radius: 6px;
+            font-weight: bold; font-family: Arial, sans-serif;">
+            Réinitialiser mon mot de passe
+        </a>
+    </p>'
                     );
 
                 $mailer->send($emailMessage);
