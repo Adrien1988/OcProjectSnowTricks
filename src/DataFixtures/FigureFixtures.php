@@ -2,31 +2,16 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Comment;
 use App\Entity\Figure;
 use App\Entity\Image;
 use App\Entity\User;
 use App\Entity\Video;
 use Doctrine\Bundle\FixturesBundle\Fixture;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
 use Doctrine\Persistence\ObjectManager;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasher;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
-class FigureFixtures extends Fixture
+class FigureFixtures extends Fixture implements DependentFixtureInterface
 {
-
-    private UserPasswordHasher $passwordHasher;
-
-
-    /**
-     * Constructeur.
-     *
-     * @param UserPasswordHasherInterface $passwordHasher service pour hacher les mots de passe des utilisateurs
-     */
-    public function __construct(UserPasswordHasherInterface $passwordHasher)
-    {
-        $this->passwordHasher = $passwordHasher;
-    }
 
 
     /**
@@ -38,14 +23,9 @@ class FigureFixtures extends Fixture
      */
     public function load(ObjectManager $manager): void
     {
-
-        // créer un utilisateur de démo
-        $user = new User();
-        $user->setUsername('demo_user')
-            ->setEmail('demo@example.com')
-            ->setIsActive(true)
-            ->setPassword($this->passwordHasher->hashPassword($user, 'password'));
-        $manager->persist($user);
+        // Liste des références d'utilisateurs créés dans UserFixtures
+        // (assure-toi d’avoir un addReference('demo-user', $user) etc. pour chacun)
+        $userReferences = ['demo-user', 'jane-user', 'john-user'];
 
         // Liste des figures
         $figures = [
@@ -107,15 +87,18 @@ class FigureFixtures extends Fixture
             $figure->setName($data['name'])
                 ->setDescription($data['description'])
                 ->setFigureGroup($data['group'])
-                ->setSlug(strtolower(str_replace(' ', '-', $data['name'])))
-                ->setAuthor($user);
-            $manager->persist($figure);
+                ->setSlug(strtolower(str_replace(' ', '-', $data['name'])));
+
+            // Choisir un utilisateur au hasard dans $userReferences
+            $randomUserRef = $userReferences[array_rand($userReferences)];
+            $user = $this->getReference($randomUserRef, User::class);
+            $figure->setAuthor($user);
 
             // Ajouter 3 images par figure
             for ($j = 1; $j <= 3; ++$j) {
                 $image = new Image();
-                $image->setUrl('uploads/figure_'.($i + 1).'_image_'.$j.'.jpg')
-                    ->setAltText('Image '.$j.' de la figure '.$data['name'])
+                $image->setUrl('uploads/figure_'.($i + 1)."_image_$j.jpg")
+                    ->setAltText("Image $j de la figure {$data['name']}")
                     ->setFigure($figure);
                 $manager->persist($image);
             }
@@ -126,17 +109,25 @@ class FigureFixtures extends Fixture
                 ->setFigure($figure);
             $manager->persist($video);
 
-            // Ajouter un commentaire
-            for ($k = 1; $k <= 2; ++$k) {
-                $comment = new Comment();
-                $comment->setContent("Commentaire $k pour la figure $i")
-                    ->setAuthor($user)
-                    ->setFigure($figure);
-                $manager->persist($comment);
-            }
+            $manager->persist($figure);
+
+            $this->addReference('figure-'.$i, $figure);
         }
 
         $manager->flush();
+    }
+
+
+    /**
+     * Indique la liste des fixtures dont dépend FigureFixtures.
+     *
+     * @return array<class-string> Liste des classes de fixtures parent
+     */
+    public function getDependencies(): array
+    {
+        return [
+            UserFixtures::class,
+        ];
     }
 
 
