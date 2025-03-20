@@ -84,19 +84,19 @@
 		<!-- Modale pour ajouter une image -->
 		<div class="modal fade" id="addImageModal" tabindex="-1" aria-labelledby="addImageModalLabel" aria-hidden="true">
 			<div class="modal-dialog modal-dialog-centered">
-				<div class="modal-content shadow-lg border-0 rounded">
-					<div class="modal-header bg-light rounded-top">
+				<div class="modal-content text-center shadow-lg">
+					<div class="modal-header">
 						<h5 class="modal-title text-uppercase" id="addImageModalLabel">Ajouter une image</h5>
 						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 					</div>
-					<div class="modal-body bg-light rounded-bottom">
+					<div class="modal-body">
 						{{ form_start(imageForm, {
                     'action': path('app_figure_add_image', { figureId: figure.id }),
                     'method': 'POST',
                     'attr': { 'enctype': 'multipart/form-data' }
                 }) }}
 
-						<div class="mb-3 text-center">
+						<div class="mb-3">
 							{{ form_label(imageForm.file, null, { 'label_attr': {'class': 'form-label d-block mb-2'} }) }}
 							{{ form_widget(imageForm.file, {'attr': {'class': 'form-control'}}) }}
 						</div>
@@ -114,17 +114,17 @@
 		<!-- Modale pour ajouter une vidéo -->
 		<div class="modal fade" id="addVideoModal" tabindex="-1" aria-labelledby="addVideoModalLabel" aria-hidden="true">
 			<div class="modal-dialog modal-dialog-centered">
-				<div class="modal-content shadow-lg border-0 rounded">
-					<div class="modal-header bg-light rounded-top">
+				<div class="modal-content text-center shadow-lg">
+					<div class="modal-header">
 						<h5 class="modal-title text-uppercase" id="addVideoModalLabel">Ajouter une vidéo</h5>
 						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 					</div>
-					<div class="modal-body bg-light rounded-bottom">
+					<div class="modal-body">
 						{{ form_start(videoForm, {
-                    'action': path('app_figure_add_video', { id: figure.id }),
+                    'action': path('app_figure_add_video', { figureId: figure.id }),
                     'method': 'POST'
                 }) }}
-						<div class="mb-3 text-center">
+						<div class="mb-3">
 							{{ form_label(videoForm.embedCode, null, { 'label_attr': {'class': 'form-label d-block mb-2'} }) }}
 							{{ form_widget(videoForm.embedCode, {'attr': {'class': 'form-control'}}) }}
 						</div>

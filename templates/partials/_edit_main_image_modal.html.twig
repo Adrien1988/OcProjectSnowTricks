@@ -1,8 +1,8 @@
 <div class="modal fade" id="editMainImageModal" tabindex="-1" aria-labelledby="editMainImageModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
-		<div class="modal-content">
+		<div class="modal-content text-center shadow-lg">
 			<div class="modal-header">
-				<h5 class="modal-title" id="editMainImageModalLabel">Modifier l'image principale</h5>
+				<h5 class="modal-title text-uppercase" id="editMainImageModalLabel">Modifier l'image principale</h5>
 				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 			</div>
 			<div class="modal-body">
@@ -11,7 +11,7 @@
                     'method': 'POST'
                 }) }}
 
-				<div class="mb-3 text-center">
+				<div class="mb-3">
 					<label class="form-label">Sélectionnez l'image principale</label>
 					<div class="d-flex flex-wrap justify-content-center gap-3">
 						{% for radio in mainImageForm.mainImage %}

@@ -33,12 +33,6 @@
   color: #333;
 }
 
-.modal-content {
-  background-color: #fff;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
 .modal-header {
   border-bottom: none;
 }

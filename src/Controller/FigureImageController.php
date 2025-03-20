@@ -6,360 +6,184 @@ use App\Entity\Figure;
 use App\Entity\Image;
 use App\Form\ImageType;
 use App\Form\MainImageType;
-use App\Service\EntityService;
 use App\Service\FileUploader;
-use Symfony\Component\Form\FormInterface;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 #[Route('/figure/image')]
-class FigureImageController extends AbstractCrudController
+class FigureImageController extends AbstractController
 {
 
 
     /**
      * Constructeur du contrôleur FigureImageController.
      *
-     * @param EntityService $entityService Service pour la gestion des entités
-     * @param FileUploader  $fileUploader  Service pour l'upload/suppression de fichiers
+     * @param FileUploader $fileUploader Service pour l'upload/suppression de fichiers
      *
      * @return void
      */
     public function __construct(
-        protected EntityService $entityService,
         private FileUploader $fileUploader,
     ) {
-        parent::__construct($entityService);
     }
 
 
     /**
-     * Renvoie le FQCN de l’entité manipulée par ce contrôleur (Image::class).
+     * Crée ou édite une image pour une figure.
      *
-     * @return string
-     */
-    protected function getEntityClass(): string
-    {
-        return Image::class;
-    }
-
-
-    /**
-     * Renvoie le FQCN du formulaire associé à l’entité Image (ImageType::class).
+     * Routes :
+     *  - "/figure/image/add/{figureId}"  => app_figure_add_image (création)
+     *  - "/figure/image/edit/{id}"       => app_figure_edit_image (édition)
      *
-     * @return string
-     */
-    protected function getFormType(): string
-    {
-        return ImageType::class;
-    }
-
-
-    /**
-     * Surcharge de createNewEntity si nécessaire.
-     * Ici, on renvoie juste new Image().
-     *
-     * @return object
-     */
-    protected function createNewEntity(): object
-    {
-        return new Image();
-    }
-
-
-    /**
-     * Hook exécuté après la validation du formulaire mais avant l'enregistrement en base.
-     *
-     * Permet d'associer l'image à une figure et de gérer l'upload du fichier.
-     *
-     * @param object        $entity  L'entité Image en cours de traitement
-     * @param Request       $request la requête HTTP
-     * @param FormInterface $form    le formulaire validé
-     *
-     * @return void
-     */
-    protected function onFormSuccess(object $entity, Request $request, FormInterface $form): void
-    {
-        /*
-         * @var Image $image
-         */
-
-        $image = $entity;
-
-        // Récupérer l'ID de la figure passé dans l'URL
-        $figureId = $request->attributes->get('figureId');
-        if ($figureId) {
-            $figure = $this->entityService->findEntityById(Figure::class, $figureId);
-            if ($figure) {
-                $image->setFigure($figure);
-            }
-        }
-
-        // Gérer l'upload si le champ file est présent
-        $uploadedFile = $form->get('file')->getData();
-        if ($uploadedFile) {
-            $newFilename = $this->fileUploader->upload($uploadedFile);
-            if ($newFilename) {
-                $image->setUrl('/uploads/'.$newFilename);
-            }
-        }
-    }
-
-
-    /**
-     * Redirige après la création réussie d'une image.
-     *
-     * Après l'ajout d'une image, cette méthode redirige vers la page de détail de la figure associée
-     * au lieu de la page d'accueil.
-     *
-     * @param object $entity L'entité nouvellement créée (ici, une Image)
-     *
-     * @return RedirectResponse la réponse de redirection après la création
-     */
-    protected function redirectAfterCreate(object $entity): RedirectResponse
-    {
-        /*
-         * @var Image $image
-         */
-
-        $image = $entity;
-        $figure = $image->getFigure();
-
-        if (!$figure) {
-            // Par prudence : si figure est null, on redirige home ?
-            return $this->redirectToRoute('app_home');
-        }
-
-        return $this->redirectToRoute(
-            'app_figure_detail',
-            [
-                'id'   => $figure->getId(),
-                'slug' => $figure->getSlug(),
-            ]
-        );
-    }
-
-
-    /**
-     * Surcharge de redirectAfterUpdate() pour rediriger vers la page d'édition de la figure
-     * après la mise à jour d'une image.
-     *
-     * @param object $entity L'entité Image modifiée
-     *
-     * @return RedirectResponse
-     */
-    protected function redirectAfterUpdate(object $entity): RedirectResponse
-    {
-        /*
-         * @var Image $image
-         */
-
-        $image = $entity;
-        $figure = $image->getFigure();
-        if ($figure) {
-            return $this->redirectToRoute('app_figure_edit', ['id' => $figure->getId()]);
-        }
-
-        return $this->redirectToRoute('app_home');
-    }
-
-
-    /**
-     * Surcharge de redirectAfterDelete() pour rediriger vers la page d'édition de la figure
-     * après la suppression d'une image.
-     *
-     * @param object $entity L'entité Image supprimée
-     *
-     * @return RedirectResponse
-     */
-    protected function redirectAfterDelete(object $entity): RedirectResponse
-    {
-        /*
-         * @var Image $image
-         */
-
-        $image = $entity;
-        $figure = $image->getFigure();
-        if ($figure) {
-            return $this->redirectToRoute('app_figure_edit', ['id' => $figure->getId()]);
-        }
-
-        return $this->redirectToRoute('app_home');
-    }
-
-
-    /**
-     * Affiche le formulaire de création d'une image si nécessaire.
-     *
-     * Cette méthode doit être surchargée dans une classe dérivée si une vue GET est requise.
-     * Par défaut, elle lève une exception car aucune page GET n'est prévue pour la création d'une image.
-     *
-     * @param object        $entity L'entité Image en cours de création
-     * @param FormInterface $form   le formulaire associé à l'entité
-     *
-     * @throws \LogicException si la méthode n'est pas surchargée
-     *
-     * @return mixed cette méthode doit être surchargée pour retourner une réponse valide
-     */
-    protected function renderCreateForm($entity, $form)
-    {
-        throw new \LogicException("Pas de page GET pour la création d'une Image dans ".__CLASS__);
-    }
-
-
-    /**
-     * Affiche le formulaire d'édition d'une image via une requête GET.
-     *
-     * Cette méthode peut être surchargée pour personnaliser l'affichage du formulaire d'édition.
-     *
-     * @param object        $entity L'entité Image à modifier
-     * @param FormInterface $form   le formulaire associé à l'entité
-     *
-     * @return Response la réponse contenant le rendu du formulaire
-     */
-    protected function renderEditForm($entity, $form)
-    {
-        // Exemple minimal : renvoyer un template twig (facultatif)
-        return $this->render(
-            'figure_image/edit.html.twig',
-            [
-                'form'  => $form->createView(),
-                'image' => $entity,
-            ]
-        );
-    }
-
-
-    // ------------------------------------------------------------------
-    //                        ROUTES CRUD (IMAGES)
-    // ------------------------------------------------------------------
-
-
-    /**
-     * Ajoute une image à une figure (utilise l'abstract createAction()).
-     * On crée un "addImage" pour la route, puis on appelle createAction().
-     *
-     * @param Request $request  La requête
-     * @param int     $figureId L'ID de la figure à laquelle on associe l'image
+     * @param Request                $request  La requête HTTP
+     * @param EntityManagerInterface $em       Le gestionnaire d'entités Doctrine
+     * @param int|null               $figureId L'ID de la figure (pour la création, null pour édition)
+     * @param Image|null             $image    L'entité Image à modifier (null si création)
      *
      * @return Response|RedirectResponse
      */
     #[Route('/add/{figureId}', name: 'app_figure_add_image', methods: ['GET', 'POST'])]
-    public function addImage(Request $request, int $figureId): Response|RedirectResponse
-    {
-        $this->denyAccessUnlessGranted('ROLE_USER');
-
-        // Si vous devez associer l'image à la figure dans onFormSuccess(),
-        // vous pouvez passer l'id de la figure dans la Request :
-        $request->attributes->set('figureId', $figureId);
-
-        // On délègue le cycle de création (création entité, form, handleForm, etc.) au parent
-        return $this->createAction(
-            $request,
-            "L'image a été ajoutée avec succès.",
-            'app_figure_detail',
-            ['id' => $figureId]
-        );
-    }
-
-
-    /**
-     * Édite une image existante (utilise l'abstract editAction()).
-     *
-     * @param int     $id      L'ID de l'image
-     * @param Request $request La requête
-     *
-     * @return Response|RedirectResponse
-     */
     #[Route('/edit/{id}', name: 'app_figure_edit_image', methods: ['GET', 'POST'])]
-    public function editImage(int $id, Request $request): Response|RedirectResponse
+    public function formImage(Request $request, EntityManagerInterface $em, ?int $figureId = null, ?Image $image = null): Response|RedirectResponse
     {
-        $this->denyAccessUnlessGranted('ROLE_USER');
+        $isEdit = ($image && $image->getId());
 
-        // Vérification si besoin (voter, etc.)
-        $image = $this->entityService->findEntityById(Image::class, $id);
-        if (!$image) {
-            $this->addFlash('error', 'Image introuvable.');
+        if (!$isEdit) {
+            $image = new Image();
+
+            if ($figureId) {
+                $figure = $em->getRepository(Figure::class)->find($figureId);
+                if (!$figure) {
+                    $this->addFlash('error', 'Figure introuvable pour associer une image.');
+
+                    return $this->redirectToRoute('app_home');
+                }
+
+                $image->setFigure($figure);
+            }
+        } else {
+            $this->denyAccessUnlessGranted('IMAGE_EDIT', $image);
+        }
+
+        $form = $this->createForm(ImageType::class, $image);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $uploadedFile = $form->get('file')->getData();
+            if ($uploadedFile) {
+                $newFilename = $this->fileUploader->upload($uploadedFile);
+                if ($newFilename) {
+                    $image->setUrl('/uploads/'.$newFilename);
+                }
+            }
+
+            $em->persist($image);
+            $em->flush();
+
+            $this->addFlash('success', $isEdit ? "L'image a été modifée avec succès." : "L'image a été ajoutée avec succès.");
+
+            $figure = $image->getFigure();
+            if ($figure) {
+                return $this->redirectToRoute(
+                    'app_figure_detail',
+                    [
+                        'id'   => $figure->getId(),
+                        'slug' => $figure->getSlug(),
+                    ]
+                );
+            }
 
             return $this->redirectToRoute('app_home');
         }
 
-        $this->denyAccessUnlessGranted('IMAGE_EDIT', $image);
-
-        // On appelle l'abstract => editAction()
-        return $this->editAction(
-            $id,
-            $request,
-            'Image modifiée avec succès',
-            'app_figure_edit_image',
-            ['id' => $id]
+        return $this->render(
+            'figure_image/form.html.twig',
+            [
+                'form'   => $form->createView(),
+                'image'  => $image,
+                'isEdit' => $isEdit,
+            ]
         );
     }
 
 
     /**
-     * Supprime une image existante (utilise l'abstract deleteAction()).
+     * Supprime une image existante.
      *
-     * @param int     $id      L'ID de l'image
-     * @param Request $request La requête
+     * @param Image                  $image   L'image à supprimer
+     * @param Request                $request La requête HTTP
+     * @param EntityManagerInterface $em      Le gestionnaire d'entités Doctrine
      *
      * @return RedirectResponse
      */
     #[Route('/delete/{id}', name: 'app_figure_delete_image', methods: ['POST'])]
-    public function deleteImage(int $id, Request $request): RedirectResponse
+    public function deleteImage(Image $image, Request $request, EntityManagerInterface $em): RedirectResponse
     {
-        $this->denyAccessUnlessGranted('ROLE_USER');
+        $this->denyAccessUnlessGranted('IMAGE_DELETE', $image);
 
-        // Vérif si l'image existe et si on a le droit de supprimer
-        $image = $this->entityService->findEntityById(Image::class, $id);
-        if (!$image) {
-            $this->addFlash('error', 'Image introuvable.');
+        if (!$this->isCsrfTokenValid('delete_image_'.$image->getId(), $request->request->get('_token'))) {
+            $this->addFlash('error', 'Token CSRF invalide.');
 
             return $this->redirectToRoute('app_home');
         }
 
-        $this->denyAccessUnlessGranted('IMAGE_DELETE', $image);
-
-        // Optionnel : on supprime le fichier physique avant la suppression DB
         if (!$this->fileUploader->remove($image->getUrl())) {
             $this->addFlash('error', 'Erreur lors de la suppression du fichier image.');
 
-            return $this->redirectToRoute('app_figure_edit', ['id' => $image->getFigure()?->getId()]);
+            $figure = $image->getFigure();
+            if ($figure) {
+                return $this->redirectToRoute(
+                    'app_figure_detail',
+                    [
+                        'id'   => $figure->getId(),
+                        'slug' => $figure->getSlug(),
+                    ]
+                );
+            }
+
+            return $this->redirectToRoute('app_home');
         }
 
-        // On confie le reste (suppression DB, redirection) à deleteAction() du parent
-        return $this->deleteAction(
-            $id,
-            $request,
-            'delete_image_',
-            'Image supprimée avec succès',
-            'app_figure_edit',
-            ['id' => $image->getFigure()?->getId()]
-        );
+        $figure = $image->getFigure();
+        $em->remove($image);
+        $em->flush();
+
+        $this->addFlash('success', 'Image supprimée avec succès.');
+
+        if ($figure) {
+            return $this->redirectToRoute(
+                'app_figure_detail',
+                [
+                    'id'   => $figure->getId(),
+                    'slug' => $figure->getSlug(),
+                ]
+            );
+        }
+
+        return $this->redirectToRoute('app_home');
+
     }
 
 
-    // ------------------------------------------------------------------
-    //                  MÉTHODES SPÉCIFIQUES "FIGURE"
-    // ------------------------------------------------------------------
-
-
     /**
-     * Change l'image principale d'une figure.
+     * Définit une image en tant qu'image principale pour une figure.
      *
-     * @param int     $id      L'identifiant de la figure
-     * @param Request $request La requête HTTP contenant le formulaire
+     * @param int                    $id      L'ID de la figure
+     * @param Request                $request La requête HTTP
+     * @param EntityManagerInterface $em      Le gestionnaire d'entités Doctrine
      *
      * @return RedirectResponse
      */
     #[Route('/figure/{id}/set-main-image', name: 'app_figure_set_main_image', methods: ['POST'])]
-    public function setMainImage(int $id, Request $request): RedirectResponse
+    public function setMainImage(int $id, Request $request, EntityManagerInterface $em): RedirectResponse
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
 
-        $figure = $this->entityService->findEntityById(Figure::class, $id);
+        $figure = $em->getRepository(Figure::class)->find($id);
         if (!$figure) {
             $this->addFlash('error', 'Figure introuvable.');
 
@@ -368,35 +192,34 @@ class FigureImageController extends AbstractCrudController
 
         // Formulaire pour désigner l'image principale
         $form = $this->createForm(MainImageType::class, null, ['figure' => $figure]);
-        // Ici, on appelle handleFormSubmission() (du BaseController)
-        // car ce n’est pas un "create/edit" d'entité Image,
-        // mais un champ custom sur la Figure.
-        $response = $this->handleFormSubmission(
-            $request,
-            $form,
-            'Image principale mise à jour.',
-            'app_figure_detail',
-            ['id' => $figure->getId()],
-            true,
-            false
-        );
-        if ($response) {
-            return $response;
-        }
+        $form->handleRequest($request);
 
-        // Récupération de l'ID de l'image choisie
-        $imageId = $form->get('mainImage')->getData();
-        foreach ($figure->getImages() as $img) {
-            if ($img->getId() == $imageId) {
-                $figure->setMainImage($img);
-                break;
+        if ($form->isSubmitted() && $form->isValid()) {
+            $selectedImageId = $form->get('mainImage')->getData();
+            $selectedImage = $em->getRepository(Image::class)->find($selectedImageId);
+
+            if ($selectedImage) {
+                $figure->setMainImage($selectedImage);
+                $em->flush();
+                $this->addFlash('success', 'Image principale mise à jour avec succès.');
+            } else {
+                $this->addFlash('error', "L'image sélectionnée est introuvable.");
             }
+        } else {
+            $this->addFlash('error', "Le Formulaire contient des erreurs ou n'a pas été soumis correctement.");
         }
-
-        $this->entityService->saveEntity($figure);
 
         // On redirige vers la page précédente (ou figure_detail)
-        $referer = $request->headers->get('referer', $this->generateUrl('app_figure_detail', ['id' => $id]));
+        $referer = $request->headers->get('referer');
+        if (!$referer) {
+            return $this->redirectToRoute(
+                'app_figure_detail',
+                [
+                    'id'   => $figure->getId(),
+                    'slug' => $figure->getSlug(),
+                ]
+            );
+        }
 
         return $this->redirect($referer);
     }
@@ -405,17 +228,18 @@ class FigureImageController extends AbstractCrudController
     /**
      * Supprime l'image principale d'une figure.
      *
-     * @param int     $id      L'identifiant de la figure
-     * @param Request $request La requête HTTP contenant le token CSRF
+     * @param int                    $id      L'ID de la figure
+     * @param Request                $request La requête HTTP contenant le token CSRF
+     * @param EntityManagerInterface $em      Le gestionnaire d'entités Doctrine
      *
      * @return RedirectResponse
      */
     #[Route('/figure/{id}/remove-main-image', name: 'app_figure_remove_main_image', methods: ['POST'])]
-    public function removeMainImage(int $id, Request $request): RedirectResponse
+    public function removeMainImage(int $id, Request $request, EntityManagerInterface $em): RedirectResponse
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
 
-        $figure = $this->entityService->findEntityById(Figure::class, $id);
+        $figure = $em->getRepository(Figure::class)->find($id);
         if (!$figure) {
             $this->addFlash('error', 'Figure introuvable.');
 
@@ -429,16 +253,21 @@ class FigureImageController extends AbstractCrudController
         }
 
         $figure->setMainImage(null);
-        $saveResult = $this->entityService->saveEntity($figure);
+        $em->flush();
 
-        $this->addFlash(
-            $saveResult ? 'success' : 'error',
-            $saveResult
-                ? "L'image principale a été supprimée avec succès."
-                : "Erreur lors de la suppression de l'image principale."
-        );
+        $this->addFlash('success', "L'image principale a été supprimée avec succès.");
 
-        $referer = $request->headers->get('referer', $this->generateUrl('app_figure_detail', ['id' => $id]));
+        // Redirection vers le referer ou la page de détail si aucun referer
+        $referer = $request->headers->get('referer');
+        if (!$referer) {
+            return $this->redirectToRoute(
+                'app_figure_detail',
+                [
+                    'id'   => $figure->getId(),
+                    'slug' => $figure->getSlug(),
+                ]
+            );
+        }
 
         return $this->redirect($referer);
     }

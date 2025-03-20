@@ -67,9 +67,9 @@
 				<!-- Fenêtre modale pour la suppression -->
 				<div class="modal fade" id="modal-delete-{{ figure.id }}" tabindex="-1" aria-labelledby="modal-delete-label-{{ figure.id }}" aria-hidden="true">
 					<div class="modal-dialog modal-dialog-centered">
-						<div class="modal-content">
+						<div class="modal-content shadow-lg">
 							<div class="modal-header">
-								<h5 class="modal-title" id="modal-delete-label-{{ figure.id }}">Confirmer la suppression</h5>
+								<h5 class="modal-title text-uppercase" id="modal-delete-label-{{ figure.id }}">Confirmer la suppression</h5>
 								<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 							</div>
 							<div class="modal-body">
@@ -107,10 +107,10 @@
 
 	<!-- Modale pour la création d'une figure -->
 	<div class="modal fade" id="createFigureModal" tabindex="-1" aria-labelledby="createFigureModalLabel" aria-hidden="true">
-		<div class="modal-dialog modal-lg">
-			<div class="modal-content">
+		<div class="modal-dialog modal-dialog-centered">
+			<div class="modal-content text-center shadow-lg">
 				<div class="modal-header">
-					<h5 class="modal-title">Créer une nouvelle figure</h5>
+					<h5 class="modal-title text-uppercase">Créer une nouvelle figure</h5>
 					<button type="button" class="btn-close" data-bs-dismiss="modal"></button>
 				</div>
 				<div class="modal-body">
@@ -120,15 +120,15 @@
                     'attr': {'class': 'figure-form'}
                 }) }}
 					<div class="mb-3">
-						{{ form_label(createFigureForm.name) }}
+						{{ form_label(createFigureForm.name, null, { 'label_attr': {'class': 'form-label d-block mb-2'} }) }}
 						{{ form_widget(createFigureForm.name, {'attr': {'class': 'form-control'}}) }}
 					</div>
 					<div class="mb-3">
-						{{ form_label(createFigureForm.description) }}
+						{{ form_label(createFigureForm.description, null, { 'label_attr': {'class': 'form-label d-block mb-2'} } ) }}
 						{{ form_widget(createFigureForm.description, {'attr': {'class': 'form-control', 'rows': 4}}) }}
 					</div>
 					<div class="mb-3">
-						{{ form_label(createFigureForm.figureGroup) }}
+						{{ form_label(createFigureForm.figureGroup, null, { 'label_attr': {'class': 'form-label d-block mb-2'} }) }}
 						{{ form_widget(createFigureForm.figureGroup, {'attr': {'class': 'form-select'}}) }}
 					</div>
 					<div class="d-grid">
