@@ -1,0 +1,2 @@
+# Normaliser tous les fichiers PHP avec des fins de lignes LF
+*.php text eol=lf
