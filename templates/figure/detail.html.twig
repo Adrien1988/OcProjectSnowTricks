@@ -138,7 +138,14 @@
 		</div>
 
 		<!-- Description -->
-		<div class="my-5 p-4 bg-light rounded shadow-lg text-center">
+		<div class="my-5 p-4 bg-light rounded shadow-lg text-center position-relative">
+			{% if is_granted('ROLE_USER') and figure.author == app.user %}
+				<!-- Bouton EDIT en haut à droite -->
+				<a href="{{ path('app_figure_edit', { id: figure.id }) }}" class="btn btn-secondary btn-sm position-absolute top-0 end-0 mt-2 me-2" data-bs-toggle="tooltip" title="Modifier la figure">
+					<i class="fa-solid fa-pen"></i>
+				</a>
+			{% endif %}
+
 			<h5 class="text-uppercase">Détails de la figure</h5>
 			<p>{{ figure.description }}</p>
 

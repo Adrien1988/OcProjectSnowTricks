@@ -41,8 +41,8 @@
 					</div>
 					<div class="d-flex justify-content-end p-2">
 						<div class="btn-group">
-							<button class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#editImageModal-{{ image.id }}">✏️</button>
-							<button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteImageModal-{{ image.id }}">🗑️</button>
+							<button class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#editImageModal-{{ image.id }}"><i class="fa-solid fa-pen"></i></button>
+							<button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteImageModal-{{ image.id }}"><i class="fa-solid fa-trash"></i></button>
 						</div>
 					</div>
 				</div>
@@ -84,6 +84,9 @@
 
 		<!-- Boutons alignés correctement -->
 		<div class="d-flex justify-content-end gap-2 flex-wrap flex-nowrap buttons-container">
+			<a href="{{ path('app_figure_detail', { id: figure.id, slug: figure.slug }) }}" class="btn btn-secondary btn-sm d-flex align-items-center justify-content-center" data-bs-toggle="tooltip" title="Aller à la page de détail">
+				<i class="fa-solid fa-eye"></i>
+			</a>
 			<button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteFigureModal">Supprimer</button>
 			<button type="submit" class="btn btn-figure-submit">Enregistrer</button>
 		</div>
@@ -106,7 +109,7 @@
 				<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
 				<form method="post" action="{{ path('app_figure_delete', { id: figure.id }) }}">
 					<input type="hidden" name="_token" value="{{ csrf_token('delete_figure_' ~ figure.id) }}">
-					<button type="submit" class="btn btn-danger">Supprimer</button>
+					<button type="submit" class="btn btn-danger">Confirmer</button>
 				</form>
 			</div>
 		</div>

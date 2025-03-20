@@ -89,10 +89,9 @@ class FigureImageController extends AbstractController
             $figure = $image->getFigure();
             if ($figure) {
                 return $this->redirectToRoute(
-                    'app_figure_detail',
+                    'app_figure_edit',
                     [
                         'id'   => $figure->getId(),
-                        'slug' => $figure->getSlug(),
                     ]
                 );
             }
@@ -137,10 +136,9 @@ class FigureImageController extends AbstractController
             $figure = $image->getFigure();
             if ($figure) {
                 return $this->redirectToRoute(
-                    'app_figure_detail',
+                    'app_figure_edit',
                     [
                         'id'   => $figure->getId(),
-                        'slug' => $figure->getSlug(),
                     ]
                 );
             }
@@ -156,10 +154,9 @@ class FigureImageController extends AbstractController
 
         if ($figure) {
             return $this->redirectToRoute(
-                'app_figure_detail',
+                'app_figure_edit',
                 [
                     'id'   => $figure->getId(),
-                    'slug' => $figure->getSlug(),
                 ]
             );
         }
