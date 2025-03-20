@@ -27,6 +27,9 @@ jobs:
       - name: Install dependencies
         run: composer install --no-scripts --no-progress
 
+      - name: Prepare test environment (.env.test)
+        run: cp .env.test .env
+
       - name: Run PHPUnit tests
         run: vendor/bin/phpunit
 
