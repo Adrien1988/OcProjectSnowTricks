@@ -73,8 +73,8 @@ Si vous ne possédez pas la CLI Symfony :
 php -S 127.0.0.1:8000 -t public```</pre>
 Vous pourrez ensuite accéder à l’application à l’adresse http://127.0.0.1:8000
 
-8. ** Compilation des assets avec Webpack (le cas échéant) :**
-Si vous utilisez Webpack (ou Webpack Encore) pour gérer et compiler vos assets, exécutez la commande appropriée : 
+8. ** Compilation des assets avec Webpack :**
+Pour gérer et compiler vos assets avec webpack, exécutez la commande appropriée : 
 <pre>```bash npm run dev```</pre> en local
 <pre>```bash npm run build```</pre> en prod
 

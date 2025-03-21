@@ -1,6 +1,6 @@
 {% if is_granted('ROLE_USER') and figure.author == app.user %}
     <div class="btn-group position-absolute top-0 end-0 p-2 d-flex">
-        <button class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#editMainImageModal">✏️</button>
-        <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteMainImageModal">🗑️</button>
+        <button class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#editMainImageModal"><i class="fa-solid fa-pen"></i></button>
+        <button class="btn btn-danger btn-sm" data-bs-toggle="modal" data-bs-target="#deleteMainImageModal"><i class="fa-solid fa-trash"></i></button>
     </div>
 {% endif %}
