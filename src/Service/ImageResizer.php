@@ -29,17 +29,17 @@ class ImageResizer
 
         // Créer la ressource PHP (GD) depuis le fichier
         switch ($type) {
-        case IMAGETYPE_JPEG:
-            $sourceResource = imagecreatefromjpeg($sourcePath);
-            break;
-        case IMAGETYPE_PNG:
-            $sourceResource = imagecreatefrompng($sourcePath);
-            break;
-        case IMAGETYPE_GIF:
-            $sourceResource = imagecreatefromgif($sourcePath);
-            break;
-        default:
-            return false; // type non géré
+            case IMAGETYPE_JPEG:
+                $sourceResource = imagecreatefromjpeg($sourcePath);
+                break;
+            case IMAGETYPE_PNG:
+                $sourceResource = imagecreatefrompng($sourcePath);
+                break;
+            case IMAGETYPE_GIF:
+                $sourceResource = imagecreatefromgif($sourcePath);
+                break;
+            default:
+                return false; // type non géré
         }
 
         // Créer la ressource finale
