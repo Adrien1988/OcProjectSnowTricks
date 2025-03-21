@@ -109,6 +109,21 @@ class Comment
 
 
     /**
+     * Définit la date de création du commentaire.
+     *
+     * @param \DateTimeImmutable $createdAt La date de création
+     *
+     * @return self Retourne l'instance Comment (pour chaînage)
+     */
+    public function setCreatedAt(\DateTimeImmutable $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+
+    /**
      * Récupère la date de création du commentaire.
      *
      * @return DateTimeImmutable
