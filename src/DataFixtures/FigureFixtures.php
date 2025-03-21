@@ -2,13 +2,15 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\Figure;
-use App\Entity\Image;
 use App\Entity\User;
+use App\Entity\Image;
 use App\Entity\Video;
-use Doctrine\Bundle\FixturesBundle\Fixture;
-use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+use App\Entity\Figure;
 use Doctrine\Persistence\ObjectManager;
+use Doctrine\Bundle\FixturesBundle\Fixture;
+use Symfony\Component\Filesystem\Filesystem;
+use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
 
 class FigureFixtures extends Fixture implements DependentFixtureInterface
 {
@@ -23,9 +25,30 @@ class FigureFixtures extends Fixture implements DependentFixtureInterface
      */
     public function load(ObjectManager $manager): void
     {
+
+        $filesystem = new Filesystem();
+
+        // 1) Récupérer la liste de toutes les images disponibles dans /images/
+        $imagesDir = __DIR__ . '/images';
+        // on scanne le dossier pour avoir tous les fichiers
+        $allImages = array_diff(scandir($imagesDir), ['.', '..']);
+        // Filtrer si besoin pour ne garder que .jpg, .png, etc.
+        $allImages = array_filter($allImages, function ($file) use ($imagesDir) {
+            return preg_match('/\.(jpg|jpeg|png)$/i', $file);
+        });
+        // Convertir en tableau indexé 0,1,2,...
+        $allImages = array_values($allImages);
+
         // Liste des références d'utilisateurs créés dans UserFixtures
         // (assure-toi d’avoir un addReference('demo-user', $user) etc. pour chacun)
-        $userReferences = ['demo-user', 'jane-user', 'john-user'];
+        $userReferences = [
+            'demo-user',
+            'jane-user',
+            'john-user',
+            'alex-user',
+            'marie-user',
+            'paul-user',
+        ];
 
         // Liste des figures
         $figures = [
@@ -94,13 +117,52 @@ class FigureFixtures extends Fixture implements DependentFixtureInterface
             $user = $this->getReference($randomUserRef, User::class);
             $figure->setAuthor($user);
 
-            // Ajouter 3 images par figure
-            for ($j = 1; $j <= 3; ++$j) {
+            // 2) Sélection aléatoire de N images dans $allImages
+            $nbImagesWanted = 3; // ex. 3 images par figure
+            // S’il y a moins d'images que $nbImagesWanted, on peut ajuster
+            $nbImagesWanted = min($nbImagesWanted, count($allImages));
+
+            // array_rand($allImages, $nbImagesWanted) renvoie une clé (ou un tableau de clés)
+            $randomKeys = (array) array_rand($allImages, $nbImagesWanted);
+
+             // Conserver les entités Image pour ensuite choisir l'une d'entre elles
+             $createdImages = [];
+
+            // 3) Pour chacune de ces images, on copie + crée l'entité
+            foreach ($randomKeys as $key) {
+                $randomFilename = $allImages[$key];
+                $sourcePath = $imagesDir . '/' . $randomFilename;
+
+                // On définit un nom de fichier final
+                $targetFilename = uniqid('figure_') . '_' . $randomFilename;
+                $targetPath = __DIR__ . '/../../public/uploads/' . $targetFilename;
+
                 $image = new Image();
-                $image->setUrl('uploads/figure_'.($i + 1)."_image_$j.jpg")
-                    ->setAltText("Image $j de la figure {$data['name']}")
-                    ->setFigure($figure);
+                $image->setFigure($figure)
+                      ->setAltText("Image aléatoire pour {$data['name']}");
+
+                if ($filesystem->exists($sourcePath)) {
+                    try {
+                        $filesystem->copy($sourcePath, $targetPath, true);
+                    } catch (IOExceptionInterface $exception) {
+                        dump("Erreur lors de la copie de $sourcePath vers $targetPath : " . $exception->getMessage());
+                    }
+                    // Définir l'URL correspondant
+                    $image->setUrl("uploads/" . $targetFilename);
+                }else {
+                    $image->setUrl('uploads/default.jpg');
+                }
+
+                $createdImages[] = $image;
                 $manager->persist($image);
+
+                
+            }
+
+            // Choisir UNE image parmi les 3 pour la mettre en image principale
+            if (!empty($createdImages)) {
+                $mainImage = $createdImages[array_rand($createdImages)];
+                $figure->setMainImage($mainImage);
             }
 
             // Ajouter une vidéo

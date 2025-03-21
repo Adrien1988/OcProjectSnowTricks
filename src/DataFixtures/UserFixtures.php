@@ -59,6 +59,27 @@ class UserFixtures extends Fixture
                 'isActive'  => true,
                 'reference' => 'john-user',
             ],
+            [
+                'username'  => 'alex_hawk',
+                'email'     => 'alex@example.com',
+                'password'  => 'alexhawk',
+                'isActive'  => true,
+                'reference' => 'alex-user',
+            ],
+            [
+                'username'  => 'marie_lake',
+                'email'     => 'marie@example.com',
+                'password'  => 'marielake',
+                'isActive'  => true,
+                'reference' => 'marie-user',
+            ],
+            [
+                'username'  => 'paul_rider',
+                'email'     => 'paul@example.com',
+                'password'  => 'paulrider',
+                'isActive'  => true,
+                'reference' => 'paul-user',
+            ],
             // Ajoutez autant d’utilisateurs que nécessaire
         ];
 
