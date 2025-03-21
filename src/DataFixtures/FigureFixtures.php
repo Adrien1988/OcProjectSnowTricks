@@ -2,15 +2,15 @@
 
 namespace App\DataFixtures;
 
-use App\Entity\User;
-use App\Entity\Image;
-use App\Entity\Video;
 use App\Entity\Figure;
-use Doctrine\Persistence\ObjectManager;
+use App\Entity\Image;
+use App\Entity\User;
+use App\Entity\Video;
 use Doctrine\Bundle\FixturesBundle\Fixture;
-use Symfony\Component\Filesystem\Filesystem;
 use Doctrine\Common\DataFixtures\DependentFixtureInterface;
+use Doctrine\Persistence\ObjectManager;
 use Symfony\Component\Filesystem\Exception\IOExceptionInterface;
+use Symfony\Component\Filesystem\Filesystem;
 
 class FigureFixtures extends Fixture implements DependentFixtureInterface
 {
@@ -29,13 +29,16 @@ class FigureFixtures extends Fixture implements DependentFixtureInterface
         $filesystem = new Filesystem();
 
         // 1) Récupérer la liste de toutes les images disponibles dans /images/
-        $imagesDir = __DIR__ . '/images';
+        $imagesDir = __DIR__.'/images';
         // on scanne le dossier pour avoir tous les fichiers
         $allImages = array_diff(scandir($imagesDir), ['.', '..']);
         // Filtrer si besoin pour ne garder que .jpg, .png, etc.
-        $allImages = array_filter($allImages, function ($file) use ($imagesDir) {
-            return preg_match('/\.(jpg|jpeg|png)$/i', $file);
-        });
+        $allImages = array_filter(
+            $allImages,
+            function ($file) {
+                return preg_match('/\.(jpg|jpeg|png)$/i', $file);
+            }
+        );
         // Convertir en tableau indexé 0,1,2,...
         $allImages = array_values($allImages);
 
@@ -125,38 +128,37 @@ class FigureFixtures extends Fixture implements DependentFixtureInterface
             // array_rand($allImages, $nbImagesWanted) renvoie une clé (ou un tableau de clés)
             $randomKeys = (array) array_rand($allImages, $nbImagesWanted);
 
-             // Conserver les entités Image pour ensuite choisir l'une d'entre elles
-             $createdImages = [];
+            // Conserver les entités Image pour ensuite choisir l'une d'entre elles
+            $createdImages = [];
 
             // 3) Pour chacune de ces images, on copie + crée l'entité
             foreach ($randomKeys as $key) {
                 $randomFilename = $allImages[$key];
-                $sourcePath = $imagesDir . '/' . $randomFilename;
+                $sourcePath = $imagesDir.'/'.$randomFilename;
 
                 // On définit un nom de fichier final
-                $targetFilename = uniqid('figure_') . '_' . $randomFilename;
-                $targetPath = __DIR__ . '/../../public/uploads/' . $targetFilename;
+                $targetFilename = uniqid('figure_').'_'.$randomFilename;
+                $targetPath = __DIR__.'/../../public/uploads/'.$targetFilename;
 
                 $image = new Image();
                 $image->setFigure($figure)
-                      ->setAltText("Image aléatoire pour {$data['name']}");
+                    ->setAltText("Image aléatoire pour {$data['name']}");
 
                 if ($filesystem->exists($sourcePath)) {
                     try {
                         $filesystem->copy($sourcePath, $targetPath, true);
                     } catch (IOExceptionInterface $exception) {
-                        dump("Erreur lors de la copie de $sourcePath vers $targetPath : " . $exception->getMessage());
+                        dump("Erreur lors de la copie de $sourcePath vers $targetPath : ".$exception->getMessage());
                     }
+
                     // Définir l'URL correspondant
-                    $image->setUrl("uploads/" . $targetFilename);
-                }else {
+                    $image->setUrl('uploads/'.$targetFilename);
+                } else {
                     $image->setUrl('uploads/default.jpg');
                 }
 
                 $createdImages[] = $image;
                 $manager->persist($image);
-
-                
             }
 
             // Choisir UNE image parmi les 3 pour la mettre en image principale
