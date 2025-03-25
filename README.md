@@ -24,20 +24,22 @@ Bienvenue sur **SnowTricks**, une application Symfony permettant de partager et 
 ## Installation et Configuration
 
 1. **Récupération du projet :**  
-   Pour commencer, clonez le dépôt Git, puis placez-vous dans le dossier correspondant :
+Pour commencer, clonez le dépôt Git, puis placez-vous dans le dossier correspondant :
+
 ```bash
 git clone https://github.com/Adrien1988/OcProjectSnowTricks.git
 cd SnowTricks
 ```
 
 2. **Installation des dépendances :**
-   Toutes les dépendances nécessaires sont gérées via Composer. Pour les installer, entrez la commande suivante :
+Toutes les dépendances nécessaires sont gérées via Composer. Pour les installer, entrez la commande suivante :
+
 ```bash
 composer install
 ```
- (version en local 2.7.4)
+(version en local 2.7.4)
 
-   Si vous avez un front-end géré par Webpack (ou un autre bundler), installez également les dépendances Node (ex. npm install ou yarn install) :
+Si vous avez un front-end géré par Webpack (ou un autre bundler), installez également les dépendances Node (ex. npm install ou yarn install) :
 
 ```bash 
 npm install
@@ -47,6 +49,7 @@ npm install
 3. **Configuration des variables d’environnement :**
 
 Le fichier .env contient les variables par défaut. Pour personnaliser la configuration (connexion à la base de données, mailer, etc.), vous pouvez créer ou modifier un fichier .env.local :
+
 ```bash
 DATABASE_URL="mysql://db_user:db_password@127.0.0.1:3306/snowtricks_db?serverVersion=8.0"
 MAILER_DSN="smtp://localhost"
@@ -61,15 +64,14 @@ Une fois la configuration effectuée, créez la base indiquée dans la variable 
 php bin/console doctrine:database:create
 ```
 
+4.1 **Import d'un fichier SQL pour pré-remplir la base :**
 
-   4.1 **Import d'un fichier SQL pour pré-remplir la base :**
+Utilisez le fichier SQL qui se trouve à la racine du projet : 
 
-   Utilisez le fichier SQL qui se trouve à la racine du projet : 
-
-   ```bash
-   mysql -u db_user -p snowtricks_db < snow_tricks.sql
-   ```
-   ou importer le fichier via l'interface du service de BDD que vous utilisez.
+```bash
+mysql -u db_user -p snowtricks_db < snow_tricks.sql
+```
+ou importer le fichier via l'interface du service de BDD que vous utilisez.
 
 
 5. **Exécution des migrations :**
