@@ -64,7 +64,7 @@ Une fois la configuration effectuée, créez la base indiquée dans la variable 
 php bin/console doctrine:database:create
 ```
 
-4.1 **Import d'un fichier SQL pour pré-remplir la base :**
+5. **Import d'un fichier SQL pour pré-remplir la base :**
 
 Utilisez le fichier SQL qui se trouve à la racine du projet : 
 
@@ -74,7 +74,7 @@ mysql -u db_user -p snowtricks_db < snow_tricks.sql
 ou importer le fichier via l'interface du service de BDD que vous utilisez.
 
 
-5. **Exécution des migrations :**
+6. **Exécution des migrations :**
 
 Pour générer la structure (tables, colonnes) nécessaire au fonctionnement du projet :
 
@@ -83,7 +83,7 @@ php bin/console doctrine:migrations:migrate
 ```
 
 
-6. **Chargement de données de test (fixtures) :**
+7. **Chargement de données de test (fixtures) :**
 Si vous souhaitez ajouter des exemples de données (figures, images, utilisateurs, etc.), exécutez :
 
 ```bash
@@ -91,7 +91,7 @@ php bin/console doctrine:fixtures:load
 ```
 Attention : cette action peut réinitialiser le contenu de certaines tables.
 
-7. **Lancement du serveur de développement :**
+8. **Lancement du serveur de développement :**
 Pour démarrer l’application en local :
 
 ```bash
@@ -106,7 +106,7 @@ php -S 127.0.0.1:8000 -t public
 
 Vous pourrez ensuite accéder à l’application à l’adresse http://127.0.0.1:8000
 
-8. ** Compilation des assets avec Webpack :**
+9. ** Compilation des assets avec Webpack :**
 Pour gérer et compiler vos assets avec webpack, exécutez la commande appropriée : 
 
 ```bash 
