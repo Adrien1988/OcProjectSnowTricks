@@ -27,15 +27,19 @@ Bienvenue sur **SnowTricks**, une application Symfony permettant de partager et 
    Pour commencer, clonez le dépôt Git, puis placez-vous dans le dossier correspondant :
    <pre>```bash
    git clone https://github.com/Adrien1988/OcProjectSnowTricks.git
-   cd SnowTricks```</pre>
+   cd SnowTricks
+   ```</pre>
 
 2. **Installation des dépendances :**
    Toutes les dépendances nécessaires sont gérées via Composer. Pour les installer, entrez la commande suivante :
    <pre>```bash
-   composer install```</pre> (version en local 2.7.4)
+   composer install
+   ```</pre> (version en local 2.7.4)
 
    Si vous avez un front-end géré par Webpack (ou un autre bundler), installez également les dépendances Node (ex. npm install ou yarn install) :
-   <pre>```bash npm install```</pre> (version en local 10.2.4)
+   <pre>```bash 
+   npm install
+   ```</pre> (version en local 10.2.4)
 
 3. **Configuration des variables d’environnement :**
 
@@ -50,40 +54,50 @@ Le fichier .env contient les variables par défaut. Pour personnaliser la config
 
 Une fois la configuration effectuée, créez la base indiquée dans la variable DATABASE_URL. Pour cela :
    <pre>```bash
-   php bin/console doctrine:database:create```</pre>
+   php bin/console doctrine:database:create
+   ```</pre>
 
    4.1 **Import d'un fichier SQL pour pré-remplir la base :**
 
    Utilisez le fichier SQL qui se trouve à la racine du projet : 
 
    <pre>```bash
-   mysql -u db_user -p snowtricks_db < snow_tricks.sql```</pre> ou importer le fichier via l'interface du service de BDD que vous utilisez.
+   mysql -u db_user -p snowtricks_db < snow_tricks.sql
+   ```</pre> ou importer le fichier via l'interface du service de BDD que vous utilisez.
 
 5. **Exécution des migrations :**
 
 Pour générer la structure (tables, colonnes) nécessaire au fonctionnement du projet :
    <pre>```bash
-   php bin/console doctrine:migrations:migrate```</pre>
+   php bin/console doctrine:migrations:migrate
+   ```</pre>
 
 6. **Chargement de données de test (fixtures) :**
 Si vous souhaitez ajouter des exemples de données (figures, images, utilisateurs, etc.), exécutez :
    <pre>```bash
-   php bin/console doctrine:fixtures:load```</pre>
+   php bin/console doctrine:fixtures:load
+   ```</pre>
    Attention : cette action peut réinitialiser le contenu de certaines tables.
 
 7. **Lancement du serveur de développement :**
 Pour démarrer l’application en local :
    <pre>```bash
-symfony server:start```</pre>
+symfony server:start
+```</pre>
 Si vous ne possédez pas la CLI Symfony :
 <pre>```bash
-php -S 127.0.0.1:8000 -t public```</pre>
+php -S 127.0.0.1:8000 -t public
+```</pre>
 Vous pourrez ensuite accéder à l’application à l’adresse http://127.0.0.1:8000
 
 8. ** Compilation des assets avec Webpack :**
 Pour gérer et compiler vos assets avec webpack, exécutez la commande appropriée : 
-<pre>```bash npm run dev```</pre> en local
-<pre>```bash npm run build```</pre> en prod
+<pre>```bash 
+npm run dev
+```</pre> en local
+<pre>```bash 
+npm run build
+```</pre> en prod
 
 
 ## Analyse de qualité
