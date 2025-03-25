@@ -72,15 +72,6 @@ mysql -u db_user -p snowtricks_db < snow_tricks.sql
 ```
 ou importer le fichier via l'interface du service de BDD que vous utilisez.
 
-   4.1 **Import d'un fichier SQL pour pré-remplir la base :**
-
-   Utilisez le fichier SQL qui se trouve à la racine du projet : 
-
-
-```bash
-mysql -u db_user -p snowtricks_db < snow_tricks.sql
-```
-ou importer le fichier via l'interface du service de BDD que vous utilisez.
 
 5. **Exécution des migrations :**
 
