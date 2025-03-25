@@ -26,10 +26,10 @@ Bienvenue sur **SnowTricks**, une application Symfony permettant de partager et 
 1. **Récupération du projet :**  
    Pour commencer, clonez le dépôt Git, puis placez-vous dans le dossier correspondant :
    <pre>
-   ```bash
+```bash
 git clone https://github.com/Adrien1988/OcProjectSnowTricks.git
 cd SnowTricks
-   ```
+```
    </pre>
 
 2. **Installation des dépendances :**
