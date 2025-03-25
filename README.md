@@ -107,29 +107,30 @@ Si vous souhaitez ajouter des exemples de données (figures, images, utilisateur
 Pour démarrer l’application en local :
    <pre>
    ```bash
-symfony server:start
-```
-</pre>
+   symfony server:start
+   ```
+   </pre>
 Si vous ne possédez pas la CLI Symfony :
-<pre>
-```bash
-php -S 127.0.0.1:8000 -t public
-```
-</pre>
+   <pre>
+   ```bash
+   php -S 127.0.0.1:8000 -t public
+   ```
+   </pre>
 Vous pourrez ensuite accéder à l’application à l’adresse http://127.0.0.1:8000
 
 8. ** Compilation des assets avec Webpack :**
 Pour gérer et compiler vos assets avec webpack, exécutez la commande appropriée : 
-<pre>
-```bash 
-npm run dev
-```
-</pre> en local
-<pre>
-```bash 
-npm run build
-```
-</pre> en prod
+   <pre>
+   ```bash 
+   npm run dev
+   ```
+   </pre> en local
+
+   <pre>
+   ```bash 
+   npm run build
+   ```
+   </pre> en prod
 
 
 ## Analyse de qualité
