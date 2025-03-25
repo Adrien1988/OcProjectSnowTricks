@@ -27,8 +27,8 @@ Bienvenue sur **SnowTricks**, une application Symfony permettant de partager et 
    Pour commencer, clonez le dépôt Git, puis placez-vous dans le dossier correspondant :
    <pre>
    ```bash
-   git clone https://github.com/Adrien1988/OcProjectSnowTricks.git
-   cd SnowTricks
+git clone https://github.com/Adrien1988/OcProjectSnowTricks.git
+cd SnowTricks
    ```
    </pre>
 
