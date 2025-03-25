@@ -1,5 +1,7 @@
 # SnowTricks - README
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/23579ff1b0eb42feb416066c7359739c)](https://app.codacy.com/gh/Adrien1988/OcProjectSnowTricks?utm_source=github.com&utm_medium=referral&utm_content=Adrien1988/OcProjectSnowTricks&utm_campaign=Badge_Grade)
+
 Bienvenue sur **SnowTricks**, une application Symfony permettant de partager et de gérer des figures (tricks) de sports de glisse, avec la possibilité d’ajouter des images, des vidéos et des commentaires, tout en assurant une gestion des utilisateurs (inscription et authentification).
 
 ---
