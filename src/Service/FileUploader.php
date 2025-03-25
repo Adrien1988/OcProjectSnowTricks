@@ -2,7 +2,6 @@
 
 namespace App\Service;
 
-use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class FileUploader
@@ -12,12 +11,10 @@ class FileUploader
 
     /**
      * Constructeur du service FileUploader.
-     *
-     * @param ParameterBagInterface $params Permet d'accéder aux paramètres Symfony
      */
-    public function __construct(ParameterBagInterface $params)
+    public function __construct(string $targetDirectory)
     {
-        $this->targetDirectory = $params->get('uploads_directory');
+        $this->targetDirectory = $targetDirectory;
     }
 
 
@@ -59,6 +56,12 @@ class FileUploader
         }
 
         return false;
+    }
+
+
+    public function getTargetDirectory(): string
+    {
+        return $this->targetDirectory;
     }
 
 

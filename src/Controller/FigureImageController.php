@@ -80,7 +80,7 @@ class FigureImageController extends AbstractController
             if ($uploadedFile) {
                 $newFilename = $this->fileUploader->upload($uploadedFile);
                 if ($newFilename) {
-                    $fullPath = $this->getParameter('kernel.project_dir').'/public/uploads/'.$newFilename;
+                    $fullPath = $this->fileUploader->getTargetDirectory().'/'.$newFilename;
 
                     // Redimensionnement
                     $this->imageResizer->resize($fullPath, $fullPath, 600, 400);
@@ -97,9 +97,10 @@ class FigureImageController extends AbstractController
             $figure = $image->getFigure();
             if ($figure) {
                 return $this->redirectToRoute(
-                    'app_figure_edit',
+                    'app_figure_detail',
                     [
                         'id'   => $figure->getId(),
+                        'slug' => $figure->getSlug(),
                     ]
                 );
             }
