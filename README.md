@@ -88,12 +88,7 @@ Pour gérer et compiler vos assets avec webpack, exécutez la commande appropri�
 
 ## Analyse de qualité
 
-Pour veiller à la cohérence du code et respecter les standards :
-
-- Vérifiez le respect des conventions PSR (ex. PSR-12) en utilisant un outil tel que PHP-CS-Fixer ou PHPCS.
-- Assurez-vous que la documentation interne (commentaires doc) reste à jour pour faciliter la compréhension du code.
-- Maintenez une structure de projet claire pour isoler les responsabilités de chaque classe et éviter les duplications.
-(NB : Aucune suite de tests n’est configurée par défaut dans ce projet.)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/d72c269f2f9e4500b2a557d51115d49c)](https://app.codacy.com/gh/Adrien1988/OcProjectSnowTricks/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 
 ## Principes SOLID et Design Patterns
 
