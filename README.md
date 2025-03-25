@@ -32,10 +32,10 @@ Bienvenue sur **SnowTricks**, une application Symfony permettant de partager et 
 2. **Installation des dépendances :**
    Toutes les dépendances nécessaires sont gérées via Composer. Pour les installer, entrez la commande suivante :
    <pre>```bash
-   composer install```</pre>
+   composer install```</pre> (version en local 2.7.4)
 
    Si vous avez un front-end géré par Webpack (ou un autre bundler), installez également les dépendances Node (ex. npm install ou yarn install) :
-   <pre>```bash npm install```</pre>
+   <pre>```bash npm install```</pre> (version en local 10.2.4)
 
 3. **Configuration des variables d’environnement :**
 
@@ -51,6 +51,13 @@ Le fichier .env contient les variables par défaut. Pour personnaliser la config
 Une fois la configuration effectuée, créez la base indiquée dans la variable DATABASE_URL. Pour cela :
    <pre>```bash
    php bin/console doctrine:database:create```</pre>
+
+   4.1 **Import d'un fichier SQL pour pré-remplir la base :**
+
+   Utilisez le fichier SQL qui se trouve à la racine du projet : 
+
+   <pre>```bash
+   mysql -u db_user -p snowtricks_db < snow_tricks.sql```</pre> ou importer le fichier via l'interface du service de BDD que vous utilisez.
 
 5. **Exécution des migrations :**
 
@@ -81,12 +88,7 @@ Pour gérer et compiler vos assets avec webpack, exécutez la commande appropri�
 
 ## Analyse de qualité
 
-Pour veiller à la cohérence du code et respecter les standards :
-
-- Vérifiez le respect des conventions PSR (ex. PSR-12) en utilisant un outil tel que PHP-CS-Fixer ou PHPCS.
-- Assurez-vous que la documentation interne (commentaires doc) reste à jour pour faciliter la compréhension du code.
-- Maintenez une structure de projet claire pour isoler les responsabilités de chaque classe et éviter les duplications.
-(NB : Aucune suite de tests n’est configurée par défaut dans ce projet.)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/d72c269f2f9e4500b2a557d51115d49c)](https://app.codacy.com/gh/Adrien1988/OcProjectSnowTricks/dashboard?utm_source=gh&utm_medium=referral&utm_content=&utm_campaign=Badge_grade)
 
 ## Principes SOLID et Design Patterns
 

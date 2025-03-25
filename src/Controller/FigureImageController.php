@@ -7,6 +7,7 @@ use App\Entity\Image;
 use App\Form\ImageType;
 use App\Form\MainImageType;
 use App\Service\FileUploader;
+use App\Service\ImageResizer;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\RedirectResponse;
@@ -23,11 +24,13 @@ class FigureImageController extends AbstractController
      * Constructeur du contrôleur FigureImageController.
      *
      * @param FileUploader $fileUploader Service pour l'upload/suppression de fichiers
+     * @param ImageResizer $imageResizer service pour le redimensionnement des images uplodées
      *
      * @return void
      */
     public function __construct(
         private FileUploader $fileUploader,
+        private ImageResizer $imageResizer,
     ) {
     }
 
@@ -77,6 +80,11 @@ class FigureImageController extends AbstractController
             if ($uploadedFile) {
                 $newFilename = $this->fileUploader->upload($uploadedFile);
                 if ($newFilename) {
+                    $fullPath = $this->fileUploader->getTargetDirectory().'/'.$newFilename;
+
+                    // Redimensionnement
+                    $this->imageResizer->resize($fullPath, $fullPath, 600, 400);
+
                     $image->setUrl('/uploads/'.$newFilename);
                 }
             }
@@ -89,9 +97,10 @@ class FigureImageController extends AbstractController
             $figure = $image->getFigure();
             if ($figure) {
                 return $this->redirectToRoute(
-                    'app_figure_edit',
+                    'app_figure_detail',
                     [
                         'id'   => $figure->getId(),
+                        'slug' => $figure->getSlug(),
                     ]
                 );
             }

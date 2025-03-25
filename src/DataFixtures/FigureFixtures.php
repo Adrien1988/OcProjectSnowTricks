@@ -28,6 +28,9 @@ class FigureFixtures extends Fixture implements DependentFixtureInterface
 
         $filesystem = new Filesystem();
 
+        // si on injecte pas, faire:
+        $resizer = new \App\Service\ImageResizer();
+
         // 1) Récupérer la liste de toutes les images disponibles dans /images/
         $imagesDir = __DIR__.'/images';
         // on scanne le dossier pour avoir tous les fichiers
@@ -147,6 +150,9 @@ class FigureFixtures extends Fixture implements DependentFixtureInterface
                 if ($filesystem->exists($sourcePath)) {
                     try {
                         $filesystem->copy($sourcePath, $targetPath, true);
+
+                        // 2) On redimensionne le fichier collé dans $targetPath (600×400 p.ex.)
+                        $resizer->resize($targetPath, $targetPath, 600, 400);
                     } catch (IOExceptionInterface $exception) {
                         dump("Erreur lors de la copie de $sourcePath vers $targetPath : ".$exception->getMessage());
                     }
