@@ -37,14 +37,12 @@ Toutes les dépendances nécessaires sont gérées via Composer. Pour les instal
 ```bash
 composer install
 ```
-(version en local 2.7.4)
 
 Si vous avez un front-end géré par Webpack (ou un autre bundler), installez également les dépendances Node (ex. npm install ou yarn install) :
 
 ```bash 
 npm install
 ```
-(version en local 10.2.4)
 
 3. **Configuration des variables d’environnement :**
 
@@ -135,9 +133,10 @@ Ce projet applique au maximum les principes SOLID :
 - Interface Segregation Principle : privilégier des interfaces spécialisées plutôt qu’une interface globale.
 - Dependency Inversion Principle : injection de dépendances (services) pour dépendre d’abstractions.
 
-Design Patterns utilisés
-En se basant sur l’ensemble du code et des discussions du projet :
+Design Patterns utilisés :
 
+- MVC (Model – View – Controller) : Architecture principale du projet (structure Symfony)
 - Repository Pattern : pour gérer l’accès aux données de chaque entité.
 - Form Builder Pattern : pour créer et gérer les formulaires (Form Types).
-- Event Subscriber/Listener : pour réagir aux événements du framework et du cycle de vie des entités.
+- Event Listener : pour réagir aux événements du framework et du cycle de vie des entités.
+- Factory Pattern : Approche utilisée lors de la création d’entités à partir de données de formulaire, même si aucune classe Factory dédiée n’est définie.
