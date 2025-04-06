@@ -12,6 +12,12 @@ security:
         dev:
             pattern: ^/(_(profiler|wdt)|css|images|js)/
             security: false
+
+        load_more:
+            pattern: ^/load-more-figures
+            stateless: true
+            security: false
+            
         main:
             lazy: true
             provider: app_user_provider

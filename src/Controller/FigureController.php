@@ -22,13 +22,14 @@ class FigureController extends AbstractController
 
 
     /**
-     * EDIT - route de modification (ou création) d’une figure.
+     * Gère la création ou la modification d’une figure.
      *
-     * @param Request                $request La requête HTTP
-     * @param EntityManagerInterface $em      Le gestionnaire d'entités Doctrine
-     * @param Figure|null            $figure  La figure à modifier (ou null si création)
+     * @param Request                $request La requête HTTP contenant le formulaire
+     * @param EntityManagerInterface $em      Le gestionnaire Doctrine pour la persistance
+     * @param SluggerInterface       $slugger Le service utilisé pour générer les slugs
+     * @param Figure|null            $figure  La figure à modifier (null en création)
      *
-     * @return Response|RedirectResponse
+     * @return Response La réponse HTML partielle (AJAX) ou complète (édition)
      */
     #[Route('/figure/add', name: 'app_figure_add', methods: ['GET', 'POST'])]
     #[Route('/figure/{slug}/edit', name: 'app_figure_edit', methods: ['GET', 'POST'])]
@@ -136,10 +137,10 @@ class FigureController extends AbstractController
     /**
      * Affiche la page de détails d'une figure (non-CRUD).
      *
-     * @param Figure            $figure            La figure dont on affiche le détail
-     * @param string            $slug              Le slug de la figure
-     * @param CommentRepository $commentRepository Le repository pour paginer les commentaires
-     * @param Request           $request           La requête HTTP
+     * @param EntityManagerInterface $em                Le gestionnaire d'entités Doctrine
+     * @param string                 $slug              Le slug de la figure à afficher
+     * @param CommentRepository      $commentRepository Le repository pour la pagination des commentaires
+     * @param Request                $request           La requête HTTP entrante
      *
      * @return Response La réponse contenant le rendu de la page de détail
      */

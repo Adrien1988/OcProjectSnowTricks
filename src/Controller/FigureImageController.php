@@ -42,12 +42,12 @@ class FigureImageController extends AbstractController
      *  - "/figure/image/add/{figureId}"  => app_figure_add_image (création)
      *  - "/figure/image/edit/{id}"       => app_figure_edit_image (édition)
      *
-     * @param Request                $request  La requête HTTP
+     * @param Request                $request  La requête HTTP entrante
      * @param EntityManagerInterface $em       Le gestionnaire d'entités Doctrine
-     * @param int|null               $figureId L'ID de la figure (pour la création, null pour édition)
-     * @param Image|null             $image    L'entité Image à modifier (null si création)
+     * @param int|null               $figureId L'ID de la figure concernée (null si en édition)
+     * @param Image|null             $image    L'entité Image à éditer (null si en création)
      *
-     * @return Response|RedirectResponse
+     * @return Response|RedirectResponse La réponse HTTP (HTML ou redirection)
      */
     #[Route('/add/{figureId}', name: 'app_figure_add_image', methods: ['GET', 'POST'])]
     #[Route('/edit/{id}', name: 'app_figure_edit_image', methods: ['GET', 'POST'])]
@@ -181,7 +181,7 @@ class FigureImageController extends AbstractController
     /**
      * Définit une image en tant qu'image principale pour une figure.
      *
-     * @param int                    $id      L'ID de la figure
+     * @param string                 $slug    Le slug de la figure
      * @param Request                $request La requête HTTP
      * @param EntityManagerInterface $em      Le gestionnaire d'entités Doctrine
      *
@@ -234,7 +234,7 @@ class FigureImageController extends AbstractController
     /**
      * Supprime l'image principale d'une figure.
      *
-     * @param int                    $id      L'ID de la figure
+     * @param string                 $slug    Le slug de la figure
      * @param Request                $request La requête HTTP contenant le token CSRF
      * @param EntityManagerInterface $em      Le gestionnaire d'entités Doctrine
      *
