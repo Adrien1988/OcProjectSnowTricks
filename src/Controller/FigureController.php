@@ -15,6 +15,7 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\String\Slugger\SluggerInterface;
 
 class FigureController extends AbstractController
 {
@@ -30,8 +31,8 @@ class FigureController extends AbstractController
      * @return Response|RedirectResponse
      */
     #[Route('/figure/add', name: 'app_figure_add', methods: ['GET', 'POST'])]
-    #[Route('/figure/edit/{id}', name: 'app_figure_edit', methods: ['GET', 'POST'])]
-    public function editFigure(Request $request, EntityManagerInterface $em, ?Figure $figure = null): Response
+    #[Route('/figure/{slug}/edit', name: 'app_figure_edit', methods: ['GET', 'POST'])]
+    public function editFigure(Request $request, EntityManagerInterface $em, SluggerInterface $slugger, ?Figure $figure = null): Response
     {
         $isEdit = ($figure && $figure->getId());
 
@@ -45,43 +46,56 @@ class FigureController extends AbstractController
         $form = $this->createForm(FigureType::class, $figure);
         $form->handleRequest($request);
 
-        if ($form->isSubmitted() && $form->isValid()) {
-            $em->persist($figure);
-            $em->flush();
+        if ($form->isSubmitted()) {
+            $existingFigure = $em->getRepository(Figure::class)->findOneBy(['name' => $figure->getName()]);
 
-            $this->addFlash('success', $isEdit ? 'Figure modifiée.' : 'Figure créée.');
+            if ($existingFigure && (!$figure->getId() || $existingFigure->getId() !== $figure->getId())) {
+                return $this->render('partials/_create_figure_form.html.twig', [
+                    'createFigureForm' => $form->createView(),
+                ]);
+            }
 
-            return $this->redirectToRoute(
-                'app_figure_detail',
-                [
-                    'id'   => $figure->getId(),
-                    'slug' => $figure->getSlug(),
-                ]
-            );
+            if ($form->isValid()) {
+                if (!$figure->getSlug()) {
+                    $figure->generateSlug($slugger);
+                }
+
+                $em->persist($figure);
+                $em->flush();
+
+                return new Response('<div id="create-figure-success" data-redirect="'.$this->generateUrl('app_figure_detail', ['slug' => $figure->getSlug()]).'"></div>');
+            }
+
+            // retour du HTML partiel de la modale
+            return $this->render('partials/_create_figure_form.html.twig', [
+                'createFigureForm' => $form->createView(),
+            ]);
         }
 
-        // Formulaires secondaires (image principale, images, vidéos)
-        $mainImageForm = $this->createForm(MainImageType::class, null, ['figure' => $figure])->createView();
-
+        // Formulaires secondaires (uniquement en édition)
+        $mainImageForm = $isEdit ? $this->createForm(MainImageType::class, null, ['figure' => $figure])->createView() : null;
         $imageForms = [];
-        foreach ($figure->getImages() as $img) {
-            $imageForms[$img->getId()] = $this->createForm(ImageType::class, $img)->createView();
-        }
-
         $videoForms = [];
-        foreach ($figure->getVideos() as $vid) {
-            $videoForms[$vid->getId()] = $this->createForm(VideoType::class, $vid)->createView();
+
+        if ($isEdit) {
+            foreach ($figure->getImages() as $img) {
+                $imageForms[$img->getId()] = $this->createForm(ImageType::class, $img)->createView();
+            }
+
+            foreach ($figure->getVideos() as $vid) {
+                $videoForms[$vid->getId()] = $this->createForm(VideoType::class, $vid)->createView();
+            }
         }
 
         return $this->render(
-            'figure/edit.html.twig',
+            $isEdit ? 'figure/edit.html.twig' : 'home/index.html.twig',
             [
-                'form'          => $form->createView(),
-                'figure'        => $figure,
-                'mainImageForm' => $mainImageForm,
-                'imageForms'    => $imageForms,
-                'videoForms'    => $videoForms,
-                'editMode'      => $isEdit,
+                'form'             => $form->createView(),
+                'figure'           => $figure,
+                'mainImageForm'    => $mainImageForm,
+                'imageForms'       => $imageForms,
+                'videoForms'       => $videoForms,
+                'editMode'         => $isEdit,
             ]
         );
     }
@@ -129,25 +143,18 @@ class FigureController extends AbstractController
      *
      * @return Response La réponse contenant le rendu de la page de détail
      */
-    #[Route('/figure/{id}/{slug}', name: 'app_figure_detail', methods: ['GET'])]
+    #[Route('/figure/{slug}', name: 'app_figure_detail', methods: ['GET'])]
     public function detail(
-        Figure $figure,
+        EntityManagerInterface $em,
         string $slug,
         CommentRepository $commentRepository,
         Request $request,
     ): Response {
 
+        $figure = $em->getRepository(Figure::class)->findOneBy(['slug' => $slug]);
         // Vérifier si le slug fourni correspond à celui de la figure
-        if ($figure->getSlug() !== $slug) {
-            // Redirection 301 vers l'URL "canonique"
-            return $this->redirectToRoute(
-                'app_figure_detail',
-                [
-                    'id'   => $figure->getId(),
-                    'slug' => $figure->getSlug(),
-                ],
-                301
-            );
+        if (!$figure) {
+            throw $this->createNotFoundException("Figure introuvable pour le slug : $slug");
         }
 
         // Formulaire de modification de l'image principale

@@ -9,6 +9,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class ImageVoter extends Voter
 {
+    public const CREATE = 'IMAGE_CREATE';
     public const EDIT = 'IMAGE_EDIT';
     public const DELETE = 'IMAGE_DELETE';
 
@@ -23,7 +24,7 @@ class ImageVoter extends Voter
      */
     protected function supports(string $attribute, mixed $subject): bool
     {
-        return in_array($attribute, [self::EDIT, self::DELETE]) && $subject instanceof Image;
+        return in_array($attribute, [self::CREATE, self::EDIT, self::DELETE]) && $subject instanceof Image;
     }
 
 
@@ -39,14 +40,24 @@ class ImageVoter extends Voter
     protected function voteOnAttribute(string $attribute, mixed $subject, TokenInterface $token): bool
     {
         $user = $token->getUser();
-
         if (!$user instanceof UserInterface) {
             return false;
         }
 
+        /** @var Image $image */
         $image = $subject;
 
-        return $user === $image->getFigure()->getAuthor();
+        switch ($attribute) {
+            case self::CREATE:
+                // Par ex. seul l’auteur de la figure peut créer une image
+                return $user === $image->getFigure()->getAuthor();
+
+            case self::EDIT:
+            case self::DELETE:
+                return $user === $image->getFigure()->getAuthor();
+        }
+
+        return false;
     }
 
 

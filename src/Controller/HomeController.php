@@ -25,7 +25,15 @@ class HomeController extends AbstractController
     public function index(FigureRepository $figureRepository, Request $request): Response
     {
 
-        $figures = $figureRepository->findAllWithImages();
+        $limit = 15;
+        $offset = 0;
+
+        // 1) Récupérer les IDs
+        $idResults = $figureRepository->findPaginatedFigureIds($limit, $offset);
+        // Convertir en un simple tableau d'IDs
+        $ids = array_column($idResults, 'id');
+
+        $figures = $figureRepository->findFiguresWithImages($ids);
         $createFigureForm = $this->createForm(FigureType::class);
 
         return $this->render(
@@ -33,8 +41,29 @@ class HomeController extends AbstractController
             [
                 'figures'          => $figures,
                 'createFigureForm' => $createFigureForm->createView(),
+                'openModal'        => false,
             ]
         );
+    }
+
+
+    #[Route('/load-more-figures', name: 'app_load_more_figures', methods: ['GET'])]
+    public function loadMoreFigures(Request $request, FigureRepository $figureRepository): Response
+    {
+        $offset = $request->query->getInt('offset', 0);
+        $limit = 15;
+
+        // 1) Récupérer uniquement les IDs des figures
+        $idResults = $figureRepository->findPaginatedFigureIds($limit, $offset);
+        $ids = array_column($idResults, 'id');
+
+        // 2) Charger les figures + images
+        $figures = $figureRepository->findFiguresWithImages($ids);
+
+        // Rendre le partial
+        return $this->render('partials/_figures_partial.html.twig', [
+            'figures' => $figures,
+        ]);
     }
 
 

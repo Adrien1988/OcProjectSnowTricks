@@ -23,8 +23,8 @@
 		</div>
 
 		<!-- Modales pour la modification et la suppression de l’image principale -->
-		{% include "partials/_edit_main_image_modal.html.twig" %}
-		{% include "partials/_delete_main_image_modal.html.twig" %}
+		{% include "partials/_edit_main_image_modal.html.twig" with { editMode: true } %}
+		{% include "partials/_delete_main_image_modal.html.twig" with { editMode: true } %}
 
 		<!-- Section Images et Vidéos -->
 		<!-- Bouton d'affichage des médias sur mobile -->
@@ -147,7 +147,7 @@
 		<div class="my-5 p-4 bg-light rounded shadow-lg text-center position-relative">
 			{% if is_granted('ROLE_USER') and figure.author == app.user %}
 				<!-- Bouton EDIT en haut à droite -->
-				<a href="{{ path('app_figure_edit', { id: figure.id }) }}" class="btn btn-secondary btn-sm position-absolute top-0 end-0 mt-2 me-2" data-bs-toggle="tooltip" title="Modifier la figure">
+				<a href="{{ path('app_figure_edit', { slug: figure.slug }) }}" class="btn btn-secondary btn-sm position-absolute top-0 end-0 mt-2 me-2" data-bs-toggle="tooltip" title="Modifier la figure">
 					<i class="fa-solid fa-pen"></i>
 				</a>
 			{% endif %}
@@ -224,21 +224,21 @@
 						<ul class="pagination justify-content-center">
 							{% if currentPage > 1 %}
 								<li class="page-item">
-									<a class="page-link" href="{{ path('app_figure_detail', { id: figure.id, slug: figure.slug, page: currentPage - 1 }) }}">
+									<a class="page-link" href="{{ path('app_figure_detail', { slug: figure.slug, page: currentPage - 1 }) }}">
 										Précédent
 									</a>
 								</li>
 							{% endif %}
 							{% for i in 1..lastPage %}
 								<li class="page-item {% if i == currentPage %}active{% endif %}">
-									<a class="page-link" href="{{ path('app_figure_detail', { id: figure.id, slug: figure.slug, page: i }) }}">
+									<a class="page-link" href="{{ path('app_figure_detail', { slug: figure.slug, page: i }) }}">
 										{{ i }}
 									</a>
 								</li>
 							{% endfor %}
 							{% if currentPage < lastPage %}
 								<li class="page-item">
-									<a class="page-link" href="{{ path('app_figure_detail', { id: figure.id, slug: figure.slug, page: currentPage + 1 }) }}">
+									<a class="page-link" href="{{ path('app_figure_detail', { slug: figure.slug, page: currentPage + 1 }) }}">
 										Suivant
 									</a>
 								</li>

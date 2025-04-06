@@ -1,0 +1,26 @@
+<div id="create-figure-form-wrapper">
+    {{ form_start(createFigureForm, {
+        'action': path('app_figure_add'),
+        'method': 'POST',
+        'attr': {'id': 'create-figure-form'}
+    }) }}
+    <div class="mb-3">
+        {{ form_label(createFigureForm.name) }}
+        {{ form_widget(createFigureForm.name, {'attr': {'class': 'form-control'}}) }}
+        {{ form_errors(createFigureForm.name) }}
+    </div>
+    <div class="mb-3">
+        {{ form_label(createFigureForm.description) }}
+        {{ form_widget(createFigureForm.description, {'attr': {'class': 'form-control'}}) }}
+        {{ form_errors(createFigureForm.description) }}
+    </div>
+    <div class="mb-3">
+        {{ form_label(createFigureForm.figureGroup) }}
+        {{ form_widget(createFigureForm.figureGroup, {'attr': {'class': 'form-select'}}) }}
+        {{ form_errors(createFigureForm.figureGroup) }}
+    </div>
+    <div class="d-grid">
+        <button type="submit" class="btn btn-figure-submit">Créer</button>
+    </div>
+    {{ form_end(createFigureForm) }}
+</div>

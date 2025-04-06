@@ -21,6 +21,8 @@ import './js/main_image';
 import './js/scroll-button';
 import './js/captcha';
 import './js/responsiveMedia';
+import './js/load-figures';
+import './js/createFigureModal';
 
 // Exemple de message dans la console pour vérifier que le fichier est bien chargé
 console.log('Bienvenue dans votre fichier assets/app.js - Bootstrap est chargé avec succès ! 🎉');
