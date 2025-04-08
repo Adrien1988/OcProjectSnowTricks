@@ -1,36 +1,39 @@
-<div class="modal fade" id="editMainImageModal" tabindex="-1" aria-labelledby="editMainImageModalLabel" aria-hidden="true">
-	<div class="modal-dialog">
-		<div class="modal-content text-center shadow-lg">
-			<div class="modal-header">
-				<h5 class="modal-title text-uppercase" id="editMainImageModalLabel">Modifier l'image principale</h5>
-				<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-			</div>
-			<div class="modal-body">
-				{{ form_start(mainImageForm, {
-                    'action': path('app_figure_set_main_image', { id: figure.id }),
-                    'method': 'POST'
-                }) }}
+{% if editMode %}
+	<!-- Affichage de la modal uniquement si la figure existe déjà -->
+	<div class="modal fade" id="editMainImageModal" tabindex="-1" aria-labelledby="editMainImageModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content text-center shadow-lg">
+				<div class="modal-header">
+					<h5 class="modal-title text-uppercase" id="editMainImageModalLabel">Modifier l'image principale</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					{{ form_start(mainImageForm, {
+          'action': path('app_figure_set_main_image', { slug: figure.slug }),
+          'method': 'POST'
+        }) }}
 
-				<div class="mb-3">
-					<label class="form-label">Sélectionnez l'image principale</label>
-					<div class="d-flex flex-wrap justify-content-center gap-3">
-						{% for radio in mainImageForm.mainImage %}
-							{% set imageUrl = radio.vars.attr['data-image-url']|default('build/images/default-image.jpg') %}
-							<label class="d-block text-center image-label" style="cursor: pointer;">
-								{{ form_widget(radio, { 'attr': { 'style': 'display: none;' } }) }}
-								<img src="{{ asset(imageUrl) }}" class="img-thumbnail border {% if radio.vars.checked %}border-primary{% endif %}" alt="Image principale" style="width: 120px; height: 120px; object-fit: cover;">
-							</label>
-						{% endfor %}
+					<div class="mb-3">
+						<label class="form-label">Sélectionnez l'image principale</label>
+						<div class="d-flex flex-wrap justify-content-center gap-3">
+							{% for radio in mainImageForm.mainImage %}
+								{% set imageUrl = radio.vars.attr['data-image-url']|default('build/images/default-image.jpg') %}
+								<label class="d-block text-center image-label" style="cursor: pointer;">
+									{{ form_widget(radio, { 'attr': { 'style': 'display: none;' } }) }}
+									<img src="{{ asset(imageUrl) }}" class="img-thumbnail border {% if radio.vars.checked %}border-primary{% endif %}" alt="Image principale" style="width: 120px; height: 120px; object-fit: cover;">
+								</label>
+							{% endfor %}
+						</div>
 					</div>
-				</div>
 
-				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-					{{ form_widget(mainImageForm.save) }}
-				</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+						{{ form_widget(mainImageForm.save) }}
+					</div>
 
-				{{ form_end(mainImageForm) }}
+					{{ form_end(mainImageForm) }}
+				</div>
 			</div>
 		</div>
 	</div>
-</div>
+{% endif %}

@@ -48,9 +48,10 @@ class FigureVideoController extends AbstractController
                     return $this->redirectToRoute('app_home');
                 }
 
-                // On pourrait vérifier la permission sur la figure : $this->denyAccessUnlessGranted('FIGURE_EDIT', $figure);
                 $video->setFigure($figure);
             }
+
+            $this->denyAccessUnlessGranted('VIDEO_CREATE', $video);
         } else {
             // Cas édition => contrôle des droits via le Voter
             $this->denyAccessUnlessGranted('VIDEO_EDIT', $video);
@@ -88,10 +89,11 @@ class FigureVideoController extends AbstractController
             // Redirection
             $figure = $video->getFigure();
             if ($figure) {
+                $route = $isEdit ? 'app_figure_edit' : 'app_figure_detail';
+
                 return $this->redirectToRoute(
-                    'app_figure_detail',
+                    $route,
                     [
-                        'id'   => $figure->getId(),
                         'slug' => $figure->getSlug(),
                     ]
                 );
@@ -143,9 +145,8 @@ class FigureVideoController extends AbstractController
         // Redirection vers la figure ou home
         if ($figure) {
             return $this->redirectToRoute(
-                'app_figure_detail',
+                'app_figure_edit',
                 [
-                    'id'   => $figure->getId(),
                     'slug' => $figure->getSlug(),
                 ]
             );

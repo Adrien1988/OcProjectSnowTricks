@@ -42,12 +42,12 @@ class FigureImageController extends AbstractController
      *  - "/figure/image/add/{figureId}"  => app_figure_add_image (création)
      *  - "/figure/image/edit/{id}"       => app_figure_edit_image (édition)
      *
-     * @param Request                $request  La requête HTTP
+     * @param Request                $request  La requête HTTP entrante
      * @param EntityManagerInterface $em       Le gestionnaire d'entités Doctrine
-     * @param int|null               $figureId L'ID de la figure (pour la création, null pour édition)
-     * @param Image|null             $image    L'entité Image à modifier (null si création)
+     * @param int|null               $figureId L'ID de la figure concernée (null si en édition)
+     * @param Image|null             $image    L'entité Image à éditer (null si en création)
      *
-     * @return Response|RedirectResponse
+     * @return Response|RedirectResponse La réponse HTTP (HTML ou redirection)
      */
     #[Route('/add/{figureId}', name: 'app_figure_add_image', methods: ['GET', 'POST'])]
     #[Route('/edit/{id}', name: 'app_figure_edit_image', methods: ['GET', 'POST'])]
@@ -68,8 +68,11 @@ class FigureImageController extends AbstractController
 
                 $image->setFigure($figure);
             }
+
+            $this->denyAccessUnlessGranted('IMAGE_CREATE', $image);
         } else {
             $this->denyAccessUnlessGranted('IMAGE_EDIT', $image);
+            $figure = $image->getFigure();
         }
 
         $form = $this->createForm(ImageType::class, $image);
@@ -96,10 +99,10 @@ class FigureImageController extends AbstractController
 
             $figure = $image->getFigure();
             if ($figure) {
-                return $this->redirectToRoute(
-                    'app_figure_detail',
+                $route = $isEdit ? 'app_figure_edit' : 'app_figure_detail';
+
+                return $this->redirectToRoute($route,
                     [
-                        'id'   => $figure->getId(),
                         'slug' => $figure->getSlug(),
                     ]
                 );
@@ -147,7 +150,7 @@ class FigureImageController extends AbstractController
                 return $this->redirectToRoute(
                     'app_figure_edit',
                     [
-                        'id'   => $figure->getId(),
+                        'slug'   => $figure->getSlug(),
                     ]
                 );
             }
@@ -165,7 +168,7 @@ class FigureImageController extends AbstractController
             return $this->redirectToRoute(
                 'app_figure_edit',
                 [
-                    'id'   => $figure->getId(),
+                    'slug'   => $figure->getSlug(),
                 ]
             );
         }
@@ -178,22 +181,20 @@ class FigureImageController extends AbstractController
     /**
      * Définit une image en tant qu'image principale pour une figure.
      *
-     * @param int                    $id      L'ID de la figure
+     * @param string                 $slug    Le slug de la figure
      * @param Request                $request La requête HTTP
      * @param EntityManagerInterface $em      Le gestionnaire d'entités Doctrine
      *
      * @return RedirectResponse
      */
-    #[Route('/figure/{id}/set-main-image', name: 'app_figure_set_main_image', methods: ['POST'])]
-    public function setMainImage(int $id, Request $request, EntityManagerInterface $em): RedirectResponse
+    #[Route('/figure/{slug}/set-main-image', name: 'app_figure_set_main_image', methods: ['POST'])]
+    public function setMainImage(string $slug, Request $request, EntityManagerInterface $em): RedirectResponse
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
 
-        $figure = $em->getRepository(Figure::class)->find($id);
+        $figure = $em->getRepository(Figure::class)->findOneBy(['slug' => $slug]);
         if (!$figure) {
-            $this->addFlash('error', 'Figure introuvable.');
-
-            return $this->redirectToRoute('app_home');
+            throw $this->createNotFoundException("Figure introuvable pour le slug $slug");
         }
 
         // Formulaire pour désigner l'image principale
@@ -221,7 +222,6 @@ class FigureImageController extends AbstractController
             return $this->redirectToRoute(
                 'app_figure_detail',
                 [
-                    'id'   => $figure->getId(),
                     'slug' => $figure->getSlug(),
                 ]
             );
@@ -234,28 +234,26 @@ class FigureImageController extends AbstractController
     /**
      * Supprime l'image principale d'une figure.
      *
-     * @param int                    $id      L'ID de la figure
+     * @param string                 $slug    Le slug de la figure
      * @param Request                $request La requête HTTP contenant le token CSRF
      * @param EntityManagerInterface $em      Le gestionnaire d'entités Doctrine
      *
      * @return RedirectResponse
      */
-    #[Route('/figure/{id}/remove-main-image', name: 'app_figure_remove_main_image', methods: ['POST'])]
-    public function removeMainImage(int $id, Request $request, EntityManagerInterface $em): RedirectResponse
+    #[Route('/figure/{slug}/remove-main-image', name: 'app_figure_remove_main_image', methods: ['POST'])]
+    public function removeMainImage(string $slug, Request $request, EntityManagerInterface $em): RedirectResponse
     {
         $this->denyAccessUnlessGranted('ROLE_USER');
 
-        $figure = $em->getRepository(Figure::class)->find($id);
+        $figure = $em->getRepository(Figure::class)->findOneBy(['slug' => $slug]);
         if (!$figure) {
-            $this->addFlash('error', 'Figure introuvable.');
-
-            return $this->redirectToRoute('app_home');
+            throw $this->createNotFoundException("Figure introuvable pour le slug $slug");
         }
 
         if (!$this->isCsrfTokenValid('remove_main_image_'.$figure->getId(), $request->request->get('_token'))) {
             $this->addFlash('error', 'Token CSRF invalide.');
 
-            return $this->redirectToRoute('app_figure_detail', ['id' => $figure->getId(), 'slug' => $figure->getSlug()]);
+            return $this->redirectToRoute('app_figure_detail', ['slug' => $figure->getSlug()]);
         }
 
         $figure->setMainImage(null);
@@ -269,7 +267,6 @@ class FigureImageController extends AbstractController
             return $this->redirectToRoute(
                 'app_figure_detail',
                 [
-                    'id'   => $figure->getId(),
                     'slug' => $figure->getSlug(),
                 ]
             );

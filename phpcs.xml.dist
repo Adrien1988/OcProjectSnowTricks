@@ -27,15 +27,15 @@
     <!-- Indentation personnalisée (inclut switch/case) -->
     <rule ref="Generic.WhiteSpace.ScopeIndent">
         <properties>
-            <property name="indent" value="4"/>
-            <property name="tabIndent" value="false"/>
+            <property name="indent" value="4" />
+            <property name="tabIndent" value="false" />
         </properties>
     </rule>
 
     <!-- Indentation spécifique des switch/case -->
     <rule ref="PSR2.ControlStructures.SwitchDeclaration">
         <properties>
-            <property name="indent" value="4"/>
+            <property name="indent" value="4" />
         </properties>
     </rule>
 
@@ -80,7 +80,9 @@
     <rule ref="Squiz.WhiteSpace.FunctionSpacing" />
     <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace" />
 
-    <rule ref="Squiz.Commenting.BlockComment" />
+    <rule ref="Squiz.Commenting.BlockComment">
+        <severity>0</severity>
+    </rule>
     <rule ref="Squiz.Commenting.DocCommentAlignment" />
 
     <!-- Désactivation de règles conflictuelles -->

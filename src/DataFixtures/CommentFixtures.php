@@ -55,18 +55,14 @@ class CommentFixtures extends Fixture implements DependentFixtureInterface
 
         // On suppose qu’il y a 10 figures dans FigureFixtures (figure-0 à figure-9)
         for ($i = 0; $i < 10; ++$i) {
-            /*
-             * @var Figure $figure
-             */
 
+            /** @var Figure $figure */
             $figure = $this->getReference('figure-'.$i, Figure::class);
 
             // Pour chaque utilisateur, on va créer plusieurs commentaires
             foreach ($userReferences as $userRef) {
-                /*
-                 * @var User $user
-                 */
 
+                /** @var User $user */
                 $user = $this->getReference($userRef, User::class);
 
                 // Générer 1 à 3 commentaires pour chaque user/figure

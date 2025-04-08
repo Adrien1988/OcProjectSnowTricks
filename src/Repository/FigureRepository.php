@@ -30,19 +30,32 @@ class FigureRepository extends ServiceEntityRepository
 
 
     /**
-     * Récupère toutes les figures avec leurs images associées en une seule requête.
-     *
-     * Cette méthode utilise une jointure gauche (LEFT JOIN) pour inclure les données
-     * des images dans les résultats. Elle optimise les performances en limitant
-     * le nombre de requêtes SQL nécessaires.
-     *
-     * @return Figure[] retourne un tableau contenant les figures et leurs images associées
+     * Étape 1 : Récupère juste les IDs de figure, paginés.
      */
-    public function findAllWithImages(): array
+    public function findPaginatedFigureIds(int $limit, int $offset): array
+    {
+        return $this->createQueryBuilder('f')
+            ->select('f.id')
+            ->orderBy('f.createdAt', 'DESC')
+            ->setFirstResult($offset)
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getScalarResult();
+        // Retourne un tableau de type [ ['id' => 12], ['id' => 13], ... ]
+    }
+
+
+    /**
+     * Étape 2 : Charge les figures (avec images) pour ces IDs.
+     */
+    public function findFiguresWithImages(array $ids): array
     {
         return $this->createQueryBuilder('f')
             ->leftJoin('f.images', 'i')
             ->addSelect('i')
+            ->where('f.id IN (:ids)')
+            ->setParameter('ids', $ids)
+            ->orderBy('f.createdAt', 'DESC')
             ->getQuery()
             ->getResult();
     }

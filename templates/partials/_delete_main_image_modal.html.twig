@@ -1,20 +1,22 @@
-<div class="modal fade" id="deleteMainImageModal" tabindex="-1">
-    <div class="modal-dialog">
-        <div class="modal-content shadow-lg">
-            <div class="modal-header">
-                <h5 class="modal-title text-uppercase">Supprimer l'image principale</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                Êtes-vous sûr de vouloir supprimer l'image principale ?
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
-                <form method="post" action="{{ path('app_figure_remove_main_image', { id: figure.id }) }}">
-                    <input type="hidden" name="_token" value="{{ csrf_token('remove_main_image_' ~ figure.id) }}">
-                    <button type="submit" class="btn btn-danger">Supprimer</button>
-                </form>
+{% if editMode %}
+    <div class="modal fade" id="deleteMainImageModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content shadow-lg">
+                <div class="modal-header">
+                    <h5 class="modal-title text-uppercase">Supprimer l'image principale</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    Êtes-vous sûr de vouloir supprimer l'image principale ?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuler</button>
+                    <form method="post" action="{{ path('app_figure_remove_main_image', { slug: figure.slug }) }}">
+                        <input type="hidden" name="_token" value="{{ csrf_token('remove_main_image_' ~ figure.id) }}">
+                        <button type="submit" class="btn btn-danger">Supprimer</button>
+                    </form>
+                </div>
             </div>
         </div>
     </div>
-</div>
+{% endif %}

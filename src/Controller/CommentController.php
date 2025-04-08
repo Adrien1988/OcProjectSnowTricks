@@ -59,7 +59,6 @@ class CommentController extends AbstractController
         return $this->redirectToRoute(
             'app_figure_detail',
             [
-                'id'   => $figure->getId(),
                 'slug' => $figure->getSlug(),
             ]
         );

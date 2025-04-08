@@ -44,6 +44,7 @@ class FigureVoter extends Voter
             return false;
         }
 
+        /** @var Figure $figure */
         $figure = $subject;
 
         // Vérification que l'utilisateur est bien le créateur de la figure

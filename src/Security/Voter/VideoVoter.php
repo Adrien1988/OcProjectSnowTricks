@@ -9,6 +9,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
 
 class VideoVoter extends Voter
 {
+    public const CREATE = 'VIDEO_CREATE';
     public const EDIT = 'VIDEO_EDIT';
     public const DELETE = 'VIDEO_DELETE';
 
@@ -23,7 +24,7 @@ class VideoVoter extends Voter
      */
     protected function supports(string $attribute, mixed $subject): bool
     {
-        return in_array($attribute, [self::EDIT, self::DELETE]) && $subject instanceof Video;
+        return in_array($attribute, [self::CREATE, self::EDIT, self::DELETE]) && $subject instanceof Video;
     }
 
 
@@ -44,9 +45,21 @@ class VideoVoter extends Voter
             return false;
         }
 
+        /** @var Video $video */
         $video = $subject;
 
-        return $user === $video->getFigure()->getAuthor();
+        switch ($attribute) {
+            case self::CREATE:
+                // Exemple : seul l'auteur de la figure peut créer une vidéo
+                return $user === $video->getFigure()->getAuthor();
+
+            case self::EDIT:
+            case self::DELETE:
+                // Même logique : seul l'auteur de la figure
+                return $user === $video->getFigure()->getAuthor();
+        }
+
+        return false;
     }
 
 
